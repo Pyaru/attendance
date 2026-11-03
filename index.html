@@ -22,6 +22,7 @@
     .late { background: #fef3c7 !important; color: #92400e; }
     .duplicate { background: #dbeafe !important; color: #1e40af; }
     .error { background: #fee2e2 !important; color: #991b1b; }
+    #result img.photo { width: 120px; height: 120px; object-fit: cover; border-radius: 14px; margin: 0 auto 8px; display: block; border: 3px solid rgba(0,0,0,.12); }
     .row { display: flex; gap: 8px; margin-bottom: 12px; }
     input[type=text] { flex: 1; padding: 12px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 10px; }
     button { padding: 12px 16px; font-size: 15px; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
@@ -178,7 +179,9 @@
     function show(r) {
       const box = document.getElementById('result');
       box.className = r.type || '';
-      let html = '<div class="big">' + esc(r.msg || '') + '</div>';
+            let html = '';
+      if (r.photo && /^data:image\//.test(r.photo)) html += '<img class="photo" alt="" src="' + r.photo + '">';
+      html += '<div class="big">' + esc(r.msg || '') + '</div>';
       if (r.name) html += '<div>' + esc(r.name) + (r.cls ? ' — ' + esc(r.cls) : '') + (r.roll ? ' (রোল ' + esc(r.roll) + ')' : '') + '</div>';
       if (r.time) html += '<div style="font-size:13px;opacity:.8">' + esc(r.time) + '</div>';
       box.innerHTML = html;
