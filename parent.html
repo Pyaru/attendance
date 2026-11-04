@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>অভিভাবক পোর্টাল</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Noto Sans Bengali", sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 14px 16px; }
+    header h1 { margin: 0; font-size: 18px; }
+    header small { opacity: .85; }
+    .wrap { padding: 12px; max-width: 520px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    label { display: block; font-size: 14px; color: #4b5563; margin: 10px 0 4px; }
+    input { width: 100%; padding: 12px; font-size: 17px; border: 1px solid #d1d5db; border-radius: 10px; }
+    button { padding: 12px 16px; font-size: 16px; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #e5e7eb; color: #111827; }
+    button.full { width: 100%; margin-top: 14px; }
+    #err { color: #991b1b; background: #fee2e2; border-radius: 10px; padding: 10px; margin-top: 12px; display: none; font-size: 15px; }
+    #app { display: none; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .tabs button { padding: 8px 14px; font-size: 14px; }
+    .tabs button.on { background: #0b6b4f; color: #fff; }
+    .who { display: flex; gap: 14px; align-items: center; }
+    .who img { width: 84px; height: 84px; border-radius: 14px; object-fit: cover; border: 3px solid #0b6b4f; background: #dfe9e5; }
+    .who .ph { width: 84px; height: 84px; border-radius: 14px; background: #dfe9e5; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 700; }
+    .who h2 { margin: 0 0 4px; font-size: 20px; }
+    .who div { font-size: 14px; color: #4b5563; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+    .stat { border-radius: 10px; padding: 8px 2px; text-align: center; }
+    .stat b { display: block; font-size: 20px; }
+    .stat span { font-size: 11px; }
+    .s-p { background: #d1fae5; color: #065f46; } .s-l { background: #fef3c7; color: #92400e; }
+    .s-a { background: #fee2e2; color: #991b1b; } .s-c { background: #e0e7ff; color: #3730a3; }
+    .ov { font-size: 13px; color: #6b7280; margin-top: 10px; text-align: center; }
+    .mhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .mhead b { font-size: 16px; }
+    .mhead button { padding: 6px 14px; font-size: 18px; }
+    .mhead button:disabled { opacity: .35; }
+    .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .cal .h { font-size: 11px; color: #6b7280; padding-bottom: 2px; }
+    .cal .d { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 9px; font-size: 14px; background: #f3f4f6; color: #9ca3af; }
+    .cal .d.present { background: #10b981; color: #fff; } .cal .d.late { background: #f59e0b; color: #fff; }
+    .cal .d.absent { background: #ef4444; color: #fff; } .cal .d.pending { background: #c7d2fe; color: #3730a3; }
+    .cal .d.today { outline: 2px solid #0b6b4f; outline-offset: 1px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; margin-top: 12px; color: #4b5563; }
+    .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    ul.list { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+    ul.list li { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; }
+    ul.list li:last-child { border: 0; }
+    .note { font-size: 12px; color: #6b7280; text-align: center; margin: 4px 0 18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="school">অভিভাবক পোর্টাল</h1>
+    <small>সন্তানের উপস্থিতি দেখুন</small>
+  </header>
+
+  <div class="wrap">
+    <div id="login" class="card">
+      <label for="phone">অভিভাবকের ফোন নম্বর</label>
+      <input id="phone" type="tel" inputmode="numeric" placeholder="যেমন 01XXXXXXXXX" autocomplete="tel">
+      <label for="ppin">পিন</label>
+      <input id="ppin" type="password" inputmode="numeric" placeholder="স্কুল থেকে পাওয়া পিন" autocomplete="off">
+      <button class="full" onclick="doLogin()">দেখুন</button>
+      <div id="err"></div>
+    </div>
+
+    <div id="app">
+      <div class="tabs" id="tabs"></div>
+      <div class="card" id="who"></div>
+      <div class="card">
+        <div class="mhead">
+          <button class="sec" id="prev" onclick="shift(-1)">‹</button>
+          <b id="mname"></b>
+          <button class="sec" id="next" onclick="shift(1)">›</button>
+        </div>
+        <div class="cal" id="cal"></div>
+        <div class="legend">
+          <span><i style="background:#10b981"></i>উপস্থিত</span>
+          <span><i style="background:#f59e0b"></i>দেরি</span>
+          <span><i style="background:#ef4444"></i>অনুপস্থিত</span>
+          <span><i style="background:#c7d2fe"></i>আজ (এখনো আসেনি)</span>
+          <span><i style="background:#f3f4f6;border:1px solid #e5e7eb"></i>স্কুল বন্ধ</span>
+        </div>
+      </div>
+      <div class="card" id="detail"></div>
+      <div class="note">স্কুল দিন বলতে যেদিন স্কুলে উপস্থিতি নেওয়া হয়েছে।</div>
+      <button class="sec full" onclick="logout()">বের হোন</button>
+    </div>
+  </div>
+
+  <script>
+    // ↓↓↓ শিক্ষকের স্ক্যানার পেজে যে /exec লিংক দিয়েছেন, সেটাই এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+
+    const BN = '০১২৩৪৫৬৭৮৯';
+    function bn(n) { return String(n).replace(/\d/g, function (d) { return BN[d]; }); }
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    const MONTHS = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+    const WD = ['শনি','রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র'];   // সপ্তাহ শনিবার থেকে শুরু
+    const ST = { present: 'উপস্থিত', late: 'দেরিতে', absent: 'অনুপস্থিত', pending: 'এখনো আসেনি' };
+
+    let data = null, cur = 0, month = '';
+
+    function save(phone, pin) { try { localStorage.setItem('par', JSON.stringify({ p: phone, k: pin })); } catch (e) {} }
+    function load() { try { return JSON.parse(localStorage.getItem('par') || 'null'); } catch (e) { return null; } }
+
+    function fetchData(phone, pin, m) {
+      const q = new URLSearchParams({ action: 'parent', phone: phone, ppin: pin });
+      if (m) q.set('month', m);
+      return fetch(API_URL + '?' + q.toString()).then(function (r) { return r.json(); });
+    }
+
+    function showErr(msg) {
+      const e = document.getElementById('err');
+      e.textContent = msg; e.style.display = msg ? 'block' : 'none';
+    }
+
+    function doLogin() {
+      const phone = document.getElementById('phone').value.trim();
+      const pin = document.getElementById('ppin').value.trim();
+      showErr('');
+      if (!phone || !pin) { showErr('ফোন নম্বর ও পিন দিন'); return; }
+      showErr('যাচাই হচ্ছে...');
+      fetchData(phone, pin, '').then(function (j) {
+        if (!j.ok) { showErr(j.msg || 'কিছু ভুল হয়েছে'); return; }
+        save(phone, pin);
+        showErr('');
+        open_(j, phone, pin);
+      }).catch(function () { showErr('সংযোগ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।'); });
+    }
+
+    function open_(j, phone, pin) {
+      data = j; data.phone = phone; data.pin = pin; month = j.month; cur = Math.min(cur, j.students.length - 1);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('school').textContent = j.school || 'অভিভাবক পোর্টাল';
+      render();
+    }
+
+    function logout() {
+      try { localStorage.removeItem('par'); } catch (e) {}
+      data = null;
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('login').style.display = 'block';
+      document.getElementById('ppin').value = '';
+    }
+
+    function shift(dir) {
+      const i = data.months.indexOf(month) + dir;
+      if (i < 0 || i >= data.months.length) return;
+      document.getElementById('mname').textContent = 'লোড হচ্ছে...';
+      fetchData(data.phone, data.pin, data.months[i]).then(function (j) {
+        if (!j.ok) return;
+        data.students = j.students; data.month = j.month; data.months = j.months; month = j.month; render();
+      }).catch(function () { render(); });
+    }
+
+    function render() {
+      const tabs = document.getElementById('tabs');
+      tabs.innerHTML = data.students.length > 1 ? data.students.map(function (s, i) {
+        return '<button class="' + (i === cur ? 'on' : 'sec') + '" onclick="cur=' + i + ';render()">' + esc(s.name) + '</button>';
+      }).join('') : '';
+
+      const s = data.students[cur];
+      const photo = s.photo && /^data:image\//.test(s.photo)
+        ? '<img alt="" src="' + s.photo + '">'
+        : '<div class="ph">' + esc(String(s.name || '?').charAt(0)) + '</div>';
+      const m = s.month, o = s.overall;
+      document.getElementById('who').innerHTML =
+        '<div class="who">' + photo + '<div><h2>' + esc(s.name) + '</h2><div>' + esc(s.cls) +
+        (s.roll ? ' · রোল ' + esc(bn(s.roll)) : '') + '</div><div>আইডি: ' + esc(s.id) + '</div></div></div>' +
+        '<div class="stats">' +
+        '<div class="stat s-p"><b>' + bn(m.present) + '</b><span>উপস্থিত</span></div>' +
+        '<div class="stat s-l"><b>' + bn(m.late) + '</b><span>দেরি</span></div>' +
+        '<div class="stat s-a"><b>' + bn(m.absent) + '</b><span>অনুপস্থিত</span></div>' +
+        '<div class="stat s-c"><b>' + (m.pct == null ? '-' : bn(m.pct) + '%') + '</b><span>এই মাসে</span></div></div>' +
+        '<div class="ov">মোট ' + bn(o.days) + ' স্কুল দিনে উপস্থিতি ' + (o.pct == null ? '-' : bn(o.pct) + '%') + '</div>';
+
+      const parts = month.split('-'), y = +parts[0], mo = +parts[1];
+      document.getElementById('mname').textContent = MONTHS[mo - 1] + ' ' + bn(y);
+      const idx = data.months.indexOf(month);
+      document.getElementById('prev').disabled = idx <= 0;
+      document.getElementById('next').disabled = idx >= data.months.length - 1;
+
+      const map = {};
+      s.days.forEach(function (d) { map[d.d] = d; });
+      const offset = (new Date(y, mo - 1, 1).getDay() + 1) % 7;
+      const dim = new Date(y, mo, 0).getDate();
+      let html = WD.map(function (w) { return '<div class="h">' + w + '</div>'; }).join('');
+      for (let i = 0; i < offset; i++) html += '<div></div>';
+      for (let d = 1; d <= dim; d++) {
+        const key = month + '-' + (d < 10 ? '0' + d : d);
+        const x = map[key];
+        html += '<div class="d ' + (x ? x.s : '') + (key === data.today ? ' today' : '') + '">' + bn(d) + '</div>';
+      }
+      document.getElementById('cal').innerHTML = html;
+
+      const rows = s.days.filter(function (d) { return d.s === 'late' || d.s === 'absent'; });
+      document.getElementById('detail').innerHTML = rows.length
+        ? '<b style="font-size:15px">দেরি ও অনুপস্থিতির দিন</b><ul class="list">' + rows.map(function (d) {
+            const dd = d.d.split('-');
+            return '<li><span>' + bn(+dd[2]) + ' ' + MONTHS[+dd[1] - 1] + '</span><span>' + ST[d.s] + (d.t ? ' (' + esc(d.t.substring(0, 5)) + ')' : '') + '</span></li>';
+          }).join('') + '</ul>'
+        : '<div style="text-align:center;color:#065f46;font-size:15px">এই মাসে কোনো দেরি বা অনুপস্থিতি নেই</div>';
+    }
+
+    document.getElementById('ppin').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+
+    // আগে লগইন করা থাকলে সরাসরি খুলবে
+    (function () {
+      const sv = load();
+      if (!sv) return;
+      fetchData(sv.p, sv.k, '').then(function (j) {
+        if (j && j.ok) open_(j, sv.p, sv.k); else logout();
+      }).catch(function () {});
+    })();
+  </script>
+</body>
+</html>
