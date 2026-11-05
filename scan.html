@@ -191,7 +191,9 @@
       loadSummary();
       const s = new Html5Qrcode('reader');
       scanner = s;
-      s.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 240, height: 240 } }, onScan, function () {})
+            // স্ক্যান-ঘর ক্যামেরা-পর্দার ৯০% জুড়ে থাকবে (আগে ছিল স্থির ২৪০ পিক্সেল)
+      const box = function (w, h) { const m = Math.floor(Math.min(w, h) * 0.9); return { width: m, height: m }; };
+      s.start({ facingMode: 'environment' }, { fps: 10, qrbox: box }, onScan, function () {})
         .then(function () {
           if (scanner !== s) { s.stop().catch(function () {}); return; }   // এর মধ্যে ট্যাব বদলে গেলে বন্ধ
           $('startBtn').classList.add('hidden');
