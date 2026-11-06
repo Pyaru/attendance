@@ -81,6 +81,7 @@
         <input type="text" id="manualId" placeholder="ম্যানুয়ালি আইডি লিখুন (যেমন S001)" autocomplete="off">
         <button class="b" onclick="manualSubmit()">জমা</button>
       </div>
+      <button class="b light full" id="camBtn" onclick="flipCam()">ক্যামেরা বদলান</button>
       <button class="b sec full" onclick="toggleAbsent()">আজকের অনুপস্থিত তালিকা</button>
       <div id="absentBox" class="listbox hidden"></div>
     </div>
@@ -184,7 +185,17 @@
 
     // ================= ছাত্র: QR স্ক্যান =================
     let scanner = null, sBusy = false, lastCode = '', lastTime = 0;
-
+        // QR স্ক্যানের ক্যামেরা: 'environment' = পেছনের, 'user' = সামনের (পছন্দ ফোনে মনে থাকে)
+    let qrFacing = 'environment';
+    try { qrFacing = localStorage.getItem('att_cam') === 'user' ? 'user' : 'environment'; } catch (e) {}
+    function camLabel() { $('camBtn').textContent = 'ক্যামেরা বদলান (এখন: ' + (qrFacing === 'user' ? 'সামনের' : 'পেছনের') + ')'; }
+    function flipCam() {
+      qrFacing = qrFacing === 'user' ? 'environment' : 'user';
+      try { localStorage.setItem('att_cam', qrFacing); } catch (e) {}
+      camLabel();
+      stopStudent().then(function () { if (tab === 'S') startStudent(); });
+    }
+    
     function startStudent() {
       if (scanner) return;
       if (!PIN && !askPin()) { showS({ ok: false, type: 'error', msg: 'পিন ছাড়া চলবে না। পেজ রিফ্রেশ দিন।' }); return; }
@@ -193,7 +204,7 @@
       scanner = s;
             // স্ক্যান-ঘর ক্যামেরা-পর্দার ৯০% জুড়ে থাকবে (আগে ছিল স্থির ২৪০ পিক্সেল)
       const box = function (w, h) { const m = Math.floor(Math.min(w, h) * 0.9); return { width: m, height: m }; };
-      s.start({ facingMode: 'environment' }, { fps: 10, qrbox: box }, onScan, function () {})
+      s.start({ facingMode: qrFacing }, { fps: 10, qrbox: box }, onScan, function () {})
         .then(function () {
           if (scanner !== s) { s.stop().catch(function () {}); return; }   // এর মধ্যে ট্যাব বদলে গেলে বন্ধ
           $('startBtn').classList.add('hidden');
@@ -206,9 +217,9 @@
         });
     }
     function stopStudent() {
-      if (!scanner) return;
+      if (!scanner) return Promise.resolve();
       const s = scanner; scanner = null;
-      s.stop().then(function () { try { s.clear(); } catch (e) {} }).catch(function () {});
+      return s.stop().then(function () { try { s.clear(); } catch (e) {} }).catch(function () {});
     }
     function onScan(text) {
       const now = Date.now();
@@ -466,6 +477,7 @@
       try { t = localStorage.getItem('att_tab') === 'T' ? 'T' : 'S'; } catch (e) {}
       if (!PIN) askPin();
       api('config').then(function (c) { if (c && c.ok && c.school) $('school').textContent = c.school; }).catch(function () {});
+      camLabel();
       setTab(t);
     })();
   </script>
