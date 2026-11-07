@@ -60,15 +60,17 @@
     .card .abs { position: absolute; }
     .card .hdr { left: 0; top: 0; width: 100%; height: calc(var(--u) * 11.5); background: linear-gradient(100deg, var(--g2), var(--g)); color: #fff; }
     .card .logo { left: calc(var(--u) * 2); top: calc(var(--u) * 1.75); width: calc(var(--u) * 8); height: calc(var(--u) * 8); border-radius: 50%; background: #fff; color: var(--g); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: calc(var(--u) * 4.6); border: calc(var(--u) * .5) solid var(--gold); }
-    .card .school { left: calc(var(--u) * 12); right: calc(var(--u) * 2); top: calc(var(--u) * 1.3); text-align: center; font-weight: 800; font-size: calc(var(--u) * 3.7); line-height: 1.15; white-space: nowrap; overflow: hidden; }
+    .card .school { color: #fff; left: calc(var(--u) * 12); right: calc(var(--u) * 2); top: calc(var(--u) * 1.3); text-align: center; font-weight: 800; font-size: calc(var(--u) * 3.7); line-height: 1.15; white-space: nowrap; overflow: hidden; }
     .card .sub { left: calc(var(--u) * 12); right: calc(var(--u) * 2); top: calc(var(--u) * 6.9); text-align: center; font-size: calc(var(--u) * 2.1); letter-spacing: .08em; color: #fde68a; font-weight: 700; white-space: nowrap; }
+    .card .logo { position: absolute; overflow: hidden; }
+    .card .logo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 50%; }
     .card .ph { left: calc(var(--u) * 3); top: calc(var(--u) * 13.5); width: calc(var(--u) * 22); height: calc(var(--u) * 27); border: calc(var(--u) * .5) solid var(--g); border-radius: calc(var(--u) * 1.5); background: #e5e7eb; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: calc(var(--u) * 2.4); text-align: center; }
     .card .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .card .idb { left: calc(var(--u) * 3); top: calc(var(--u) * 42); width: calc(var(--u) * 22); height: calc(var(--u) * 5.2); background: var(--g); color: #fff; border-radius: calc(var(--u) * 2.6); font-weight: 800; font-size: calc(var(--u) * 2.9); display: flex; align-items: center; justify-content: center; white-space: nowrap; }
     .card .nm { left: calc(var(--u) * 28); top: calc(var(--u) * 13.2); width: calc(var(--u) * 54.5); font-weight: 800; font-size: calc(var(--u) * 4.4); line-height: 1.25; color: var(--g2); white-space: nowrap; overflow: hidden; }
     .card .rows { left: calc(var(--u) * 28); top: calc(var(--u) * 19.6); width: calc(var(--u) * 54.5); font-size: calc(var(--u) * 2.9); line-height: 1.38; }
     .card .rows div { display: flex; white-space: nowrap; }
-    .card .rows b { flex: 0 0 calc(var(--u) * 13); font-weight: 600; color: #4b5563; }
+    .card .rows b { flex: 0 0 calc(var(--u) * 16); font-weight: 600; color: #4b5563; }
     .card .rows b::after { content: " :"; }
     .card .rows span { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
     .card .bc { left: calc(var(--u) * 28); top: calc(var(--u) * 41.6); width: calc(var(--u) * 54.5); height: calc(var(--u) * 6.4); }
@@ -171,6 +173,7 @@
     const SCHOOL = {
       nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
       logoText: 'ফ',
+      logoUrl: 'logo.png',
       address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
       phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
       signLabel: 'প্রধান শিক্ষকের স্বাক্ষর',
@@ -308,17 +311,17 @@
         : 'ছবি<br>নেই';
       return '' +
         '<div class="abs hdr"></div>' +
-        '<div class="abs logo">' + esc(SCHOOL.logoText) + '</div>' +
+        '<div class="abs logo">' + esc(SCHOOL.logoText) + (SCHOOL.logoUrl ? '<img alt="" src="' + esc(SCHOOL.logoUrl) + '" onerror="this.remove()">' : '') + '</div>' +
         '<div class="abs school" data-fit="3.7">' + esc(d.school || school) + '</div>' +
         '<div class="abs sub">STUDENT ID CARD</div>' +
         '<div class="abs ph">' + photo + '</div>' +
         '<div class="abs idb">ID: ' + esc(d.id) + '</div>' +
         '<div class="abs nm" data-fit="4.4">' + esc(d.name) + '</div>' +
         '<div class="abs rows">' +
-          '<div><b>শ্রেণি</b><span>' + esc(d.cls) + '</span></div>' +
-          '<div><b>রোল</b><span>' + esc(bn(d.roll)) + '</span></div>' +
-          '<div><b>জন্ম তারিখ</b><span>' + esc(bn(d.dob) || '—') + '</span></div>' +
-          '<div><b>মোবাইল</b><span>' + esc(bn(d.phone) || '—') + '</span></div>' +
+        '<div><b>শ্রেণি</b><span>' + esc(d.cls) + '</span></div>' +
+        '<div><b>রোল</b><span>' + esc(bn(d.roll)) + '</span></div>' +
+        '<div><b>জন্ম তারিখ</b><span>' + esc(bn(d.dob) || '—') + '</span></div>' +
+        '<div><b>অভিভাবক</b><span>' + esc(bn(d.phone) || '—') + '</span></div>' +
         '</div>' +
         '<div class="abs bc">' + barcodeSvg(d.id) + '</div>' +
         '<div class="abs bct">' + esc(d.id) + '</div>' +
@@ -327,8 +330,8 @@
     function backHtml(d) {
       return '' +
         '<div class="abs tt">' +
-          '<div><b>ইস্যু তারিখ</b><span>' + esc(bn(d.issue) || '—') + '</span></div>' +
-          '<div><b>মেয়াদ শেষ</b><span>' + esc(bn(d.expire) || '—') + '</span></div>' +
+        '<div><b>ইস্যু তারিখ</b><span>' + esc(bn(d.issue) || '—') + '</span></div>' +
+        '<div><b>মেয়াদ শেষ</b><span>' + esc(bn(d.expire) || '—') + '</span></div>' +
         '</div>' +
         '<div class="abs terms"><h4>শর্তাবলী</h4><ol>' +
           SCHOOL.terms.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') +
@@ -475,7 +478,10 @@
         window.removeEventListener('afterprint', done);
       };
       window.addEventListener('afterprint', done);
-      setTimeout(function () { window.print(); }, 300);
+        const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img')).map(function (im) {
+        return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; });
+      });
+      Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
     }
     $('printBtn').onclick = function () { doPrint('a4'); };
     $('printCardBtn').onclick = function () { doPrint('card'); };
