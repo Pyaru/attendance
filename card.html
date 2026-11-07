@@ -27,6 +27,14 @@
     #msg.error { display: block; background: #fee2e2; color: #991b1b; }
     #msg.info { display: block; background: #dbeafe; color: #1e40af; }
     #lock { display: none; }
+    button, input, select { font-family: inherit; }
+    select { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    #stuList { max-height: 270px; overflow: auto; margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 10px; }
+    #stuList label { display: flex; gap: 8px; align-items: center; padding: 8px 10px; font-size: 14px; color: #1f2937; margin: 0; border-bottom: 1px solid #f1f5f9; }
+    #stuList input { width: 18px; height: 18px; flex: none; }
+    .wt { color: #b91c1c; font-size: 12px; margin-left: auto; text-align: right; }
+    #cnt { margin-top: 10px; font-size: 14px; color: #065f46; font-weight: 600; }
+    #bmsg { margin-top: 8px; font-size: 13px; color: #6b7280; }
 
     /* ---------- কার্ড (CR80 আড়াআড়ি: ৮৫.৬ × ৫৪ মিমি) ---------- */
     #stage { perspective: 1400px; width: min(100%, 520px); margin: 0 auto; }
@@ -85,27 +93,29 @@
     .card .ftr b { color: #fde68a; }
 
     /* ---------- প্রিন্ট ---------- */
-    #sheet { display: none; }
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .cw { width: 85.6mm; height: 54mm; }
+    #sheet .cl { display: none; }
     @media print {
       html, body { background: #fff !important; }
       header, .wrap { display: none !important; }
-      #sheet { display: block; }
+      #sheet { position: static; }
       #sheet .card { box-shadow: none; border: .2mm solid #cbd5e1; }
-      body.pm-card #sheet .cw { width: 85.6mm; height: 54mm; page-break-after: always; break-after: page; }
-      body.pm-card #sheet .cw:last-child { page-break-after: auto; break-after: auto; }
-      body.pm-card #sheet .card { border: 0; border-radius: 0; }
-      body.pm-a4 #sheet { display: flex; gap: 8mm; justify-content: center; padding-top: 12mm; }
-      body.pm-a4 #sheet .cw { width: 85.6mm; height: 54mm; }
-      body.pm-a4 #sheet .cl { display: block; text-align: center; font-size: 9pt; color: #6b7280; margin-top: 2mm; }
+      .single { display: flex; gap: 8mm; justify-content: center; padding-top: 12mm; }
+      .single .cl { display: block; text-align: center; font-size: 9pt; color: #6b7280; margin-top: 2mm; }
+      .pg { display: grid; grid-template-columns: 85.6mm 85.6mm; grid-auto-rows: 54mm; gap: 2mm 6mm; justify-content: center; page-break-after: always; break-after: page; }
+      .pg:last-child { page-break-after: auto; break-after: auto; }
+      .pp { width: 85.6mm; height: 108mm; page-break-after: always; break-after: page; }
+      .pp:last-child { page-break-after: auto; break-after: auto; }
+      .pp .card { border: 0; border-radius: 0; }
     }
-    #sheet .cl { display: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>আইডি কার্ড জেনারেটর</h1>
     <small id="sub">ID Card Search</small>
-        <a href="./" style="float:right;color:#fff;font-size:14px;text-decoration:underline">← স্ক্যানার</a>
+    <a href="./" style="float:right;color:#fff;font-size:14px;text-decoration:underline">← স্ক্যানার</a>
   </header>
 
   <div class="wrap">
@@ -125,9 +135,22 @@
         <button id="searchBtn">Search</button>
         <button id="flipBtn" class="sec" disabled>Flip</button>
         <button id="printBtn" class="warn" disabled>Print A4</button>
-        <button id="printCardBtn" class="sec" disabled>কার্ড প্রিন্টার</button>
+        <button id="printCardBtn" class="sec" disabled>কার্ড প্রিন্টার (১ পাতা)</button>
       </div>
       <div id="msg"></div>
+      <div id="cnt"></div>
+    </div>
+
+    <div class="panel" id="batch">
+      <h2>ক্লাস অনুযায়ী কার্ড</h2>
+      <label for="clsSel">ক্লাস বাছুন</label>
+      <select id="clsSel"><option value="">— ক্লাস —</option></select>
+      <div id="stuList"></div>
+      <div class="btns">
+        <button id="allBtn" class="sec">সব বাছাই / বাদ</button>
+        <button id="loadBtn">কার্ড তৈরি করুন</button>
+      </div>
+      <div id="bmsg"></div>
     </div>
 
     <div id="cardWrap">
@@ -162,6 +185,8 @@
     let ADMIN = '';
     try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
     let cur = null;
+    let LIST = [];
+    let printSet = [];
     let school = SCHOOL.nameFallback;
 
     const $ = function (id) { return document.getElementById(id); };
@@ -184,11 +209,12 @@
       const q = new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {}));
       return fetch(API_URL + '?' + q.toString()).then(function (r) { return r.json(); });
     }
+    function showMain(on) { $('main').style.display = on ? 'block' : 'none'; $('batch').style.display = on ? 'block' : 'none'; }
     function needLogin() {
       ADMIN = '';
       try { sessionStorage.removeItem('card_admin'); } catch (e) {}
       $('lock').style.display = 'block';
-      $('main').style.display = 'none';
+      showMain(false);
       $('pinIn').focus();
     }
     function login() {
@@ -198,7 +224,7 @@
       try { sessionStorage.setItem('card_admin', v); } catch (e) {}
       $('pinIn').value = '';
       $('lock').style.display = 'none';
-      $('main').style.display = 'block';
+      showMain(true);
       loadList();
     }
     $('pinBtn').onclick = login;
@@ -209,6 +235,7 @@
         if (j && j.badAdmin) { needLogin(); say('ভুল অ্যাডমিন পিন', 'error'); return; }
         if (!j || !j.ok) return;
         if (j.school) school = j.school;
+        LIST = j.list; fillClasses();
         $('ids').innerHTML = j.list.map(function (s) {
           return '<option value="' + esc(s.id) + '">' + esc(s.name + ' — ' + s.cls) + '</option>';
         }).join('');
@@ -224,6 +251,7 @@
         if (d && d.badAdmin) { needLogin(); say('ভুল অ্যাডমিন পিন', 'error'); return; }
         if (!d || !d.ok) { say((d && d.msg) || 'পাওয়া যায়নি', 'error'); return; }
         say('', '');
+        printSet = [d];
         show(d);
       }).catch(function (e) {
         say('সংযোগ ত্রুটি। ইন্টারনেট ও API_URL দেখুন। (' + e.message + ')', 'error');
@@ -334,11 +362,7 @@
       $('stageLabel').textContent = 'সামনের দিক';
       ['flipBtn', 'printBtn', 'printCardBtn'].forEach(function (i) { $(i).disabled = false; });
       fit($('flipper'));
-      // প্রিন্টের কপি: ফিট করা ফন্টসহ
-      const fr = $('flipper').querySelector('.front').innerHTML, bk = $('flipper').querySelector('.back').innerHTML;
-      $('sheet').innerHTML =
-        '<div><div class="cw"><div class="card">' + fr + '</div></div><span class="cl">সামনে</span></div>' +
-        '<div><div class="cw"><div class="card">' + bk + '</div></div><span class="cl">পেছনে</span></div>';
+      cnt();
     }
 
     $('flipBtn').onclick = function () {
@@ -347,29 +371,117 @@
       $('stageLabel').textContent = fl.classList.contains('flipped') ? 'পেছনের দিক' : 'সামনের দিক';
     };
 
+    // ---------- ক্লাস অনুযায়ী ----------
+    function cnt() {
+      $('cnt').textContent = printSet.length ? 'প্রিন্টের জন্য প্রস্তুত: ' + bn(printSet.length) + 'টি কার্ড' : '';
+    }
+    function fillClasses() {
+      const set = {};
+      LIST.forEach(function (s) { set[s.cls] = 1; });
+      const cl = Object.keys(set).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
+      const sel = $('clsSel'), keep = sel.value;
+      sel.innerHTML = '<option value="">— ক্লাস —</option>' + cl.map(function (c) {
+        return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+      }).join('');
+      sel.value = keep;
+    }
+    function renderStu() {
+      const c = $('clsSel').value;
+      const rows = LIST.filter(function (s) { return s.cls === c; });
+      $('stuList').innerHTML = rows.map(function (s) {
+        const w = [];
+        if (!s.photo) w.push('ছবি নেই');
+        if (!s.dates) w.push('তারিখ নেই');
+        return '<label><input type="checkbox" value="' + esc(s.id) + '" checked> ' + esc(s.name) +
+          ' <small>(' + esc(s.id) + ')</small>' + (w.length ? '<span class="wt">⚠ ' + w.join(', ') + '</span>' : '') + '</label>';
+      }).join('');
+      $('bmsg').textContent = c ? 'মোট ' + bn(rows.length) + ' জন। যাদের বাদ দিতে চান তাদের টিক তুলে দিন।' : '';
+    }
+    $('clsSel').onchange = renderStu;
+    $('allBtn').onclick = function () {
+      const boxes = $('stuList').querySelectorAll('input');
+      let anyOff = false;
+      boxes.forEach(function (b) { if (!b.checked) anyOff = true; });
+      boxes.forEach(function (b) { b.checked = anyOff; });
+    };
+    $('loadBtn').onclick = function () {
+      const ids = [];
+      $('stuList').querySelectorAll('input:checked').forEach(function (b) { ids.push(b.value); });
+      if (!ids.length) { $('bmsg').textContent = 'আগে ক্লাস বেছে অন্তত একজনকে টিক দিন'; return; }
+      const got = [];
+      let i = 0;
+      $('loadBtn').disabled = true;
+      (function next() {
+        if (i >= ids.length) {
+          $('loadBtn').disabled = false;
+          if (!got.length) { $('bmsg').textContent = 'কোনো কার্ড আনা যায়নি'; return; }
+          printSet = got;
+          show(got[0]);
+          $('bmsg').textContent = 'তৈরি। ওপরে প্রথম কার্ডের প্রিভিউ দেখাচ্ছে; প্রিন্ট বাটন চাপুন।';
+          return;
+        }
+        $('bmsg').textContent = 'কার্ড আনা হচ্ছে: ' + bn(Math.min(i, ids.length)) + '/' + bn(ids.length);
+        const chunk = ids.slice(i, i + 6);
+        api('cardmany', { ids: chunk.join(',') }).then(function (j) {
+          if (j && j.badAdmin) { needLogin(); $('loadBtn').disabled = false; return; }
+          if (j && j.ok) j.cards.forEach(function (c) { got.push(c); });
+          i += chunk.length;
+          next();
+        }).catch(function (e) {
+          $('loadBtn').disabled = false;
+          $('bmsg').textContent = 'সংযোগ ত্রুটি (' + e.message + '); ' + bn(got.length) + 'টি আনা গেছে।';
+        });
+      })();
+    };
+
     // ---------- প্রিন্ট ----------
+    function cw(inner) { return '<div class="cw"><div class="card">' + inner + '</div></div>'; }
+    function buildSheet(mode) {
+      const sh = $('sheet');
+      let h = '';
+      if (mode === 'card') {
+        // কার্ড প্রিন্টার: প্রতি ছাত্র এক পাতা, ওপরে সামনে নিচে পেছনে
+        printSet.forEach(function (d) { h += '<div class="pp">' + cw(frontHtml(d)) + cw(backHtml(d)) + '</div>'; });
+      } else if (printSet.length === 1) {
+        const d = printSet[0];
+        h = '<div class="single"><div>' + cw(frontHtml(d)) + '<span class="cl">সামনে</span></div><div>' + cw(backHtml(d)) + '<span class="cl">পেছনে</span></div></div>';
+      } else {
+        // A4: এক পাতায় ১০টি। আগে সব সামনের পাতা, তারপর পেছনের পাতা (জোড়ায় জোড়ায় ডানবাম উল্টানো)
+        const chunks = [];
+        for (let i = 0; i < printSet.length; i += 10) chunks.push(printSet.slice(i, i + 10));
+        chunks.forEach(function (ch) { h += '<div class="pg">' + ch.map(function (d) { return cw(frontHtml(d)); }).join('') + '</div>'; });
+        chunks.forEach(function (ch) {
+          const arr = ch.map(function (d) { return cw(backHtml(d)); });
+          if (arr.length % 2) arr.push('<div></div>');
+          for (let j = 0; j + 1 < arr.length; j += 2) { const t = arr[j]; arr[j] = arr[j + 1]; arr[j + 1] = t; }
+          h += '<div class="pg">' + arr.join('') + '</div>';
+        });
+      }
+      sh.innerHTML = h;
+      fit(sh);
+    }
     function doPrint(mode) {
-      if (!cur) return;
+      if (!printSet.length) return;
+      buildSheet(mode);
       const st = document.createElement('style');
       st.id = 'pg';
       st.textContent = mode === 'card'
-        ? '@page { size: 85.6mm 54mm; margin: 0; }'
-        : '@page { size: A4; margin: 10mm; }';
+        ? '@page { size: 85.6mm 108mm; margin: 0; }'
+        : '@page { size: A4; margin: 8mm; }';
       document.head.appendChild(st);
-      document.body.classList.add('pm-' + mode);
       const done = function () {
-        document.body.classList.remove('pm-card', 'pm-a4');
         const s = $('pg'); if (s) s.remove();
+        $('sheet').innerHTML = '';
         window.removeEventListener('afterprint', done);
       };
       window.addEventListener('afterprint', done);
-      window.print();
+      setTimeout(function () { window.print(); }, 300);
     }
     $('printBtn').onclick = function () { doPrint('a4'); };
     $('printCardBtn').onclick = function () { doPrint('card'); };
 
     // ---------- শুরু ----------
-    if (ADMIN) { $('main').style.display = 'block'; loadList(); } else { needLogin(); }
+    if (ADMIN) { showMain(true); loadList(); } else { needLogin(); }
   </script>
 </body>
 </html>
