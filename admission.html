@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ভর্তির আবেদন</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 14px 16px; }
+    header h1 { margin: 0; font-size: 18px; }
+    header small { opacity: .9; }
+    .tabs { display: flex; gap: 6px; max-width: 680px; margin: 10px auto 0; padding: 0 12px; }
+    .tabs button { flex: 1; background: #e5e7eb; color: #374151; font-weight: 600; }
+    .tabs button.on { background: #0b6b4f; color: #fff; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 14px; }
+    .panel h2 { margin: 0 0 12px; font-size: 16px; color: #0b6b4f; }
+    label.l { display: block; font-size: 13px; color: #6b7280; margin: 10px 0 4px; }
+    label.l b { color: #b91c1c; }
+    input[type=text], input[type=tel], input[type=password], input[type=date], select, textarea {
+      width: 100%; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    textarea { min-height: 70px; resize: vertical; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 420px) { .two.stack { grid-template-columns: 1fr; } }
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .opts label { display: flex; align-items: center; gap: 6px; padding: 9px 14px; border: 1px solid #d1d5db; border-radius: 999px; font-size: 15px; background: #fff; cursor: pointer; }
+    .opts input { width: 18px; height: 18px; }
+    .chk { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; }
+    .chk input { width: 18px; height: 18px; }
+    button { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #374151; }
+    button.warn { background: #b45309; }
+    button:disabled { opacity: .5; cursor: default; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btns button { flex: 1; min-width: 120px; }
+    .err { border-color: #dc2626 !important; background: #fef2f2 !important; }
+    #formErr, #msg { margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+    #formErr.on, #msg.on { display: block; background: #fee2e2; color: #991b1b; }
+    #msg.info { background: #dbeafe; color: #1e40af; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .photoBox { display: flex; gap: 12px; align-items: center; }
+    #phPrev { width: 90px; height: 120px; border: 2px dashed #9ca3af; border-radius: 10px; background: #f3f4f6 center/cover no-repeat; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b7280; text-align: center; flex: none; }
+    .note { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+    #done { display: none; text-align: center; }
+    #done .no { font-size: 28px; font-weight: 700; color: #0b6b4f; margin: 10px 0; letter-spacing: .04em; }
+    #closed { display: none; background: #fef3c7; color: #92400e; padding: 14px; border-radius: 12px; text-align: center; }
+
+    /* অফিস */
+    #lock { display: none; }
+    .bar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .bar > * { flex: 1; min-width: 130px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+    .stat { background: #f0fdf4; border-radius: 10px; padding: 8px 4px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: #065f46; }
+    .stat span { font-size: 12px; color: #6b7280; }
+    .it { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+    .it .m { flex: 1; min-width: 0; }
+    .it .m b { display: block; font-size: 15px; }
+    .it .m span { font-size: 12px; color: #6b7280; }
+    .st { font-size: 12px; font-style: normal; padding: 3px 9px; border-radius: 999px; background: #e5e7eb; color: #374151; white-space: nowrap; }
+    .st-Pending { background: #dbeafe; color: #1e40af; }
+    .st-Exam { background: #fef3c7; color: #92400e; }
+    .st-Selected, .st-Admitted { background: #d1fae5; color: #065f46; }
+    .st-Waiting { background: #ede9fe; color: #5b21b6; }
+    .st-Rejected { background: #fee2e2; color: #991b1b; }
+    #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 10; overflow: auto; padding: 12px; }
+    #modal .box { background: #fff; border-radius: 14px; max-width: 560px; margin: 0 auto; padding: 14px; }
+    #modal .kv { display: grid; grid-template-columns: 120px 1fr; gap: 4px 10px; font-size: 14px; margin-top: 10px; }
+    #modal .kv b { color: #6b7280; font-weight: 500; }
+    #modal .kv span { word-break: break-word; }
+    #modal img { width: 90px; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db; float: right; margin-left: 10px; }
+
+    /* ---------- প্রিন্ট করা ফর্ম (A4) ---------- */
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .pf { width: 190mm; height: 277mm; padding: 0; position: relative; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; font-size: 10pt; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; overflow: hidden; }
+    .pf .brd { position: absolute; inset: 0; border: .6mm solid #0b6b4f; border-radius: 2mm; pointer-events: none; }
+    .pf .in { position: absolute; inset: 4mm 6mm 4mm 6mm; }
+    .pf .hd { display: flex; align-items: center; gap: 4mm; height: 24mm; }
+    .pf .lg { width: 21mm; height: 21mm; border-radius: 50%; border: .8mm solid #f59e0b; background: #fff; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 22pt; font-weight: 700; position: relative; overflow: hidden; flex: none; }
+    .pf .lg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .pf .sn { flex: 1; text-align: center; }
+    .pf .sn h1 { margin: 0; font-size: 21pt; line-height: 1.5; color: #0b6b4f; font-weight: 700; white-space: nowrap; }
+    .pf .sn p { margin: 0; font-size: 9.5pt; color: #374151; line-height: 1.5; }
+    .pf .rb { display: flex; align-items: center; gap: 3mm; margin-top: 2mm; }
+    .pf .rb .tt { flex: 1; text-align: center; background: linear-gradient(100deg, #064e3b, #0b6b4f); color: #fff; border: .6mm solid #f59e0b; border-radius: 2mm; font-size: 15pt; font-weight: 700; line-height: 1.7; }
+    .pf .bx { display: flex; align-items: center; gap: 1.5mm; font-size: 9.5pt; font-weight: 600; white-space: nowrap; }
+    .pf .bx i { display: block; min-width: 26mm; height: 7mm; border: .3mm solid #0b6b4f; border-radius: 1.2mm; font-style: normal; font-weight: 700; padding: 0 1.5mm; line-height: 7mm; overflow: hidden; text-align: center; }
+    .pf .ck { display: flex; gap: 6mm; align-items: center; margin-top: 3mm; font-size: 10pt; font-weight: 600; flex-wrap: wrap; }
+    .pf .ck span { display: inline-flex; align-items: center; gap: 1.5mm; }
+    .pf .cb { display: inline-block; width: 3.6mm; height: 3.6mm; border: .35mm solid #0b6b4f; position: relative; flex: none; }
+    .pf .cb.on::after { content: ""; position: absolute; left: .9mm; top: -.5mm; width: 1.3mm; height: 2.7mm; border: solid #0b6b4f; border-width: 0 .55mm .55mm 0; transform: rotate(45deg); }
+    .pf .dc { margin: 3mm 0 3mm; font-size: 9.6pt; line-height: 1.65; text-align: justify; }
+    .pf .row { display: flex; gap: 3.5mm; align-items: flex-end; margin-bottom: 2.6mm; }
+    .pf .fl { display: flex; align-items: flex-end; gap: 1.5mm; min-width: 0; }
+    .pf .k { white-space: nowrap; font-size: 9.6pt; color: #1f2937; font-weight: 500; }
+    .pf .v { flex: 1; min-width: 0; min-height: 6.4mm; border-bottom: .25mm solid #6b7280; padding: 0 1mm; font-weight: 700; font-size: 10pt; line-height: 6.2mm; white-space: nowrap; overflow: hidden; color: #0f172a; }
+    .pf .v.ml { white-space: normal; line-height: 6.2mm; max-height: 12.9mm; }
+    .pf .sb { display: flex; gap: 4mm; margin-top: 1mm; }
+    .pf .sb .lf { flex: 1; min-width: 0; }
+    .pf .ph { width: 30mm; height: 36mm; border: .35mm solid #0b6b4f; border-radius: 1.5mm; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 8.5pt; color: #6b7280; overflow: hidden; flex: none; }
+    .pf .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pf .sg { display: flex; justify-content: space-around; gap: 6mm; margin-top: 10mm; }
+    .pf .sg div { flex: 1; text-align: center; font-size: 9.2pt; font-weight: 600; color: #b91c1c; border-top: .3mm solid #6b7280; padding-top: 1mm; }
+    .pf .of { margin-top: 5mm; }
+    .pf .of .tt { text-align: center; background: linear-gradient(100deg, #064e3b, #0b6b4f); color: #fff; border: .5mm solid #f59e0b; border-radius: 2mm; font-size: 12.5pt; font-weight: 700; line-height: 1.7; margin-bottom: 4mm; }
+    .pf .of .row { margin-bottom: 3.4mm; }
+    .pf .ft { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 8pt; color: #6b7280; }
+
+    @media print {
+      html, body { background: #fff !important; }
+      header, .tabs, .wrap, #modal { display: none !important; }
+      #sheet { position: static; }
+      .pf { page-break-after: always; break-after: page; }
+      .pf:last-child { page-break-after: auto; break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="schoolH">ভর্তির আবেদন</h1>
+    <small id="yearH"></small>
+  </header>
+  <div class="tabs">
+    <button id="tabA" class="on">নতুন আবেদন</button>
+    <button id="tabO">অফিস</button>
+  </div>
+
+  <div class="wrap">
+    <!-- ================= আবেদন ফর্ম ================= -->
+    <div id="apply">
+      <div id="closed">ভর্তির আবেদন এখন বন্ধ আছে। অনুগ্রহ করে অফিসে যোগাযোগ করুন।</div>
+
+      <form id="form" autocomplete="off" novalidate>
+        <div class="panel">
+          <h2>আবেদনের তথ্য</h2>
+          <label class="l">আবেদনের ধরন</label>
+          <div class="opts" id="typeOpts">
+            <label><input type="radio" name="type" value="নতুন" checked> নতুন</label>
+            <label><input type="radio" name="type" value="পুরাতন"> পুরাতন</label>
+          </div>
+          <div id="resWrap" style="display:none">
+            <label class="l">আবাসিক / অনাবাসিক <b>*</b></label>
+            <div class="opts" id="resOpts"></div>
+          </div>
+          <label class="l" for="cls">কোন শ্রেণিতে ভর্তি হতে চান <b>*</b></label>
+          <select id="cls"><option value="">— শ্রেণি বাছুন —</option></select>
+        </div>
+
+        <div class="panel">
+          <h2>শিক্ষার্থীর তথ্য</h2>
+          <label class="l" for="name">শিক্ষার্থীর নাম <b>*</b></label>
+          <input type="text" id="name" maxlength="80">
+          <label class="l">ছেলে / মেয়ে <b>*</b></label>
+          <div class="opts" id="genderOpts">
+            <label><input type="radio" name="gender" value="ছেলে"> ছেলে</label>
+            <label><input type="radio" name="gender" value="মেয়ে"> মেয়ে</label>
+          </div>
+          <div class="two stack">
+            <div>
+              <label class="l" for="dob">জন্ম তারিখ <b>*</b></label>
+              <input type="date" id="dob">
+            </div>
+            <div>
+              <label class="l" for="blood">রক্তের গ্রুপ</label>
+              <select id="blood"><option value="">জানি না / পরে</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+            </div>
+          </div>
+          <label class="l" for="breg">জন্ম নিবন্ধন নম্বর</label>
+          <input type="tel" id="breg" inputmode="numeric" maxlength="30">
+          <label class="l">শিক্ষার্থীর ছবি</label>
+          <div class="photoBox">
+            <div id="phPrev">ছবি<br>নেই</div>
+            <div style="flex:1">
+              <div class="btns" style="margin-top:0">
+                <button type="button" class="sec" id="phCam">ছবি তুলুন</button>
+                <button type="button" class="sec" id="phGal">গ্যালারি থেকে</button>
+                <button type="button" id="phDel" style="display:none;background:#9ca3af">মুছুন</button>
+              </div>
+              <input type="file" id="fCam" accept="image/*" capture="environment" style="display:none">
+              <input type="file" id="fGal" accept="image/*" style="display:none">
+              <div class="note">পাসপোর্ট মাপের পরিষ্কার ছবি দিন। ছবি ছাড়াও আবেদন জমা দেওয়া যাবে।</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>পিতার তথ্য</h2>
+          <label class="l" for="father">পিতার নাম <b>*</b></label>
+          <input type="text" id="father" maxlength="80">
+          <div class="two stack">
+            <div><label class="l" for="focc">পেশা</label><input type="text" id="focc" maxlength="60"></div>
+            <div><label class="l" for="fmob">মোবাইল</label><input type="tel" id="fmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
+          </div>
+          <label class="l" for="fnid">এনআইডি নম্বর</label>
+          <input type="tel" id="fnid" inputmode="numeric" maxlength="20">
+        </div>
+
+        <div class="panel">
+          <h2>মাতার তথ্য</h2>
+          <label class="l" for="mother">মাতার নাম</label>
+          <input type="text" id="mother" maxlength="80">
+          <div class="two stack">
+            <div><label class="l" for="mocc">পেশা</label><input type="text" id="mocc" maxlength="60"></div>
+            <div><label class="l" for="mmob">মোবাইল</label><input type="tel" id="mmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
+          </div>
+          <label class="l" for="mnid">এনআইডি নম্বর</label>
+          <input type="tel" id="mnid" inputmode="numeric" maxlength="20">
+        </div>
+
+        <div class="panel">
+          <h2>অভিভাবক</h2>
+          <label class="chk"><input type="checkbox" id="gchk"> অভিভাবক পিতা-মাতা থেকে আলাদা কেউ</label>
+          <div id="gWrap" style="display:none">
+            <label class="l" for="guard">অভিভাবকের নাম</label>
+            <input type="text" id="guard" maxlength="80">
+            <div class="two stack">
+              <div><label class="l" for="rel">সম্পর্ক</label><input type="text" id="rel" maxlength="30"></div>
+              <div><label class="l" for="gocc">পেশা</label><input type="text" id="gocc" maxlength="60"></div>
+            </div>
+            <div class="two stack">
+              <div><label class="l" for="gmob">মোবাইল</label><input type="tel" id="gmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
+              <div><label class="l" for="gnid">এনআইডি নম্বর</label><input type="tel" id="gnid" inputmode="numeric" maxlength="20"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>ঠিকানা ও পূর্বের প্রতিষ্ঠান</h2>
+          <label class="l" for="perm">স্থায়ী ঠিকানা</label>
+          <textarea id="perm" maxlength="300" placeholder="গ্রাম/মহল্লা, ডাকঘর, উপজেলা, জেলা"></textarea>
+          <label class="chk"><input type="checkbox" id="same" checked> বর্তমান ঠিকানা স্থায়ী ঠিকানার মতোই</label>
+          <div id="tempWrap" style="display:none">
+            <label class="l" for="temp">বর্তমান / অস্থায়ী ঠিকানা</label>
+            <textarea id="temp" maxlength="300"></textarea>
+          </div>
+          <label class="l" for="prev">পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা (থাকলে)</label>
+          <input type="text" id="prev" maxlength="200">
+        </div>
+
+        <div class="hp"><label>এই ঘরটি ফাঁকা রাখুন <input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div>
+
+        <div id="formErr"></div>
+        <div class="btns"><button type="submit" id="submitBtn">আবেদন জমা দিন</button></div>
+        <div class="note">জমা দেওয়ার পর আপনি একটি আবেদন নম্বর পাবেন। নম্বরটি সংরক্ষণ করুন। আপনার দেওয়া তথ্য শুধু ভর্তির কাজে ব্যবহার হবে।</div>
+      </form>
+
+      <div class="panel" id="done">
+        <h2>আবেদন জমা হয়েছে</h2>
+        <div>আপনার আবেদন নম্বর</div>
+        <div class="no" id="doneNo"></div>
+        <div class="note" id="doneNote">অফিস থেকে আপনার সাথে যোগাযোগ করা হবে। নম্বরটি লিখে বা ছবি তুলে রাখুন।</div>
+        <div class="btns">
+          <button type="button" id="printMine">আবেদনপত্র প্রিন্ট / PDF</button>
+          <button type="button" class="sec" id="again">আরেকটি আবেদন</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= অফিস ================= -->
+    <div id="office" style="display:none">
+      <div class="panel" id="lock">
+        <h2>অ্যাডমিন পিন</h2>
+        <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
+        <div class="btns"><button id="pinBtn">ঢুকুন</button></div>
+        <div id="msg"></div>
+      </div>
+
+      <div id="officeMain" style="display:none">
+        <div class="panel">
+          <div class="bar">
+            <input type="text" id="q" placeholder="নাম / আবেদন নম্বর / মোবাইল খুঁজুন">
+            <select id="fCls"><option value="">সব শ্রেণি</option></select>
+            <select id="fSt"><option value="">সব অবস্থা</option></select>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="sAll">০</b><span>মোট</span></div>
+            <div class="stat"><b id="sNew">০</b><span>নতুন</span></div>
+            <div class="stat"><b id="sSel">০</b><span>নির্বাচিত</span></div>
+          </div>
+          <div class="btns" style="margin-top:0">
+            <button class="sec" id="reload">তালিকা নতুন করে আনুন</button>
+            <button class="warn" id="printBlank">ফাঁকা ফর্ম প্রিন্ট</button>
+          </div>
+          <div id="listMsg" class="note"></div>
+        </div>
+        <div class="panel" id="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal"><div class="box" id="modalBox"></div></div>
+  <div id="sheet"></div>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+
+    // ↓↓↓ প্রিন্ট করা ফর্মের তথ্য — নিজের মতো বদলান ↓↓↓
+    const ADM = {
+      nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
+      logoText: 'ফ',
+      logoUrl: 'logo.png',                                   // যেমন 'logo.png'
+      address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
+      phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
+      signsTop: ['পিতা/মাতার স্বাক্ষর', 'অভিভাবকের স্বাক্ষর'],
+      signsOffice: ['হিসাবরক্ষকের স্বাক্ষর', 'সহকারী প্রধান শিক্ষকের স্বাক্ষর', 'প্রধান শিক্ষকের স্বাক্ষর'],
+      declaration: 'আস্‌সালামু আলাইকুম ওয়া রাহমাতুল্লাহ। সবিনয় নিবেদন এই যে, আমি আমার নিম্নে বর্ণিত সন্তান/পোষ্যকে আপনার প্রতিষ্ঠানে ভর্তির জন্য আবেদন করছি। প্রতিষ্ঠানের সকল নিয়ম-কানুন মেনে চলার অঙ্গীকার করছি। অতএব, আমার সন্তানকে ভর্তির সুযোগ দানে বাধিত করবেন।'
+    };
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function bn(s) { return String(s == null ? '' : s).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+    function en(s) { return String(s == null ? '' : s).replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }); }
+
+    let CFG = { open: true, year: '', school: ADM.nameFallback, classes: [], residence: [], statuses: {} };
+    let ADMIN = '';
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}    // কার্ড পেজের সাথে একই পিন-মেমোরি
+    let photoData = '';
+    let APPS = [];
+    let lastSubmitted = null;
+
+    // ---------- API ----------
+    function get(action, params) {
+      const q = new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {}));
+      return fetch(API_URL + '?' + q.toString()).then(function (r) { return r.json(); });
+    }
+    function post(body) {
+      return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json(); });
+    }
+
+    // ---------- শুরু: কনফিগ ----------
+    function applyConfig() {
+      $('schoolH').textContent = CFG.school || ADM.nameFallback;
+      $('yearH').textContent = CFG.year ? 'ভর্তির আবেদন — শিক্ষাবর্ষ ' + bn(CFG.year) : 'ভর্তির আবেদন';
+      $('cls').innerHTML = '<option value="">— শ্রেণি বাছুন —</option>' + CFG.classes.map(function (c) {
+        return '<option>' + esc(c) + '</option>';
+      }).join('');
+      $('fCls').innerHTML = '<option value="">সব শ্রেণি</option>' + CFG.classes.map(function (c) {
+        return '<option>' + esc(c) + '</option>';
+      }).join('');
+      $('fSt').innerHTML = '<option value="">সব অবস্থা</option>' + Object.keys(CFG.statuses).map(function (k) {
+        return '<option value="' + esc(k) + '">' + esc(CFG.statuses[k]) + '</option>';
+      }).join('');
+      if (CFG.residence && CFG.residence.length) {
+        $('resWrap').style.display = 'block';
+        $('resOpts').innerHTML = CFG.residence.map(function (r) {
+          return '<label><input type="radio" name="res" value="' + esc(r) + '"> ' + esc(r) + '</label>';
+        }).join('');
+      }
+      $('form').style.display = CFG.open ? 'block' : 'none';
+      $('closed').style.display = CFG.open ? 'none' : 'block';
+    }
+    get('appconfig').then(function (j) {
+      if (j && j.ok) { CFG = j; applyConfig(); }
+      else { showErr('সার্ভারের সাথে যোগাযোগ হয়নি। পেজ রিফ্রেশ করুন।'); }
+    }).catch(function () { showErr('ইন্টারনেট বা API_URL দেখুন। পেজ রিফ্রেশ করুন।'); });
+
+    // ---------- ট্যাব ----------
+    function tab(which) {
+      $('apply').style.display = which === 'A' ? 'block' : 'none';
+      $('office').style.display = which === 'O' ? 'block' : 'none';
+      $('tabA').className = which === 'A' ? 'on' : '';
+      $('tabO').className = which === 'O' ? 'on' : '';
+      if (which === 'O') officeEnter();
+    }
+    $('tabA').onclick = function () { tab('A'); };
+    $('tabO').onclick = function () { tab('O'); };
+
+    // ---------- ফর্মের ছোট আচরণ ----------
+    $('gchk').onchange = function () { $('gWrap').style.display = this.checked ? 'block' : 'none'; };
+    $('same').onchange = function () { $('tempWrap').style.display = this.checked ? 'none' : 'block'; };
+
+    // ছবি: নিয়ে ৩০০×৪০০ জেপিইজি-তে ছোট করা
+    function handleFile(file) {
+      if (!file) return;
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = function () {
+        const W = 300, H = 400, c = document.createElement('canvas');
+        c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+        const r = Math.max(W / img.width, H / img.height);
+        const w = img.width * r, h = img.height * r;
+        ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+        photoData = c.toDataURL('image/jpeg', 0.85);
+        $('phPrev').style.backgroundImage = 'url(' + photoData + ')';
+        $('phPrev').textContent = '';
+        $('phDel').style.display = 'inline-block';
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = function () { showErr('ছবিটি পড়া যায়নি, অন্য ছবি দিন।'); URL.revokeObjectURL(url); };
+      img.src = url;
+    }
+    $('phCam').onclick = function () { $('fCam').click(); };
+    $('phGal').onclick = function () { $('fGal').click(); };
+    $('fCam').onchange = function () { handleFile(this.files[0]); this.value = ''; };
+    $('fGal').onchange = function () { handleFile(this.files[0]); this.value = ''; };
+    $('phDel').onclick = function () {
+      photoData = ''; $('phPrev').style.backgroundImage = ''; $('phPrev').innerHTML = 'ছবি<br>নেই'; this.style.display = 'none';
+    };
+
+    // ---------- যাচাই ও জমা ----------
+    function showErr(t) { const e = $('formErr'); e.textContent = t; e.className = t ? 'on' : ''; }
+    function val(id) { return $(id).value.trim(); }
+    function radio(name) { const r = document.querySelector('input[name=' + name + ']:checked'); return r ? r.value : ''; }
+    function mobOk(v) {
+      let d = en(v).replace(/\D/g, '');
+      if (d.length === 13 && d.indexOf('88') === 0) d = d.slice(2);
+      return /^01\d{9}$/.test(d);
+    }
+    function collect() {
+      return {
+        type: radio('type') || 'নতুন', res: radio('res'), cls: val('cls'), name: val('name'), gender: radio('gender'),
+        blood: val('blood'), dob: val('dob'), breg: val('breg'),
+        father: val('father'), focc: val('focc'), fnid: val('fnid'), fmob: val('fmob'),
+        mother: val('mother'), mocc: val('mocc'), mnid: val('mnid'), mmob: val('mmob'),
+        guard: $('gchk').checked ? val('guard') : '', rel: $('gchk').checked ? val('rel') : '',
+        gocc: $('gchk').checked ? val('gocc') : '', gnid: $('gchk').checked ? val('gnid') : '', gmob: $('gchk').checked ? val('gmob') : '',
+        perm: val('perm'), temp: $('same').checked ? val('perm') : val('temp'), prev: val('prev'),
+        photo: photoData, hp: val('hp')
+      };
+    }
+    function mark(id, bad) { $(id).classList.toggle('err', !!bad); }
+    function validate(d) {
+      ['cls', 'name', 'dob', 'father', 'fmob', 'mmob', 'gmob'].forEach(function (i) { mark(i, false); });
+      let first = '', msg = '';
+      function bad(id, m) { mark(id, true); if (!first) { first = id; msg = m; } }
+      if (!d.cls) bad('cls', 'শ্রেণি বেছে নিন');
+      if (d.name.length < 2) bad('name', 'শিক্ষার্থীর নাম লিখুন');
+      if (!d.gender && !first) { first = 'genderOpts'; msg = 'ছেলে না মেয়ে বেছে নিন'; }
+      const dobOk = d.dob && new Date(d.dob).getTime() <= Date.now() && /^\d{4}-\d{2}-\d{2}$/.test(d.dob);
+      if (!dobOk) bad('dob', 'জন্ম তারিখ সঠিকভাবে দিন');
+      if (d.father.length < 2 && d.guard.length < 2) bad('father', 'পিতার নাম (অথবা অভিভাবকের নাম) লিখুন');
+      if (CFG.residence && CFG.residence.length && !d.res && !first) { first = 'resOpts'; msg = 'আবাসিক/অনাবাসিক বেছে নিন'; }
+      if (d.fmob && !mobOk(d.fmob)) bad('fmob', 'পিতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (d.mmob && !mobOk(d.mmob)) bad('mmob', 'মাতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (d.gmob && !mobOk(d.gmob)) bad('gmob', 'অভিভাবকের মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (!first && !mobOk(d.fmob) && !mobOk(d.mmob) && !mobOk(d.gmob)) bad('fmob', 'অন্তত একটি সঠিক মোবাইল নম্বর দিন');
+      if (first) {
+        showErr(msg);
+        const el = $(first); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+      }
+      showErr('');
+      return true;
+    }
+
+    $('form').addEventListener('input', function (e) { if (e.target.classList) e.target.classList.remove('err'); });
+    $('form').addEventListener('change', function (e) { if (e.target.classList) e.target.classList.remove('err'); });
+
+    $('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const d = collect();
+      if (!validate(d)) return;
+      const btn = $('submitBtn');
+      btn.disabled = true; btn.textContent = 'জমা হচ্ছে...';
+      post(Object.assign({ action: 'apply' }, d)).then(function (j) {
+        btn.disabled = false; btn.textContent = 'আবেদন জমা দিন';
+        if (!j || !j.ok) { showErr((j && j.msg) || 'জমা হয়নি, আবার চেষ্টা করুন'); return; }
+        lastSubmitted = Object.assign({}, d, { appNo: j.appNo, year: j.year || CFG.year, dob: dmy(d.dob) });
+        $('doneNo').textContent = j.appNo;
+        $('doneNote').textContent = j.dup ? 'এই আবেদন আগেই জমা হয়েছিল। আপনার আবেদন নম্বর ওপরে দেওয়া আছে।'
+          : 'অফিস থেকে আপনার সাথে যোগাযোগ করা হবে। নম্বরটি লিখে বা ছবি তুলে রাখুন।';
+        $('form').style.display = 'none';
+        $('done').style.display = 'block';
+        window.scrollTo(0, 0);
+      }).catch(function (er) {
+        btn.disabled = false; btn.textContent = 'আবেদন জমা দিন';
+        showErr('ইন্টারনেট সংযোগ ত্রুটি। আবার চেষ্টা করুন। (' + er.message + ')');
+      });
+    });
+    $('again').onclick = function () {
+      $('form').reset(); photoData = ''; $('phDel').click();
+      $('gWrap').style.display = 'none'; $('tempWrap').style.display = 'none';
+      $('done').style.display = 'none'; $('form').style.display = 'block'; lastSubmitted = null;
+    };
+    function dmy(iso) { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); }
+
+    // ---------- প্রিন্টের ফর্ম ----------
+    function box(label, v, flex, cls) {
+      return '<div class="fl" style="flex:' + (flex || 1) + '"><span class="k">' + label + '</span><span class="v' + (cls ? ' ' + cls : '') + '" data-fit>' + esc(v || '') + '</span></div>';
+    }
+    function formHtml(d, blank) {
+      d = d || {};
+      const school = (CFG && CFG.school) || ADM.nameFallback;
+      const logo = '<div class="lg">' + esc(ADM.logoText) + (ADM.logoUrl ? '<img alt="" src="' + esc(ADM.logoUrl) + '" onerror="this.remove()">' : '') + '</div>';
+      const photo = d.photo && /^data:image\//.test(d.photo) ? '<img alt="" src="' + d.photo + '">' : 'ছবি';
+      const ck = function (label, on) { return '<span><i class="cb' + (on ? ' on' : '') + '"></i>' + esc(label) + '</span>'; };
+      const resRow = (CFG.residence && CFG.residence.length)
+        ? CFG.residence.map(function (r) { return ck(r, d.res === r); }).join('') : '';
+      const cell = function (v) { return blank ? '' : bn(v || ''); };
+      const t = function (v) { return blank ? '' : (v || ''); };
+      return '' +
+        '<div class="pf"><div class="brd"></div><div class="in">' +
+          '<div class="hd">' + logo +
+            '<div class="sn"><h1 data-fit>' + esc(school) + '</h1><p>' + esc(ADM.address) + '</p><p>' + esc(ADM.phone) + '</p></div>' +
+          '</div>' +
+          '<div class="rb"><div class="bx">ফরম নং:<i>' + esc(blank ? '' : (d.appNo || '')) + '</i></div><div class="tt">ভর্তির আবেদন ফরম</div>' +
+            '<div class="bx">শিক্ষাবর্ষ:<i>' + esc(bn(blank ? (CFG.year || '') : (d.year || CFG.year || ''))) + '</i></div></div>' +
+          '<div class="ck">' + ck('নতুন', !blank && d.type !== 'পুরাতন') + ck('পুরাতন', !blank && d.type === 'পুরাতন') + resRow + '</div>' +
+          '<div class="dc"><b>জনাব,</b><br>' + esc(ADM.declaration) + '</div>' +
+          '<div class="sb"><div class="lf">' +
+            '<div class="row">' + box('শিক্ষার্থীর নাম:', t(d.name), 3) + box('ছেলে/মেয়ে:', t(d.gender), 1.1) + '</div>' +
+            '<div class="row">' + box('জন্ম তারিখ:', cell(d.dob), 1.2) + box('রক্তের গ্রুপ:', t(d.blood), .9) + '</div>' +
+            '<div class="row">' + box('জন্ম নিবন্ধন নম্বর:', cell(d.breg), 1) + '</div>' +
+            '<div class="row">' + box('ভর্তির শ্রেণি:', t(d.cls), 1) + '</div>' +
+            '<div class="row">' + box('স্থায়ী ঠিকানা:', t(d.perm), 1, 'ml') + '</div>' +
+          '</div><div class="ph">' + (blank ? 'ছবি' : photo) + '</div></div>' +
+          '<div class="row">' + box('বর্তমান ঠিকানা:', t(d.temp), 1, 'ml') + '</div>' +
+          '<div class="row">' + box('পিতার নাম:', t(d.father), 2) + box('পেশা:', t(d.focc), 1) + '</div>' +
+          '<div class="row">' + box('এনআইডি নম্বর:', cell(d.fnid), 1) + box('মোবাইল:', cell(d.fmob), 1) + '</div>' +
+          '<div class="row">' + box('মাতার নাম:', t(d.mother), 2) + box('পেশা:', t(d.mocc), 1) + '</div>' +
+          '<div class="row">' + box('এনআইডি নম্বর:', cell(d.mnid), 1) + box('মোবাইল:', cell(d.mmob), 1) + '</div>' +
+          '<div class="row">' + box('অভিভাবকের নাম:', t(d.guard), 2) + box('সম্পর্ক:', t(d.rel), 1) + box('পেশা:', t(d.gocc), 1) + '</div>' +
+          '<div class="row">' + box('এনআইডি নম্বর:', cell(d.gnid), 1) + box('মোবাইল:', cell(d.gmob), 1) + '</div>' +
+          '<div class="row">' + box('পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা:', t(d.prev), 1) + '</div>' +
+          '<div class="sg">' + ADM.signsTop.map(function (s) { return '<div>' + esc(s) + '</div>'; }).join('') + '</div>' +
+          '<div class="of"><div class="tt">অফিস ব্যবহারের জন্য</div>' +
+            '<div class="row">' + box('ভর্তি পরীক্ষার প্রাপ্ত নম্বর:', '', 1) + box('পূর্ণমান:', '', .8) + box('স্বাক্ষর:', '', 1) + '</div>' +
+            '<div class="row">' + box('ভর্তির শ্রেণি:', '', 1) + box('শাখা:', '', .7) + box('রোল:', '', .7) + box('আইডি নম্বর:', '', 1) + '</div>' +
+            '<div class="row">' + box('ভর্তি ফি:', '', 1) + box('মাসিক বেতন:', '', 1) + box('অন্যান্য:', '', 1) + box('মোট:', '', 1) + '</div>' +
+            '<div class="sg">' + ADM.signsOffice.map(function (s) { return '<div>' + esc(s) + '</div>'; }).join('') + '</div>' +
+          '</div>' +
+        '</div></div>';
+    }
+    // ঘরে না আঁটলে লেখা ছোট করা
+    function fitAll(root) {
+      root.querySelectorAll('[data-fit]').forEach(function (el) {
+        let s = el.tagName === 'H1' ? 21 : 10;
+        el.style.fontSize = s + 'pt';
+        let g = 40;
+        const ml = el.classList.contains('ml');
+        while (g-- && s > 6 && (ml ? el.scrollHeight > el.clientHeight + 1 : el.scrollWidth > el.clientWidth + 1)) {
+          s -= 0.3; el.style.fontSize = s.toFixed(1) + 'pt';
+        }
+      });
+    }
+    function printForms(list, blank) {
+      $('sheet').innerHTML = list.map(function (d) { return formHtml(d, blank); }).join('');
+      fitAll($('sheet'));
+      const st = document.createElement('style');
+      st.id = 'pg'; st.textContent = '@page { size: A4; margin: 10mm; }';
+      document.head.appendChild(st);
+      const done = function () {
+        const s = $('pg'); if (s) s.remove();
+        $('sheet').innerHTML = '';
+        window.removeEventListener('afterprint', done);
+      };
+      window.addEventListener('afterprint', done);
+      const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img')).map(function (im) {
+        return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; });
+      });
+      Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
+    }
+    $('printMine').onclick = function () { if (lastSubmitted) printForms([lastSubmitted], false); };
+
+    // ---------- অফিস ----------
+    function officeEnter() {
+      if (!ADMIN) { $('lock').style.display = 'block'; $('officeMain').style.display = 'none'; return; }
+      $('lock').style.display = 'none'; $('officeMain').style.display = 'block';
+      loadApps();
+    }
+    function say(t, info) { const m = $('msg'); m.textContent = t || ''; m.className = t ? ('on' + (info ? ' info' : '')) : ''; }
+    function login() {
+      const v = $('pinIn').value.trim(); if (!v) return;
+      ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {}
+      $('pinIn').value = ''; say('');
+      officeEnter();
+    }
+    $('pinBtn').onclick = login;
+    $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+    function badAdmin() {
+      ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {}
+      $('lock').style.display = 'block'; $('officeMain').style.display = 'none'; say('ভুল অ্যাডমিন পিন');
+    }
+
+    function loadApps() {
+      $('listMsg').textContent = 'আনা হচ্ছে...';
+      get('applist').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { $('listMsg').textContent = (j && j.msg) || 'তালিকা আনা যায়নি'; return; }
+        APPS = j.list; $('listMsg').textContent = '';
+        if (j.statuses) CFG.statuses = j.statuses;
+        renderList();
+      }).catch(function (e) { $('listMsg').textContent = 'সংযোগ ত্রুটি (' + e.message + ')'; });
+    }
+    function stLabel(k) { return (CFG.statuses && CFG.statuses[k]) || k; }
+    function renderList() {
+      const q = en($('q').value.trim().toLowerCase()), c = $('fCls').value, s = $('fSt').value;
+      const rows = APPS.filter(function (a) {
+        if (c && a.cls !== c) return false;
+        if (s && a.status !== s) return false;
+        if (q && (a.name + ' ' + a.appNo + ' ' + a.mobile + ' ' + a.father).toLowerCase().indexOf(q) < 0) return false;
+        return true;
+      });
+      $('sAll').textContent = bn(APPS.length);
+      $('sNew').textContent = bn(APPS.filter(function (a) { return a.status === 'Pending'; }).length);
+      $('sSel').textContent = bn(APPS.filter(function (a) { return a.status === 'Selected' || a.status === 'Admitted'; }).length);
+      $('list').innerHTML = rows.length ? rows.map(function (a) {
+        return '<div class="it" data-no="' + esc(a.appNo) + '"><div class="m"><b>' + esc(a.name) + '</b><span>' +
+          esc(a.appNo) + ' • ' + esc(a.cls) + ' • ' + esc(a.gender) + ' • ' + esc(a.submitted) + '</span></div>' +
+          '<em class="st st-' + esc(a.status) + '">' + esc(stLabel(a.status)) + '</em></div>';
+      }).join('') : '<div class="note">কোনো আবেদন নেই</div>';
+    }
+    $('q').addEventListener('input', renderList);
+    $('fCls').onchange = renderList; $('fSt').onchange = renderList;
+    $('reload').onclick = loadApps;
+    $('printBlank').onclick = function () { printForms([{}], true); };
+    $('list').addEventListener('click', function (e) {
+      const it = e.target.closest('.it'); if (it) openApp(it.getAttribute('data-no'));
+    });
+
+    let curApp = null;
+    function openApp(no) {
+      $('modal').style.display = 'block';
+      $('modalBox').innerHTML = '<div class="note">আনা হচ্ছে...</div>';
+      get('appget', { no: no }).then(function (d) {
+        if (d && d.badAdmin) { $('modal').style.display = 'none'; badAdmin(); return; }
+        if (!d || !d.ok) { $('modalBox').innerHTML = '<div class="note">' + esc((d && d.msg) || 'পাওয়া যায়নি') + '</div><div class="btns"><button id="mClose">বন্ধ</button></div>'; $('mClose').onclick = closeModal; return; }
+        curApp = d;
+        const rows = [['আবেদন নম্বর', d.appNo], ['জমার সময়', d.submitted], ['ধরন', d.type], ['আবাসিক', d.res], ['শ্রেণি', d.cls],
+          ['লিঙ্গ', d.gender], ['জন্ম তারিখ', d.dob], ['রক্তের গ্রুপ', d.blood], ['জন্ম নিবন্ধন', d.breg],
+          ['পিতা', d.father], ['পিতার পেশা', d.focc], ['পিতার এনআইডি', d.fnid], ['পিতার মোবাইল', d.fmob],
+          ['মাতা', d.mother], ['মাতার পেশা', d.mocc], ['মাতার এনআইডি', d.mnid], ['মাতার মোবাইল', d.mmob],
+          ['অভিভাবক', d.guard], ['সম্পর্ক', d.rel], ['অভিভাবকের মোবাইল', d.gmob],
+          ['স্থায়ী ঠিকানা', d.perm], ['বর্তমান ঠিকানা', d.temp], ['পূর্বের প্রতিষ্ঠান', d.prev]]
+          .filter(function (r) { return r[1]; });
+        const stOpts = Object.keys(CFG.statuses).map(function (k) {
+          return '<option value="' + esc(k) + '"' + (k === d.status ? ' selected' : '') + '>' + esc(CFG.statuses[k]) + '</option>';
+        }).join('');
+        $('modalBox').innerHTML =
+          (d.photo ? '<img alt="" src="' + d.photo + '">' : '') +
+          '<h2 style="margin:0;font-size:18px">' + esc(d.name) + '</h2>' +
+          '<div class="kv">' + rows.map(function (r) { return '<b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span>'; }).join('') + '</div>' +
+          '<label class="l">অবস্থা</label><select id="mSt">' + stOpts + '</select>' +
+          '<label class="l">অফিসের নোট</label><input type="text" id="mNote" maxlength="300" value="' + esc(d.note) + '">' +
+          '<div id="mMsg" class="note"></div>' +
+          '<div class="btns"><button id="mSave">সংরক্ষণ</button><button class="warn" id="mPrint">ফর্ম প্রিন্ট</button><button class="sec" id="mClose">বন্ধ</button></div>';
+        $('mClose').onclick = closeModal;
+        $('mPrint').onclick = function () { printForms([curApp], false); };
+        $('mSave').onclick = function () {
+          $('mSave').disabled = true; $('mMsg').textContent = 'সংরক্ষণ হচ্ছে...';
+          get('appstatus', { no: d.appNo, status: $('mSt').value, note: $('mNote').value }).then(function (r) {
+            $('mSave').disabled = false;
+            if (r && r.ok) {
+              $('mMsg').textContent = 'সংরক্ষণ হয়েছে';
+              APPS.forEach(function (a) { if (a.appNo === d.appNo) a.status = $('mSt').value; });
+              renderList();
+            } else { $('mMsg').textContent = (r && r.msg) || 'সংরক্ষণ হয়নি'; }
+          }).catch(function (er) { $('mSave').disabled = false; $('mMsg').textContent = 'সংযোগ ত্রুটি (' + er.message + ')'; });
+        };
+      }).catch(function (er) { $('modalBox').innerHTML = '<div class="note">সংযোগ ত্রুটি (' + esc(er.message) + ')</div><div class="btns"><button id="mClose">বন্ধ</button></div>'; $('mClose').onclick = closeModal; });
+    }
+    function closeModal() { $('modal').style.display = 'none'; }
+    $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
+  </script>
+</body>
+</html>
