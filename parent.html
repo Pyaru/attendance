@@ -76,6 +76,34 @@
     .badge.Waiting { background: #ede9fe; color: #5b21b6; }
     .badge.Rejected, .badge.Problem { background: #fee2e2; color: #991b1b; }
     .msgbox { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 10px 12px; border-radius: 8px; margin-top: 12px; font-size: 15px; }
+
+    .ex { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 12px; margin-top: 12px; font-size: 15px; }
+    .ex .g { display: grid; grid-template-columns: 90px 1fr; gap: 3px 8px; }
+    .ex .g b { color: #6b7280; font-weight: 500; }
+    .res { margin-top: 10px; text-align: center; font-size: 15px; }
+    .res .n { font-size: 26px; font-weight: 700; color: #0b6b4f; }
+    #psheet { position: absolute; left: -10000px; top: 0; }
+    .ac { width: 190mm; height: 88mm; border: .5mm solid #0b6b4f; border-radius: 2mm; padding: 3mm 4mm; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #fff; color: #111827; font-family: system-ui, "Noto Sans Bengali", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ac .h { display: flex; align-items: center; gap: 3mm; height: 15mm; }
+    .ac .lg { width: 13mm; height: 13mm; border-radius: 50%; border: .6mm solid #f59e0b; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 15pt; font-weight: 700; position: relative; overflow: hidden; flex: none; }
+    .ac .lg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .ac .sn { flex: 1; text-align: center; }
+    .ac .sn b { display: block; font-size: 14pt; line-height: 1.5; color: #0b6b4f; white-space: nowrap; }
+    .ac .sn span { font-size: 8.5pt; color: #374151; }
+    .ac .tt { text-align: center; background: linear-gradient(100deg, #064e3b, #0b6b4f); color: #fff; border: .4mm solid #f59e0b; border-radius: 1.5mm; font-size: 11pt; font-weight: 700; line-height: 1.6; margin: 1mm 0 2mm; }
+    .ac .bd { display: flex; gap: 3mm; flex: 1; min-height: 0; }
+    .ac .ph { width: 26mm; height: 32mm; border: .3mm solid #0b6b4f; border-radius: 1.2mm; font-size: 8pt; color: #6b7280; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; flex: none; }
+    .ac .ph img { width: 100%; height: 100%; object-fit: cover; }
+    .ac .fl { flex: 1; min-width: 0; }
+    .ac .r { display: flex; gap: 2mm; align-items: flex-end; margin-bottom: 1.6mm; }
+    .ac .f { display: flex; align-items: flex-end; gap: 1mm; min-width: 0; }
+    .ac .k { font-size: 8.8pt; white-space: nowrap; color: #1f2937; }
+    .ac .v { flex: 1; min-width: 0; border-bottom: .2mm solid #6b7280; font-weight: 700; font-size: 9.6pt; line-height: 5.2mm; min-height: 5.2mm; padding: 0 1mm; white-space: nowrap; overflow: hidden; }
+    .ac .big .v { font-size: 12pt; color: #0b6b4f; }
+    .ac .nt { font-size: 8pt; color: #374151; line-height: 1.4; margin-top: 1mm; }
+    .ac .sg { display: flex; justify-content: space-between; gap: 10mm; margin-top: auto; }
+    .ac .sg div { flex: 1; text-align: center; font-size: 8pt; color: #b91c1c; border-top: .25mm solid #6b7280; padding-top: .6mm; font-weight: 600; }
+    @media print { html, body { background: #fff !important; } header, .modes, .wrap { display: none !important; } #psheet { position: static; } }
   </style>
 </head>
 <body>
@@ -282,7 +310,9 @@
     })();
 
     // ================= ভর্তির আবেদন =================
-    let CFG = { open: true, classes: [], residence: [], year: '' }, aPhoto = '';
+    // ↓↓↓ প্রবেশপত্রের জন্য — নিজের মতো বদলান (admission.html-এর ADM-এর মতোই) ↓↓↓
+    const ADM = { logoText: 'ফ', logoUrl: 'logo.png', address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী রাঙ্গুনিয়া, চট্টগ্রাম' };
+    let CFG = { open: true, classes: [], residence: [], year: '' }, aPhoto = '', lastRes = null;
     function mode(m) {
       ['att', 'apply', 'check'].forEach(function (k) {
         document.getElementById(k).style.display = k === m ? 'block' : 'none';
@@ -406,6 +436,42 @@
       }).catch(function () { b.disabled = false; b.textContent = 'আবেদন জমা দিন'; aErr('ইন্টারনেট সংযোগ ত্রুটি। আবার চেষ্টা করুন।'); });
     });
 
+    // পরীক্ষার তথ্য, ফল ও প্রবেশপত্র
+    function examBox(j) {
+      const x = j.exam; if (!x) return '';
+      let h = '<div class="ex"><b>ভর্তি পরীক্ষা</b><div class="g" style="margin-top:6px"><b>রোল</b><span>' + esc(bn(x.roll)) + '</span><b>রুম / সিট</b><span>' + esc(bn(x.room)) + ' / ' + esc(bn(x.seat)) + '</span>' +
+        (x.date ? '<b>তারিখ</b><span>' + esc(x.date) + '</span>' : '') + (x.time ? '<b>সময়</b><span>' + esc(x.time) + '</span>' : '') +
+        (x.venue ? '<b>স্থান</b><span>' + esc(x.venue) + '</span>' : '') + '</div>' +
+        '<button class="full" onclick="printAdmit()">প্রবেশপত্র প্রিন্ট / PDF</button></div>';
+      if (x.marks !== undefined) {
+        h += '<div class="ex res">প্রাপ্ত নম্বর <div class="n">' + esc(bn(x.marks)) + ' / ' + esc(bn(x.total)) + '</div>ফল: <b>' + (x.result === 'Pass' ? 'পাস' : 'ফেল') + '</b>' +
+          (x.merit ? ' • মেধাক্রম: ' + esc(bn(x.merit)) + ' তম' : '') + '</div>';
+      }
+      return h;
+    }
+    function printAdmit() {
+      const j = lastRes; if (!j || !j.exam) return;
+      const x = j.exam, school = CFG.school || 'ভর্তি পরীক্ষা';
+      const row = function (k, v, f, c) { return '<div class="f' + (c ? ' ' + c : '') + '" style="flex:' + (f || 1) + '"><span class="k">' + k + '</span><span class="v">' + esc(v || '') + '</span></div>'; };
+      const ph = x.photo && /^data:image\//.test(x.photo) ? '<img alt="" src="' + x.photo + '">' : 'ছবি';
+      $i('psheet').innerHTML = '<div class="ac"><div class="h"><div class="lg">' + esc(ADM.logoText) + (ADM.logoUrl ? '<img alt="" src="' + esc(ADM.logoUrl) + '" onerror="this.remove()">' : '') + '</div>' +
+        '<div class="sn"><b>' + esc(school) + '</b><span>' + esc(ADM.address) + '</span></div></div>' +
+        '<div class="tt">প্রবেশপত্র — ভর্তি পরীক্ষা ' + esc(bn(j.year || CFG.year || '')) + '</div>' +
+        '<div class="bd"><div class="ph">' + ph + '</div><div class="fl">' +
+        '<div class="r">' + row('নাম:', j.name, 1) + '</div><div class="r">' + row('পিতার নাম:', x.father, 1) + '</div>' +
+        '<div class="r">' + row('শ্রেণি:', j.cls, 1.1) + row('জন্ম তারিখ:', bn(x.dob), 1) + '</div>' +
+        '<div class="r">' + row('রোল:', bn(x.roll), 1, 'big') + row('রুম:', bn(x.room), 1, 'big') + row('সিট:', bn(x.seat), 1, 'big') + '</div>' +
+        '<div class="r">' + row('তারিখ:', x.date, 1.4) + row('সময়:', x.time, 1) + '</div>' +
+        (x.venue ? '<div class="r">' + row('স্থান:', x.venue, 1) + '</div>' : '') +
+        '<div class="nt">' + esc(x.note || '') + ' (আবেদন নং ' + esc(j.appNo) + ')</div></div></div>' +
+        '<div class="sg"><div>পরীক্ষার্থীর স্বাক্ষর</div><div>প্রধান শিক্ষকের স্বাক্ষর</div></div></div>';
+      const st = document.createElement('style'); st.id = 'pg'; st.textContent = '@page { size: A4; margin: 10mm; }'; document.head.appendChild(st);
+      const done = function () { const e = $i('pg'); if (e) e.remove(); $i('psheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      const imgs = Array.prototype.slice.call($i('psheet').querySelectorAll('img')).map(function (im) { return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; }); });
+      Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
+    }
+
     // আবেদনের অবস্থা
     function doCheck() {
       const no = $v('c_no'), mob = $v('c_mob'); $i('c_err').textContent = ''; $i('c_res').innerHTML = '';
@@ -417,7 +483,8 @@
         $i('c_res').innerHTML = '<div style="margin-top:14px"><b style="font-size:18px">' + esc(j.name) + '</b><div class="ov" style="text-align:left">' +
           esc(j.appNo) + ' • ' + esc(j.cls) + ' • জমার সময়: ' + esc(j.submitted) + '</div>' +
           '<div style="margin-top:10px"><span class="badge ' + esc(j.status) + '">' + esc(j.statusLabel) + '</span></div>' +
-          (j.note ? '<div class="msgbox"><b>অফিসের বার্তা:</b><br>' + esc(j.note) + '</div>' : '') + '</div>';
+          (j.note ? '<div class="msgbox"><b>অফিসের বার্তা:</b><br>' + esc(j.note) + '</div>' : '') + examBox(j) + '</div>';
+        lastRes = j;
       }).catch(function () { $i('c_err').textContent = 'সংযোগ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।'; });
     }
 
@@ -428,5 +495,6 @@
     }).catch(function () { buildForm(); });
     if (location.hash === '#apply') mode('apply'); else if (location.hash === '#check') mode('check');
   </script>
+  <div id="psheet"></div>
 </body>
 </html>
