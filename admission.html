@@ -66,7 +66,7 @@
     .st-Exam { background: #fef3c7; color: #92400e; }
     .st-Selected, .st-Admitted { background: #d1fae5; color: #065f46; }
     .st-Waiting { background: #ede9fe; color: #5b21b6; }
-    .st-Rejected { background: #fee2e2; color: #991b1b; }
+    .st-Rejected, .st-Problem { background: #fee2e2; color: #991b1b; }
     #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 10; overflow: auto; padding: 12px; }
     #modal .box { background: #fff; border-radius: 14px; max-width: 560px; margin: 0 auto; padding: 14px; }
     #modal .kv { display: grid; grid-template-columns: 120px 1fr; gap: 4px 10px; font-size: 14px; margin-top: 10px; }
@@ -121,147 +121,13 @@
 </head>
 <body>
   <header>
-    <h1 id="schoolH">ভর্তির আবেদন</h1>
+    <a href="index.html" style="color:#fff;text-decoration:none;font-size:13px;opacity:.9">‹ স্ক্যানার মেনু</a>
+    <h1 id="schoolH">ভর্তির আবেদন — অফিস</h1>
     <small id="yearH"></small>
   </header>
-  <div class="tabs">
-    <button id="tabA" class="on">নতুন আবেদন</button>
-    <button id="tabO">অফিস</button>
-  </div>
-
   <div class="wrap">
-    <!-- ================= আবেদন ফর্ম ================= -->
-    <div id="apply">
-      <div id="closed">ভর্তির আবেদন এখন বন্ধ আছে। অনুগ্রহ করে অফিসে যোগাযোগ করুন।</div>
-
-      <form id="form" autocomplete="off" novalidate>
-        <div class="panel">
-          <h2>আবেদনের তথ্য</h2>
-          <label class="l">আবেদনের ধরন</label>
-          <div class="opts" id="typeOpts">
-            <label><input type="radio" name="type" value="নতুন" checked> নতুন</label>
-            <label><input type="radio" name="type" value="পুরাতন"> পুরাতন</label>
-          </div>
-          <div id="resWrap" style="display:none">
-            <label class="l">আবাসিক / অনাবাসিক <b>*</b></label>
-            <div class="opts" id="resOpts"></div>
-          </div>
-          <label class="l" for="cls">কোন শ্রেণিতে ভর্তি হতে চান <b>*</b></label>
-          <select id="cls"><option value="">— শ্রেণি বাছুন —</option></select>
-        </div>
-
-        <div class="panel">
-          <h2>শিক্ষার্থীর তথ্য</h2>
-          <label class="l" for="name">শিক্ষার্থীর নাম <b>*</b></label>
-          <input type="text" id="name" maxlength="80">
-          <label class="l">ছেলে / মেয়ে <b>*</b></label>
-          <div class="opts" id="genderOpts">
-            <label><input type="radio" name="gender" value="ছেলে"> ছেলে</label>
-            <label><input type="radio" name="gender" value="মেয়ে"> মেয়ে</label>
-          </div>
-          <div class="two stack">
-            <div>
-              <label class="l" for="dob">জন্ম তারিখ <b>*</b></label>
-              <input type="date" id="dob">
-            </div>
-            <div>
-              <label class="l" for="blood">রক্তের গ্রুপ</label>
-              <select id="blood"><option value="">জানি না / পরে</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
-            </div>
-          </div>
-          <label class="l" for="breg">জন্ম নিবন্ধন নম্বর</label>
-          <input type="tel" id="breg" inputmode="numeric" maxlength="30">
-          <label class="l">শিক্ষার্থীর ছবি</label>
-          <div class="photoBox">
-            <div id="phPrev">ছবি<br>নেই</div>
-            <div style="flex:1">
-              <div class="btns" style="margin-top:0">
-                <button type="button" class="sec" id="phCam">ছবি তুলুন</button>
-                <button type="button" class="sec" id="phGal">গ্যালারি থেকে</button>
-                <button type="button" id="phDel" style="display:none;background:#9ca3af">মুছুন</button>
-              </div>
-              <input type="file" id="fCam" accept="image/*" capture="environment" style="display:none">
-              <input type="file" id="fGal" accept="image/*" style="display:none">
-              <div class="note">পাসপোর্ট মাপের পরিষ্কার ছবি দিন। ছবি ছাড়াও আবেদন জমা দেওয়া যাবে।</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>পিতার তথ্য</h2>
-          <label class="l" for="father">পিতার নাম <b>*</b></label>
-          <input type="text" id="father" maxlength="80">
-          <div class="two stack">
-            <div><label class="l" for="focc">পেশা</label><input type="text" id="focc" maxlength="60"></div>
-            <div><label class="l" for="fmob">মোবাইল</label><input type="tel" id="fmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
-          </div>
-          <label class="l" for="fnid">এনআইডি নম্বর</label>
-          <input type="tel" id="fnid" inputmode="numeric" maxlength="20">
-        </div>
-
-        <div class="panel">
-          <h2>মাতার তথ্য</h2>
-          <label class="l" for="mother">মাতার নাম</label>
-          <input type="text" id="mother" maxlength="80">
-          <div class="two stack">
-            <div><label class="l" for="mocc">পেশা</label><input type="text" id="mocc" maxlength="60"></div>
-            <div><label class="l" for="mmob">মোবাইল</label><input type="tel" id="mmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
-          </div>
-          <label class="l" for="mnid">এনআইডি নম্বর</label>
-          <input type="tel" id="mnid" inputmode="numeric" maxlength="20">
-        </div>
-
-        <div class="panel">
-          <h2>অভিভাবক</h2>
-          <label class="chk"><input type="checkbox" id="gchk"> অভিভাবক পিতা-মাতা থেকে আলাদা কেউ</label>
-          <div id="gWrap" style="display:none">
-            <label class="l" for="guard">অভিভাবকের নাম</label>
-            <input type="text" id="guard" maxlength="80">
-            <div class="two stack">
-              <div><label class="l" for="rel">সম্পর্ক</label><input type="text" id="rel" maxlength="30"></div>
-              <div><label class="l" for="gocc">পেশা</label><input type="text" id="gocc" maxlength="60"></div>
-            </div>
-            <div class="two stack">
-              <div><label class="l" for="gmob">মোবাইল</label><input type="tel" id="gmob" inputmode="numeric" maxlength="16" placeholder="01XXXXXXXXX"></div>
-              <div><label class="l" for="gnid">এনআইডি নম্বর</label><input type="tel" id="gnid" inputmode="numeric" maxlength="20"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>ঠিকানা ও পূর্বের প্রতিষ্ঠান</h2>
-          <label class="l" for="perm">স্থায়ী ঠিকানা</label>
-          <textarea id="perm" maxlength="300" placeholder="গ্রাম/মহল্লা, ডাকঘর, উপজেলা, জেলা"></textarea>
-          <label class="chk"><input type="checkbox" id="same" checked> বর্তমান ঠিকানা স্থায়ী ঠিকানার মতোই</label>
-          <div id="tempWrap" style="display:none">
-            <label class="l" for="temp">বর্তমান / অস্থায়ী ঠিকানা</label>
-            <textarea id="temp" maxlength="300"></textarea>
-          </div>
-          <label class="l" for="prev">পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা (থাকলে)</label>
-          <input type="text" id="prev" maxlength="200">
-        </div>
-
-        <div class="hp"><label>এই ঘরটি ফাঁকা রাখুন <input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div>
-
-        <div id="formErr"></div>
-        <div class="btns"><button type="submit" id="submitBtn">আবেদন জমা দিন</button></div>
-        <div class="note">জমা দেওয়ার পর আপনি একটি আবেদন নম্বর পাবেন। নম্বরটি সংরক্ষণ করুন। আপনার দেওয়া তথ্য শুধু ভর্তির কাজে ব্যবহার হবে।</div>
-      </form>
-
-      <div class="panel" id="done">
-        <h2>আবেদন জমা হয়েছে</h2>
-        <div>আপনার আবেদন নম্বর</div>
-        <div class="no" id="doneNo"></div>
-        <div class="note" id="doneNote">অফিস থেকে আপনার সাথে যোগাযোগ করা হবে। নম্বরটি লিখে বা ছবি তুলে রাখুন।</div>
-        <div class="btns">
-          <button type="button" id="printMine">আবেদনপত্র প্রিন্ট / PDF</button>
-          <button type="button" class="sec" id="again">আরেকটি আবেদন</button>
-        </div>
-      </div>
-    </div>
-
     <!-- ================= অফিস ================= -->
-    <div id="office" style="display:none">
+    <div id="office">
       <div class="panel" id="lock">
         <h2>অ্যাডমিন পিন</h2>
         <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
@@ -323,9 +189,7 @@
     let CFG = { open: true, year: '', school: ADM.nameFallback, classes: [], residence: [], statuses: {} };
     let ADMIN = '';
     try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}    // কার্ড পেজের সাথে একই পিন-মেমোরি
-    let photoData = '';
     let APPS = [];
-    let lastSubmitted = null;
 
     // ---------- API ----------
     function get(action, params) {
@@ -339,152 +203,18 @@
 
     // ---------- শুরু: কনফিগ ----------
     function applyConfig() {
-      $('schoolH').textContent = CFG.school || ADM.nameFallback;
-      $('yearH').textContent = CFG.year ? 'ভর্তির আবেদন — শিক্ষাবর্ষ ' + bn(CFG.year) : 'ভর্তির আবেদন';
-      $('cls').innerHTML = '<option value="">— শ্রেণি বাছুন —</option>' + CFG.classes.map(function (c) {
-        return '<option>' + esc(c) + '</option>';
-      }).join('');
-      $('fCls').innerHTML = '<option value="">সব শ্রেণি</option>' + CFG.classes.map(function (c) {
-        return '<option>' + esc(c) + '</option>';
-      }).join('');
+      $('schoolH').textContent = 'ভর্তির আবেদন — অফিস';
+      $('yearH').textContent = CFG.year ? (CFG.school || '') + ' • শিক্ষাবর্ষ ' + bn(CFG.year) : (CFG.school || '');
+      const co = CFG.classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
+      $('fCls').innerHTML = '<option value="">সব শ্রেণি</option>' + co;
       $('fSt').innerHTML = '<option value="">সব অবস্থা</option>' + Object.keys(CFG.statuses).map(function (k) {
         return '<option value="' + esc(k) + '">' + esc(CFG.statuses[k]) + '</option>';
       }).join('');
-      if (CFG.residence && CFG.residence.length) {
-        $('resWrap').style.display = 'block';
-        $('resOpts').innerHTML = CFG.residence.map(function (r) {
-          return '<label><input type="radio" name="res" value="' + esc(r) + '"> ' + esc(r) + '</label>';
-        }).join('');
-      }
-      $('form').style.display = CFG.open ? 'block' : 'none';
-      $('closed').style.display = CFG.open ? 'none' : 'block';
     }
     get('appconfig').then(function (j) {
       if (j && j.ok) { CFG = j; applyConfig(); }
-      else { showErr('সার্ভারের সাথে যোগাযোগ হয়নি। পেজ রিফ্রেশ করুন।'); }
-    }).catch(function () { showErr('ইন্টারনেট বা API_URL দেখুন। পেজ রিফ্রেশ করুন।'); });
-
-    // ---------- ট্যাব ----------
-    function tab(which) {
-      $('apply').style.display = which === 'A' ? 'block' : 'none';
-      $('office').style.display = which === 'O' ? 'block' : 'none';
-      $('tabA').className = which === 'A' ? 'on' : '';
-      $('tabO').className = which === 'O' ? 'on' : '';
-      if (which === 'O') officeEnter();
-    }
-    $('tabA').onclick = function () { tab('A'); };
-    $('tabO').onclick = function () { tab('O'); };
-
-    // ---------- ফর্মের ছোট আচরণ ----------
-    $('gchk').onchange = function () { $('gWrap').style.display = this.checked ? 'block' : 'none'; };
-    $('same').onchange = function () { $('tempWrap').style.display = this.checked ? 'none' : 'block'; };
-
-    // ছবি: নিয়ে ৩০০×৪০০ জেপিইজি-তে ছোট করা
-    function handleFile(file) {
-      if (!file) return;
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = function () {
-        const W = 300, H = 400, c = document.createElement('canvas');
-        c.width = W; c.height = H;
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
-        const r = Math.max(W / img.width, H / img.height);
-        const w = img.width * r, h = img.height * r;
-        ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
-        photoData = c.toDataURL('image/jpeg', 0.85);
-        $('phPrev').style.backgroundImage = 'url(' + photoData + ')';
-        $('phPrev').textContent = '';
-        $('phDel').style.display = 'inline-block';
-        URL.revokeObjectURL(url);
-      };
-      img.onerror = function () { showErr('ছবিটি পড়া যায়নি, অন্য ছবি দিন।'); URL.revokeObjectURL(url); };
-      img.src = url;
-    }
-    $('phCam').onclick = function () { $('fCam').click(); };
-    $('phGal').onclick = function () { $('fGal').click(); };
-    $('fCam').onchange = function () { handleFile(this.files[0]); this.value = ''; };
-    $('fGal').onchange = function () { handleFile(this.files[0]); this.value = ''; };
-    $('phDel').onclick = function () {
-      photoData = ''; $('phPrev').style.backgroundImage = ''; $('phPrev').innerHTML = 'ছবি<br>নেই'; this.style.display = 'none';
-    };
-
-    // ---------- যাচাই ও জমা ----------
-    function showErr(t) { const e = $('formErr'); e.textContent = t; e.className = t ? 'on' : ''; }
-    function val(id) { return $(id).value.trim(); }
-    function radio(name) { const r = document.querySelector('input[name=' + name + ']:checked'); return r ? r.value : ''; }
-    function mobOk(v) {
-      let d = en(v).replace(/\D/g, '');
-      if (d.length === 13 && d.indexOf('88') === 0) d = d.slice(2);
-      return /^01\d{9}$/.test(d);
-    }
-    function collect() {
-      return {
-        type: radio('type') || 'নতুন', res: radio('res'), cls: val('cls'), name: val('name'), gender: radio('gender'),
-        blood: val('blood'), dob: val('dob'), breg: val('breg'),
-        father: val('father'), focc: val('focc'), fnid: val('fnid'), fmob: val('fmob'),
-        mother: val('mother'), mocc: val('mocc'), mnid: val('mnid'), mmob: val('mmob'),
-        guard: $('gchk').checked ? val('guard') : '', rel: $('gchk').checked ? val('rel') : '',
-        gocc: $('gchk').checked ? val('gocc') : '', gnid: $('gchk').checked ? val('gnid') : '', gmob: $('gchk').checked ? val('gmob') : '',
-        perm: val('perm'), temp: $('same').checked ? val('perm') : val('temp'), prev: val('prev'),
-        photo: photoData, hp: val('hp')
-      };
-    }
-    function mark(id, bad) { $(id).classList.toggle('err', !!bad); }
-    function validate(d) {
-      ['cls', 'name', 'dob', 'father', 'fmob', 'mmob', 'gmob'].forEach(function (i) { mark(i, false); });
-      let first = '', msg = '';
-      function bad(id, m) { mark(id, true); if (!first) { first = id; msg = m; } }
-      if (!d.cls) bad('cls', 'শ্রেণি বেছে নিন');
-      if (d.name.length < 2) bad('name', 'শিক্ষার্থীর নাম লিখুন');
-      if (!d.gender && !first) { first = 'genderOpts'; msg = 'ছেলে না মেয়ে বেছে নিন'; }
-      const dobOk = d.dob && new Date(d.dob).getTime() <= Date.now() && /^\d{4}-\d{2}-\d{2}$/.test(d.dob);
-      if (!dobOk) bad('dob', 'জন্ম তারিখ সঠিকভাবে দিন');
-      if (d.father.length < 2 && d.guard.length < 2) bad('father', 'পিতার নাম (অথবা অভিভাবকের নাম) লিখুন');
-      if (CFG.residence && CFG.residence.length && !d.res && !first) { first = 'resOpts'; msg = 'আবাসিক/অনাবাসিক বেছে নিন'; }
-      if (d.fmob && !mobOk(d.fmob)) bad('fmob', 'পিতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
-      if (d.mmob && !mobOk(d.mmob)) bad('mmob', 'মাতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
-      if (d.gmob && !mobOk(d.gmob)) bad('gmob', 'অভিভাবকের মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
-      if (!first && !mobOk(d.fmob) && !mobOk(d.mmob) && !mobOk(d.gmob)) bad('fmob', 'অন্তত একটি সঠিক মোবাইল নম্বর দিন');
-      if (first) {
-        showErr(msg);
-        const el = $(first); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return false;
-      }
-      showErr('');
-      return true;
-    }
-
-    $('form').addEventListener('input', function (e) { if (e.target.classList) e.target.classList.remove('err'); });
-    $('form').addEventListener('change', function (e) { if (e.target.classList) e.target.classList.remove('err'); });
-
-    $('form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const d = collect();
-      if (!validate(d)) return;
-      const btn = $('submitBtn');
-      btn.disabled = true; btn.textContent = 'জমা হচ্ছে...';
-      post(Object.assign({ action: 'apply' }, d)).then(function (j) {
-        btn.disabled = false; btn.textContent = 'আবেদন জমা দিন';
-        if (!j || !j.ok) { showErr((j && j.msg) || 'জমা হয়নি, আবার চেষ্টা করুন'); return; }
-        lastSubmitted = Object.assign({}, d, { appNo: j.appNo, year: j.year || CFG.year, dob: dmy(d.dob) });
-        $('doneNo').textContent = j.appNo;
-        $('doneNote').textContent = j.dup ? 'এই আবেদন আগেই জমা হয়েছিল। আপনার আবেদন নম্বর ওপরে দেওয়া আছে।'
-          : 'অফিস থেকে আপনার সাথে যোগাযোগ করা হবে। নম্বরটি লিখে বা ছবি তুলে রাখুন।';
-        $('form').style.display = 'none';
-        $('done').style.display = 'block';
-        window.scrollTo(0, 0);
-      }).catch(function (er) {
-        btn.disabled = false; btn.textContent = 'আবেদন জমা দিন';
-        showErr('ইন্টারনেট সংযোগ ত্রুটি। আবার চেষ্টা করুন। (' + er.message + ')');
-      });
-    });
-    $('again').onclick = function () {
-      $('form').reset(); photoData = ''; $('phDel').click();
-      $('gWrap').style.display = 'none'; $('tempWrap').style.display = 'none';
-      $('done').style.display = 'none'; $('form').style.display = 'block'; lastSubmitted = null;
-    };
-    function dmy(iso) { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); }
+      officeEnter();
+    }).catch(function () { officeEnter(); });
 
     // ---------- প্রিন্টের ফর্ম ----------
     function box(label, v, flex, cls) {
@@ -562,7 +292,6 @@
       });
       Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
     }
-    $('printMine').onclick = function () { if (lastSubmitted) printForms([lastSubmitted], false); };
 
     // ---------- অফিস ----------
     function officeEnter() {
@@ -643,7 +372,7 @@
           '<h2 style="margin:0;font-size:18px">' + esc(d.name) + '</h2>' +
           '<div class="kv">' + rows.map(function (r) { return '<b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span>'; }).join('') + '</div>' +
           '<label class="l">অবস্থা</label><select id="mSt">' + stOpts + '</select>' +
-          '<label class="l">অফিসের নোট</label><input type="text" id="mNote" maxlength="300" value="' + esc(d.note) + '">' +
+          '<label class="l">বার্তা (আবেদনকারী অভিভাবক পোর্টালে দেখতে পাবেন)</label><input type="text" id="mNote" maxlength="300" value="' + esc(d.note) + '">' +
           '<div id="mMsg" class="note"></div>' +
           '<div class="btns"><button id="mSave">সংরক্ষণ</button><button class="warn" id="mPrint">ফর্ম প্রিন্ট</button><button class="sec" id="mClose">বন্ধ</button></div>';
         $('mClose').onclick = closeModal;
