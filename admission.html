@@ -110,6 +110,52 @@
     .pf .of .row { margin-bottom: 3.4mm; }
     .pf .ft { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 8pt; color: #6b7280; }
 
+
+    .sub { display: flex; gap: 6px; margin-bottom: 12px; }
+    .sub button { flex: 1; background: #e5e7eb; color: #374151; font-weight: 600; }
+    .sub button.on { background: #0b6b4f; color: #fff; }
+    .mk { display: flex; align-items: center; gap: 8px; padding: 8px 2px; border-bottom: 1px solid #f1f5f9; }
+    .mk .m { flex: 1; min-width: 0; }
+    .mk .m b { display: block; font-size: 15px; }
+    .mk .m span { font-size: 12px; color: #6b7280; }
+    .mk input { width: 76px; padding: 8px; font-size: 16px; text-align: center; border: 1px solid #d1d5db; border-radius: 8px; }
+    .mk input.saved { border-color: #10b981; background: #ecfdf5; }
+    .mk input.fail { border-color: #dc2626; background: #fef2f2; }
+    .mk .r { width: 62px; text-align: center; font-size: 12px; }
+    .ex-i { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 14px; margin-bottom: 8px; }
+    .ex-i b { color: #6b7280; font-weight: 500; }
+
+    /* প্রবেশপত্র / তালিকা প্রিন্ট */
+    .apg, .tp { width: 190mm; background: #fff; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .apg { height: 277mm; display: flex; flex-direction: column; justify-content: space-between; }
+    .ac { height: 88mm; border: .5mm solid #0b6b4f; border-radius: 2mm; padding: 3mm 4mm; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .ac .h { display: flex; align-items: center; gap: 3mm; height: 15mm; }
+    .ac .lg { width: 13mm; height: 13mm; border-radius: 50%; border: .6mm solid #f59e0b; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 15pt; font-weight: 700; position: relative; overflow: hidden; flex: none; }
+    .ac .lg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .ac .sn { flex: 1; text-align: center; }
+    .ac .sn b { display: block; font-size: 14pt; line-height: 1.5; color: #0b6b4f; white-space: nowrap; }
+    .ac .sn span { font-size: 8.5pt; color: #374151; }
+    .ac .tt { text-align: center; background: linear-gradient(100deg, #064e3b, #0b6b4f); color: #fff; border: .4mm solid #f59e0b; border-radius: 1.5mm; font-size: 11pt; font-weight: 700; line-height: 1.6; margin: 1mm 0 2mm; }
+    .ac .bd { display: flex; gap: 3mm; flex: 1; min-height: 0; }
+    .ac .ph { width: 26mm; height: 32mm; border: .3mm solid #0b6b4f; border-radius: 1.2mm; font-size: 8pt; color: #6b7280; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; flex: none; }
+    .ac .ph img { width: 100%; height: 100%; object-fit: cover; }
+    .ac .fl { flex: 1; min-width: 0; }
+    .ac .r { display: flex; gap: 2mm; align-items: flex-end; margin-bottom: 1.6mm; }
+    .ac .f { display: flex; align-items: flex-end; gap: 1mm; min-width: 0; }
+    .ac .k { font-size: 8.8pt; white-space: nowrap; color: #1f2937; }
+    .ac .v { flex: 1; min-width: 0; border-bottom: .2mm solid #6b7280; font-weight: 700; font-size: 9.6pt; line-height: 5.2mm; min-height: 5.2mm; padding: 0 1mm; white-space: nowrap; overflow: hidden; }
+    .ac .big .v { font-size: 12pt; color: #0b6b4f; }
+    .ac .nt { font-size: 8pt; color: #374151; line-height: 1.4; margin-top: 1mm; }
+    .ac .sg { display: flex; justify-content: space-between; gap: 10mm; margin-top: auto; }
+    .ac .sg div { flex: 1; text-align: center; font-size: 8pt; color: #b91c1c; border-top: .25mm solid #6b7280; padding-top: .6mm; font-weight: 600; }
+    .tp { height: 277mm; }
+    .tp h2 { margin: 0; text-align: center; color: #0b6b4f; font-size: 17pt; line-height: 1.5; }
+    .tp .s { text-align: center; font-size: 10.5pt; color: #374151; margin-bottom: 4mm; }
+    .tp table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+    .tp th { background: #0b6b4f; color: #fff; padding: 1.4mm 2mm; border: .25mm solid #0b6b4f; font-weight: 600; }
+    .tp td { padding: 1.7mm 2mm; border: .25mm solid #9ca3af; }
+    .tp td.c { text-align: center; }
+    @media print { .apg, .tp { page-break-after: always; break-after: page; } .apg:last-child, .tp:last-child { page-break-after: auto; break-after: auto; } }
     @media print {
       html, body { background: #fff !important; }
       header, .tabs, .wrap, #modal { display: none !important; }
@@ -136,6 +182,8 @@
       </div>
 
       <div id="officeMain" style="display:none">
+        <div class="sub"><button id="vA" class="on">আবেদন</button><button id="vE">ভর্তি পরীক্ষা</button></div>
+        <div id="viewApps">
         <div class="panel">
           <div class="bar">
             <input type="text" id="q" placeholder="নাম / আবেদন নম্বর / মোবাইল খুঁজুন">
@@ -154,6 +202,30 @@
           <div id="listMsg" class="note"></div>
         </div>
         <div class="panel" id="list"></div>
+        </div>
+
+        <div id="viewExam" style="display:none">
+          <div class="panel">
+            <h2>ভর্তি পরীক্ষা</h2>
+            <div class="ex-i" id="exInfo"></div>
+            <div class="btns" style="margin-top:0">
+              <button id="exAssign">রোল ও সিট দিন</button>
+              <button class="warn" id="exCards">প্রবেশপত্র প্রিন্ট</button>
+              <button class="warn" id="exSeats">সিট তালিকা প্রিন্ট</button>
+            </div>
+            <div class="btns">
+              <button class="sec" id="exSelect">পাস করাদের "নির্বাচিত" করুন</button>
+              <button class="sec" id="exMerit">মেধাতালিকা প্রিন্ট</button>
+              <button class="sec" id="exPub">ফল প্রকাশ</button>
+            </div>
+            <div class="bar" style="margin-top:12px">
+              <input type="text" id="eq" placeholder="নাম / রোল খুঁজুন">
+              <select id="eCls"><option value="">সব শ্রেণি</option></select>
+            </div>
+            <div id="exMsg" class="note"></div>
+          </div>
+          <div class="panel" id="exList"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -169,7 +241,7 @@
     const ADM = {
       nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
       logoText: 'ফ',
-      logoUrl: 'logo.png',                                   // যেমন 'logo.png'
+      logoUrl: '',                                   // যেমন 'logo.png'
       address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
       phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
       signsTop: ['পিতা/মাতার স্বাক্ষর', 'অভিভাবকের স্বাক্ষর'],
@@ -390,6 +462,166 @@
         };
       }).catch(function (er) { $('modalBox').innerHTML = '<div class="note">সংযোগ ত্রুটি (' + esc(er.message) + ')</div><div class="btns"><button id="mClose">বন্ধ</button></div>'; $('mClose').onclick = closeModal; });
     }
+
+    // ================= ভর্তি পরীক্ষা (অফিস) =================
+    let EX = { list: [], exam: {} };
+    function view(v) {
+      $('viewApps').style.display = v === 'A' ? 'block' : 'none';
+      $('viewExam').style.display = v === 'E' ? 'block' : 'none';
+      $('vA').className = v === 'A' ? 'on' : ''; $('vE').className = v === 'E' ? 'on' : '';
+      if (v === 'E') loadExam();
+    }
+    $('vA').onclick = function () { view('A'); }; $('vE').onclick = function () { view('E'); };
+    function exSay(t) { $('exMsg').textContent = t || ''; }
+    function loadExam(keep) {
+      exSay('আনা হচ্ছে...');
+      get('examlist').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { exSay((j && j.msg) || 'আনা যায়নি'); return; }
+        EX = j; CFG.statuses = j.statuses || CFG.statuses; exSay(keep || '');
+        const x = j.exam;
+        $('exInfo').innerHTML = '<b>পরীক্ষার তারিখ</b><span>' + esc(x.date || '— (Applications.gs-এ দিন)') + '</span>' +
+          '<b>সময়</b><span>' + esc(x.time || '—') + '</span><b>পূর্ণমান / পাশ</b><span>' + bn(x.total) + ' / ' + bn(x.pass) + '</span>' +
+          '<b>প্রতি রুমে</b><span>' + bn(x.roomSize) + ' জন</span><b>ফল</b><span>' + (x.published ? 'প্রকাশিত' : 'প্রকাশ হয়নি') + '</span>';
+        $('exPub').textContent = x.published ? 'ফল প্রকাশ বন্ধ করুন' : 'ফল প্রকাশ করুন';
+        const sel = $('eCls').value;
+        $('eCls').innerHTML = '<option value="">সব শ্রেণি</option>' + (j.classes || []).map(function (c) { return '<option' + (c === sel ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('');
+        renderExam();
+      }).catch(function (e) { exSay('সংযোগ ত্রুটি (' + e.message + ')'); });
+    }
+    function exFiltered() {
+      const q = en($('eq').value.trim().toLowerCase()), c = $('eCls').value;
+      return EX.list.filter(function (a) {
+        if (c && a.cls !== c) return false;
+        if (q && (a.name + ' ' + a.roll + ' ' + a.appNo).toLowerCase().indexOf(q) < 0) return false;
+        return a.status !== 'Rejected';
+      });
+    }
+    function renderExam() {
+      const rows = exFiltered();
+      $('exList').innerHTML = rows.length ? rows.map(function (a) {
+        return '<div class="mk" data-no="' + esc(a.appNo) + '"><div class="m"><b>' + (a.roll ? bn(a.roll) + ' • ' : '') + esc(a.name) + '</b><span>' +
+          esc(a.cls) + (a.room ? ' • রুম ' + bn(a.room) + ' • সিট ' + bn(a.seat) : ' • রোল বাকি') + '</span></div>' +
+          (a.roll ? '<input type="text" inputmode="decimal" value="' + esc(a.marks) + '" placeholder="নম্বর" data-no="' + esc(a.appNo) + '">' +
+            '<div class="r">' + (a.result ? '<em class="st st-' + (a.result === 'Pass' ? 'Selected' : 'Rejected') + '">' + (a.result === 'Pass' ? 'পাস' : 'ফেল') + '</em>' +
+              (a.merit ? '<br>' + bn(a.merit) + ' তম' : '') : '') + '</div>' : '') + '</div>';
+      }).join('') : '<div class="note">কেউ নেই। প্রথমে "রোল ও সিট দিন" চাপুন।</div>';
+    }
+    $('eq').addEventListener('input', renderExam); $('eCls').onchange = renderExam;
+    $('exList').addEventListener('change', function (e) {
+      const el = e.target; if (!el.matches('input[data-no]')) return;
+      el.disabled = true;
+      get('examsave', { no: el.getAttribute('data-no'), marks: el.value }).then(function (r) {
+        el.disabled = false;
+        if (!r || !r.ok) { el.classList.add('fail'); exSay((r && r.msg) || 'সংরক্ষণ হয়নি'); return; }
+        el.classList.remove('fail'); el.classList.add('saved'); exSay('');
+        const a = EX.list.filter(function (x) { return x.appNo === el.getAttribute('data-no'); })[0];
+        if (a) { a.marks = r.marks; a.result = r.result; }
+        setTimeout(function () { loadExamQuiet(); }, 300);
+      }).catch(function () { el.disabled = false; el.classList.add('fail'); exSay('সংযোগ ত্রুটি, আবার দিন'); });
+    });
+    function loadExamQuiet() {      // মেধাক্রম নতুন করে আনা (ইনপুটে ফোকাস থাকলে বাদ)
+      if (document.activeElement && document.activeElement.matches && document.activeElement.matches('#exList input')) return;
+      get('examlist').then(function (j) { if (j && j.ok) { EX = j; renderExam(); } });
+    }
+    $('exAssign').onclick = function () {
+      exSay('রোল ও সিট দেওয়া হচ্ছে...');
+      get('examassign').then(function (r) {
+        if (r && r.badAdmin) { badAdmin(); return; }
+        loadExam(r && r.ok ? (r.assigned ? bn(r.assigned) + ' জনকে রোল/সিট দেওয়া হয়েছে (মোট ' + bn(r.rooms) + ' রুম)' : 'নতুন কেউ নেই — সবার রোল দেওয়া আছে') : ((r && r.msg) || 'হয়নি'));
+      }).catch(function () { exSay('সংযোগ ত্রুটি'); });
+    };
+    $('exSelect').onclick = function () {
+      if (!confirm('পাশ নম্বর পাওয়া সবার অবস্থা "নির্বাচিত" হবে। চালাবেন?')) return;
+      get('examselect').then(function (r) { loadApps(); loadExam(r && r.ok ? bn(r.changed) + ' জনকে নির্বাচিত করা হয়েছে' : ((r && r.msg) || 'হয়নি')); });
+    };
+    $('exPub').onclick = function () {
+      const on = !(EX.exam && EX.exam.published);
+      if (!confirm(on ? 'ফল প্রকাশ করলে আবেদনকারীরা নম্বর ও ফল দেখতে পাবে। প্রকাশ করবেন?' : 'ফল প্রকাশ বন্ধ করবেন?')) return;
+      get('exampublish', { on: on ? '1' : '0' }).then(function () { loadExam(); });
+    };
+
+    // প্রিন্ট: সাধারণ পাতা
+    function printSheet(html) {
+      $('sheet').innerHTML = html;
+      fitAll($('sheet'));
+      const st = document.createElement('style');
+      st.id = 'pg'; st.textContent = '@page { size: A4; margin: 10mm; }';
+      document.head.appendChild(st);
+      const done = function () { const s = $('pg'); if (s) s.remove(); $('sheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img')).map(function (im) {
+        return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; });
+      });
+      Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
+    }
+    function admitCard(d, x) {
+      const school = (CFG && CFG.school) || ADM.nameFallback;
+      const row = function (k, v, f, cls) { return '<div class="f' + (cls ? ' ' + cls : '') + '" style="flex:' + (f || 1) + '"><span class="k">' + k + '</span><span class="v" data-fit>' + esc(v || '') + '</span></div>'; };
+      const ph = d.photo && /^data:image\//.test(d.photo) ? '<img alt="" src="' + d.photo + '">' : 'ছবি';
+      return '<div class="ac"><div class="h"><div class="lg">' + esc(ADM.logoText) + (ADM.logoUrl ? '<img alt="" src="' + esc(ADM.logoUrl) + '" onerror="this.remove()">' : '') + '</div>' +
+        '<div class="sn"><b data-fit>' + esc(school) + '</b><span>' + esc(ADM.address) + '</span></div></div>' +
+        '<div class="tt">প্রবেশপত্র — ভর্তি পরীক্ষা ' + esc(bn(CFG.year || '')) + '</div>' +
+        '<div class="bd"><div class="ph">' + ph + '</div><div class="fl">' +
+        '<div class="r">' + row('নাম:', d.name, 1) + '</div>' +
+        '<div class="r">' + row('পিতার নাম:', d.father, 1) + '</div>' +
+        '<div class="r">' + row('শ্রেণি:', d.cls, 1.1) + row('জন্ম তারিখ:', bn(d.dob), 1) + '</div>' +
+        '<div class="r">' + row('রোল:', bn(d.roll), 1, 'big') + row('রুম:', bn(d.room), 1, 'big') + row('সিট:', bn(d.seat), 1, 'big') + '</div>' +
+        '<div class="r">' + row('তারিখ:', x.date, 1.4) + row('সময়:', x.time, 1) + '</div>' +
+        (x.venue ? '<div class="r">' + row('স্থান:', x.venue, 1) + '</div>' : '') +
+        '<div class="nt">' + esc(x.note || '') + ' (আবেদন নং ' + esc(d.appNo) + ' • পূর্ণমান ' + esc(bn(x.total)) + ')</div></div></div>' +
+        '<div class="sg"><div>পরীক্ষার্থীর স্বাক্ষর</div><div>প্রধান শিক্ষকের স্বাক্ষর</div></div></div>';
+    }
+    function chunk(a, n) { const o = []; for (let i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; }
+    $('exCards').onclick = function () {
+      const list = exFiltered().filter(function (a) { return a.roll; });
+      if (!list.length) { exSay('রোল পাওয়া কেউ নেই'); return; }
+      const groups = chunk(list.map(function (a) { return a.appNo; }), 10), cards = [];
+      let n = 0, exam = EX.exam;
+      (function next() {
+        if (n >= groups.length) {
+          cards.sort(function (a, b) { return Number(a.roll) - Number(b.roll); });
+          exSay(''); printSheet(chunk(cards, 3).map(function (g) { return '<div class="apg">' + g.map(function (d) { return admitCard(d, exam); }).join('') + '</div>'; }).join(''));
+          return;
+        }
+        exSay('প্রবেশপত্র তৈরি হচ্ছে... ' + bn(Math.min(n * 10, list.length)) + '/' + bn(list.length));
+        get('examcards', { nos: groups[n].join(',') }).then(function (r) {
+          if (!r || !r.ok) { exSay((r && r.msg) || 'আনা যায়নি'); return; }
+          cards.push.apply(cards, r.cards); exam = r.exam || exam; n++; next();
+        }).catch(function () { exSay('সংযোগ ত্রুটি'); });
+      })();
+    };
+    function tablePage(title, sub, head, rows) {
+      return '<div class="tp"><h2>' + esc(title) + '</h2><div class="s">' + esc(sub) + '</div><table><tr>' +
+        head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr>' + rows.join('') + '</table></div>';
+    }
+    $('exSeats').onclick = function () {
+      const list = exFiltered().filter(function (a) { return a.roll; });
+      if (!list.length) { exSay('রোল পাওয়া কেউ নেই'); return; }
+      const rooms = {};
+      list.forEach(function (a) { (rooms[a.room] = rooms[a.room] || []).push(a); });
+      const x = EX.exam, school = CFG.school || ADM.nameFallback;
+      printSheet(Object.keys(rooms).sort(function (a, b) { return a - b; }).map(function (rm) {
+        const arr = rooms[rm].sort(function (a, b) { return Number(a.seat) - Number(b.seat); });
+        return tablePage(school, 'ভর্তি পরীক্ষা ' + bn(CFG.year || '') + ' — রুম ' + bn(rm) + ' — ' + arr[0].cls + (x.date ? ' — ' + x.date : '') + (x.time ? ', ' + x.time : ''),
+          ['সিট', 'রোল', 'পরীক্ষার্থীর নাম', 'পিতার নাম', 'স্বাক্ষর'],
+          arr.map(function (a) { return '<tr><td class="c">' + bn(a.seat) + '</td><td class="c">' + bn(a.roll) + '</td><td>' + esc(a.name) + '</td><td>' + esc(a.father) + '</td><td style="width:32mm"></td></tr>'; }));
+      }).join(''));
+    };
+    $('exMerit').onclick = function () {
+      const list = exFiltered().filter(function (a) { return a.marks !== ''; });
+      if (!list.length) { exSay('কারো নম্বর তোলা হয়নি'); return; }
+      const by = {};
+      list.forEach(function (a) { (by[a.cls] = by[a.cls] || []).push(a); });
+      const school = CFG.school || ADM.nameFallback, order = EX.classes || [];
+      printSheet(Object.keys(by).sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); }).map(function (c) {
+        const arr = by[c].sort(function (a, b) { return Number(a.merit) - Number(b.merit); });
+        return tablePage(school, 'ভর্তি পরীক্ষা ' + bn(CFG.year || '') + ' — মেধাতালিকা — ' + c + ' (পূর্ণমান ' + bn(EX.exam.total) + ', পাশ ' + bn(EX.exam.pass) + ')',
+          ['ক্রম', 'রোল', 'নাম', 'পিতার নাম', 'নম্বর', 'ফল'],
+          arr.map(function (a) { return '<tr><td class="c">' + bn(a.merit) + '</td><td class="c">' + bn(a.roll) + '</td><td>' + esc(a.name) + '</td><td>' + esc(a.father) + '</td><td class="c">' + bn(a.marks) + '</td><td class="c">' + (a.result === 'Pass' ? 'পাস' : 'ফেল') + '</td></tr>'; }));
+      }).join(''));
+    };
+
     function closeModal() { $('modal').style.display = 'none'; }
     $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
   </script>
