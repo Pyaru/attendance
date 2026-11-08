@@ -13,7 +13,8 @@
     .wrap { padding: 12px; max-width: 520px; margin: 0 auto; }
     .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
     label { display: block; font-size: 14px; color: #4b5563; margin: 10px 0 4px; }
-    input { width: 100%; padding: 12px; font-size: 17px; border: 1px solid #d1d5db; border-radius: 10px; }
+    input:not([type=radio]):not([type=checkbox]), select, textarea { width: 100%; padding: 12px; font-size: 17px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    textarea { min-height: 70px; }
     button { padding: 12px 16px; font-size: 16px; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
     button.sec { background: #e5e7eb; color: #111827; }
     button.full { width: 100%; margin-top: 14px; }
@@ -50,15 +51,46 @@
     ul.list li { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; }
     ul.list li:last-child { border: 0; }
     .note { font-size: 12px; color: #6b7280; text-align: center; margin: 4px 0 18px; }
+
+    .modes { display: flex; gap: 6px; max-width: 520px; margin: 10px auto 0; padding: 0 12px; }
+    .modes button { flex: 1; padding: 10px 4px; font-size: 14px; background: #e5e7eb; color: #374151; font-weight: 600; }
+    .modes button.on { background: #0b6b4f; color: #fff; }
+    .sec2 { display: none; }
+    .card h2.t { margin: 0 0 4px; font-size: 16px; color: #0b6b4f; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .opts label { display: flex; align-items: center; gap: 6px; padding: 9px 14px; border: 1px solid #d1d5db; border-radius: 999px; font-size: 15px; background: #fff; margin: 0; color: #111827; }
+    .opts input, .chk input { width: 18px; height: 18px; }
+    .chk { display: flex; align-items: center; gap: 8px; color: #111827; }
+    .req { color: #b91c1c; }
+    .bad { border-color: #dc2626 !important; background: #fef2f2 !important; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .pbox { display: flex; gap: 12px; align-items: center; }
+    #a_pv { width: 90px; height: 120px; border: 2px dashed #9ca3af; border-radius: 10px; background: #f3f4f6 center/cover no-repeat; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b7280; text-align: center; flex: none; }
+    .pbox .b2 { flex: 1; display: grid; gap: 8px; }
+    .pbox button { padding: 10px; font-size: 15px; }
+    .big { font-size: 28px; font-weight: 700; color: #0b6b4f; text-align: center; margin: 8px 0; letter-spacing: .04em; }
+    .badge { display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 16px; font-weight: 700; background: #dbeafe; color: #1e40af; }
+    .badge.Selected, .badge.Admitted { background: #d1fae5; color: #065f46; }
+    .badge.Exam { background: #fef3c7; color: #92400e; }
+    .badge.Waiting { background: #ede9fe; color: #5b21b6; }
+    .badge.Rejected, .badge.Problem { background: #fee2e2; color: #991b1b; }
+    .msgbox { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 10px 12px; border-radius: 8px; margin-top: 12px; font-size: 15px; }
   </style>
 </head>
 <body>
   <header>
     <h1 id="school">অভিভাবক পোর্টাল</h1>
-    <small>সন্তানের উপস্থিতি দেখুন</small>
+    <small>সন্তানের উপস্থিতি দেখুন · ভর্তির আবেদন করুন</small>
   </header>
+  <div class="modes">
+    <button id="m_att" class="on" onclick="mode('att')">উপস্থিতি</button>
+    <button id="m_apply" onclick="mode('apply')">নতুন আবেদন</button>
+    <button id="m_check" onclick="mode('check')">আবেদনের অবস্থা</button>
+  </div>
 
   <div class="wrap">
+   <div id="att">
     <div id="login" class="card">
       <label for="phone">অভিভাবকের ফোন নম্বর</label>
       <input id="phone" type="tel" inputmode="numeric" placeholder="যেমন 01XXXXXXXXX" autocomplete="tel">
@@ -90,6 +122,32 @@
       <div class="note">স্কুল দিন বলতে যেদিন স্কুলে উপস্থিতি নেওয়া হয়েছে।</div>
       <button class="sec full" onclick="logout()">বের হোন</button>
     </div>
+   </div>
+
+   <div id="apply" class="sec2"><div id="a_closed" class="card" style="display:none;background:#fef3c7;color:#92400e;text-align:center">ভর্তির আবেদন এখন বন্ধ আছে। অফিসে যোগাযোগ করুন।</div>
+    <form id="a_form" autocomplete="off" novalidate></form>
+    <div id="a_done" class="card" style="display:none;text-align:center">
+      <h2 class="t">আবেদন জমা হয়েছে</h2>
+      <div>আপনার আবেদন নম্বর</div>
+      <div class="big" id="a_no"></div>
+      <div class="ov" id="a_donenote"></div>
+      <button class="full" onclick="mode('check')">আবেদনের অবস্থা দেখুন</button>
+      <button class="sec full" onclick="againForm()">আরেকটি আবেদন</button>
+    </div>
+   </div>
+
+   <div id="check" class="sec2">
+    <div class="card">
+      <h2 class="t">আবেদনের অবস্থা</h2>
+      <label for="c_no">আবেদন নম্বর</label>
+      <input id="c_no" type="text" placeholder="যেমন A-2027-0001" autocomplete="off">
+      <label for="c_mob">আবেদনে দেওয়া মোবাইল নম্বর</label>
+      <input id="c_mob" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX">
+      <button class="full" onclick="doCheck()">দেখুন</button>
+      <div id="c_err" style="color:#991b1b;margin-top:12px;font-size:15px"></div>
+      <div id="c_res"></div>
+    </div>
+   </div>
   </div>
 
   <script>
@@ -222,6 +280,153 @@
         if (j && j.ok) open_(j, sv.p, sv.k); else logout();
       }).catch(function () {});
     })();
+
+    // ================= ভর্তির আবেদন =================
+    let CFG = { open: true, classes: [], residence: [], year: '' }, aPhoto = '';
+    function mode(m) {
+      ['att', 'apply', 'check'].forEach(function (k) {
+        document.getElementById(k).style.display = k === m ? 'block' : 'none';
+        document.getElementById('m_' + k).className = k === m ? 'on' : '';
+      });
+      if (m === 'check') { const sv = lastApp(); if (sv) { if (!$v('c_no')) document.getElementById('c_no').value = sv.no; if (!$v('c_mob')) document.getElementById('c_mob').value = sv.mob; } }
+      window.scrollTo(0, 0);
+    }
+    function $i(id) { return document.getElementById(id); }
+    function $v(id) { return $i(id).value.trim(); }
+    function lastApp() { try { return JSON.parse(localStorage.getItem('lastApp') || 'null'); } catch (e) { return null; } }
+    function enD(s) { return String(s == null ? '' : s).replace(/[০-৯]/g, function (d) { return BN.indexOf(d); }); }
+    function mobOk(v) { let d = enD(v).replace(/\D/g, ''); if (d.length === 13 && d.indexOf('88') === 0) d = d.slice(2); return /^01\d{9}$/.test(d); }
+    function post(body) {
+      return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+    }
+    function inp(id, label, o) {
+      o = o || {};
+      return '<div><label for="a_' + id + '">' + label + (o.req ? ' <span class="req">*</span>' : '') + '</label>' +
+        (o.area ? '<textarea id="a_' + id + '" maxlength="300"' + (o.ph ? ' placeholder="' + o.ph + '"' : '') + '></textarea>'
+          : '<input id="a_' + id + '" type="' + (o.type || 'text') + '"' + (o.num ? ' inputmode="numeric"' : '') + ' maxlength="' + (o.max || 80) + '"' + (o.ph ? ' placeholder="' + o.ph + '"' : '') + '>') + '</div>';
+    }
+    function buildForm() {
+      const co = CFG.classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
+      const blood = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(function (b) { return '<option>' + b + '</option>'; }).join('');
+      const res = CFG.residence && CFG.residence.length ? '<label>আবাসিক / অনাবাসিক <span class="req">*</span></label><div class="opts" id="a_resO">' +
+        CFG.residence.map(function (r) { return '<label><input type="radio" name="a_res" value="' + esc(r) + '"> ' + esc(r) + '</label>'; }).join('') + '</div>' : '';
+      $i('a_form').innerHTML =
+        '<div class="card"><h2 class="t">আবেদনের তথ্য' + (CFG.year ? ' — শিক্ষাবর্ষ ' + bn(CFG.year) : '') + '</h2>' +
+        '<label>আবেদনের ধরন</label><div class="opts"><label><input type="radio" name="a_type" value="নতুন" checked> নতুন</label><label><input type="radio" name="a_type" value="পুরাতন"> পুরাতন</label></div>' + res +
+        '<label for="a_cls">কোন শ্রেণিতে ভর্তি হতে চান <span class="req">*</span></label><select id="a_cls"><option value="">— শ্রেণি বাছুন —</option>' + co + '</select></div>' +
+        '<div class="card"><h2 class="t">শিক্ষার্থীর তথ্য</h2>' + inp('name', 'শিক্ষার্থীর নাম', { req: 1 }) +
+        '<label>ছেলে / মেয়ে <span class="req">*</span></label><div class="opts" id="a_genO"><label><input type="radio" name="a_gender" value="ছেলে"> ছেলে</label><label><input type="radio" name="a_gender" value="মেয়ে"> মেয়ে</label></div>' +
+        '<div class="two">' + inp('dob', 'জন্ম তারিখ', { type: 'date', req: 1 }) +
+        '<div><label for="a_blood">রক্তের গ্রুপ</label><select id="a_blood"><option value="">জানি না</option>' + blood + '</select></div></div>' +
+        inp('breg', 'জন্ম নিবন্ধন নম্বর', { num: 1, max: 30 }) +
+        '<label>শিক্ষার্থীর ছবি</label><div class="pbox"><div id="a_pv">ছবি<br>নেই</div><div class="b2">' +
+        '<button type="button" class="sec" onclick="$i(\'a_fc\').click()">ছবি তুলুন</button><button type="button" class="sec" onclick="$i(\'a_fg\').click()">গ্যালারি থেকে</button>' +
+        '<button type="button" class="sec" id="a_pd" style="display:none" onclick="photoDel()">মুছুন</button></div></div>' +
+        '<input type="file" id="a_fc" accept="image/*" capture="environment" style="display:none"><input type="file" id="a_fg" accept="image/*" style="display:none">' +
+        '<div class="ov" style="text-align:left">পাসপোর্ট মাপের পরিষ্কার ছবি দিন। ছবি ছাড়াও জমা দেওয়া যাবে।</div></div>' +
+        '<div class="card"><h2 class="t">পিতার তথ্য</h2>' + inp('father', 'পিতার নাম', { req: 1 }) +
+        '<div class="two">' + inp('focc', 'পেশা', { max: 60 }) + inp('fmob', 'মোবাইল', { type: 'tel', num: 1, max: 16, ph: '01XXXXXXXXX' }) + '</div>' + inp('fnid', 'এনআইডি নম্বর', { num: 1, max: 20 }) + '</div>' +
+        '<div class="card"><h2 class="t">মাতার তথ্য</h2>' + inp('mother', 'মাতার নাম') +
+        '<div class="two">' + inp('mocc', 'পেশা', { max: 60 }) + inp('mmob', 'মোবাইল', { type: 'tel', num: 1, max: 16, ph: '01XXXXXXXXX' }) + '</div>' + inp('mnid', 'এনআইডি নম্বর', { num: 1, max: 20 }) + '</div>' +
+        '<div class="card"><h2 class="t">অভিভাবক</h2><label class="chk"><input type="checkbox" id="a_gchk"> অভিভাবক পিতা-মাতা থেকে আলাদা কেউ</label>' +
+        '<div id="a_gw" style="display:none">' + inp('guard', 'অভিভাবকের নাম') + '<div class="two">' + inp('rel', 'সম্পর্ক', { max: 30 }) + inp('gocc', 'পেশা', { max: 60 }) + '</div>' +
+        '<div class="two">' + inp('gmob', 'মোবাইল', { type: 'tel', num: 1, max: 16, ph: '01XXXXXXXXX' }) + inp('gnid', 'এনআইডি নম্বর', { num: 1, max: 20 }) + '</div></div></div>' +
+        '<div class="card"><h2 class="t">ঠিকানা ও পূর্বের প্রতিষ্ঠান</h2>' + inp('perm', 'স্থায়ী ঠিকানা', { area: 1, ph: 'গ্রাম/মহল্লা, ডাকঘর, উপজেলা, জেলা' }) +
+        '<label class="chk" style="margin-top:12px"><input type="checkbox" id="a_same" checked> বর্তমান ঠিকানা স্থায়ী ঠিকানার মতোই</label>' +
+        '<div id="a_tw" style="display:none">' + inp('temp', 'বর্তমান / অস্থায়ী ঠিকানা', { area: 1 }) + '</div>' +
+        inp('prev', 'পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা (থাকলে)', { max: 200 }) + '</div>' +
+        '<div class="hp"><input type="text" id="a_hp" tabindex="-1" autocomplete="off"></div>' +
+        '<div id="a_err" style="display:none;color:#991b1b;background:#fee2e2;border-radius:10px;padding:10px;font-size:15px"></div>' +
+        '<button type="submit" class="full" id="a_btn">আবেদন জমা দিন</button>' +
+        '<div class="note">জমা দেওয়ার পর একটি আবেদন নম্বর পাবেন। এই পেজেই "আবেদনের অবস্থা" থেকে নির্বাচিত/অপেক্ষমাণ/বাতিল জানতে পারবেন।</div>';
+      $i('a_gchk').onchange = function () { $i('a_gw').style.display = this.checked ? 'block' : 'none'; };
+      $i('a_same').onchange = function () { $i('a_tw').style.display = this.checked ? 'none' : 'block'; };
+      $i('a_fc').onchange = function () { photoIn(this.files[0]); this.value = ''; };
+      $i('a_fg').onchange = function () { photoIn(this.files[0]); this.value = ''; };
+      $i('a_form').addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+      $i('a_form').addEventListener('change', function (e) { e.target.classList.remove('bad'); });
+    }
+    function photoIn(file) {
+      if (!file) return;
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        const W = 300, H = 400, c = document.createElement('canvas'); c.width = W; c.height = H;
+        const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+        const r = Math.max(W / img.width, H / img.height), w = img.width * r, h = img.height * r;
+        x.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+        aPhoto = c.toDataURL('image/jpeg', 0.85);
+        $i('a_pv').style.backgroundImage = 'url(' + aPhoto + ')'; $i('a_pv').textContent = ''; $i('a_pd').style.display = 'block';
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = function () { aErr('ছবিটি পড়া যায়নি, অন্য ছবি দিন।'); URL.revokeObjectURL(url); };
+      img.src = url;
+    }
+    function photoDel() { aPhoto = ''; $i('a_pv').style.backgroundImage = ''; $i('a_pv').innerHTML = 'ছবি<br>নেই'; $i('a_pd').style.display = 'none'; }
+    function aErr(t) { const e = $i('a_err'); e.textContent = t; e.style.display = t ? 'block' : 'none'; }
+    function rad(n) { const r = document.querySelector('input[name=' + n + ']:checked'); return r ? r.value : ''; }
+    function collect() {
+      const g = $i('a_gchk').checked, v = function (k) { return $v('a_' + k); };
+      return {
+        type: rad('a_type') || 'নতুন', res: rad('a_res'), cls: v('cls'), name: v('name'), gender: rad('a_gender'), blood: v('blood'), dob: v('dob'), breg: v('breg'),
+        father: v('father'), focc: v('focc'), fnid: v('fnid'), fmob: v('fmob'), mother: v('mother'), mocc: v('mocc'), mnid: v('mnid'), mmob: v('mmob'),
+        guard: g ? v('guard') : '', rel: g ? v('rel') : '', gocc: g ? v('gocc') : '', gnid: g ? v('gnid') : '', gmob: g ? v('gmob') : '',
+        perm: v('perm'), temp: $i('a_same').checked ? v('perm') : v('temp'), prev: v('prev'), photo: aPhoto, hp: v('hp')
+      };
+    }
+    function checkForm(d) {
+      ['cls', 'name', 'dob', 'father', 'fmob', 'mmob', 'gmob'].forEach(function (k) { $i('a_' + k).classList.remove('bad'); });
+      let first = '', msg = '';
+      function bad(k, m) { $i('a_' + k).classList.add('bad'); if (!first) { first = 'a_' + k; msg = m; } }
+      if (!d.cls) bad('cls', 'শ্রেণি বেছে নিন');
+      if (d.name.length < 2) bad('name', 'শিক্ষার্থীর নাম লিখুন');
+      if (!d.gender && !first) { first = 'a_genO'; msg = 'ছেলে না মেয়ে বেছে নিন'; }
+      if (!d.dob || new Date(d.dob).getTime() > Date.now()) bad('dob', 'জন্ম তারিখ সঠিকভাবে দিন');
+      if (d.father.length < 2 && d.guard.length < 2) bad('father', 'পিতার নাম (অথবা অভিভাবকের নাম) লিখুন');
+      if (CFG.residence && CFG.residence.length && !d.res && !first) { first = 'a_resO'; msg = 'আবাসিক/অনাবাসিক বেছে নিন'; }
+      if (d.fmob && !mobOk(d.fmob)) bad('fmob', 'পিতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (d.mmob && !mobOk(d.mmob)) bad('mmob', 'মাতার মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (d.gmob && !mobOk(d.gmob)) bad('gmob', 'অভিভাবকের মোবাইল নম্বর সঠিক নয় (১১ সংখ্যা)');
+      if (!first && !mobOk(d.fmob) && !mobOk(d.mmob) && !mobOk(d.gmob)) bad('fmob', 'অন্তত একটি সঠিক মোবাইল নম্বর দিন');
+      if (first) { aErr(msg); const el = $i(first); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+      aErr(''); return true;
+    }
+    function againForm() { aPhoto = ''; buildForm(); $i('a_done').style.display = 'none'; $i('a_form').style.display = 'block'; window.scrollTo(0, 0); }
+    $i('a_form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const d = collect(); if (!checkForm(d)) return;
+      const b = $i('a_btn'); b.disabled = true; b.textContent = 'জমা হচ্ছে...';
+      post(Object.assign({ action: 'apply' }, d)).then(function (j) {
+        b.disabled = false; b.textContent = 'আবেদন জমা দিন';
+        if (!j || !j.ok) { aErr((j && j.msg) || 'জমা হয়নি, আবার চেষ্টা করুন'); return; }
+        const mob = d.fmob || d.mmob || d.gmob;
+        try { localStorage.setItem('lastApp', JSON.stringify({ no: j.appNo, mob: mob })); } catch (x) {}
+        $i('a_no').textContent = j.appNo;
+        $i('a_donenote').textContent = (j.dup ? 'এই আবেদন আগেই জমা হয়েছিল। ' : '') + 'নম্বরটি লিখে বা ছবি তুলে রাখুন। অফিস থেকে যোগাযোগ করা হবে।';
+        $i('a_form').style.display = 'none'; $i('a_done').style.display = 'block'; window.scrollTo(0, 0);
+      }).catch(function () { b.disabled = false; b.textContent = 'আবেদন জমা দিন'; aErr('ইন্টারনেট সংযোগ ত্রুটি। আবার চেষ্টা করুন।'); });
+    });
+
+    // আবেদনের অবস্থা
+    function doCheck() {
+      const no = $v('c_no'), mob = $v('c_mob'); $i('c_err').textContent = ''; $i('c_res').innerHTML = '';
+      if (!no || !mob) { $i('c_err').textContent = 'আবেদন নম্বর ও মোবাইল দিন'; return; }
+      $i('c_err').textContent = 'দেখা হচ্ছে...';
+      fetch(API_URL + '?' + new URLSearchParams({ action: 'appcheck', no: no, mobile: mob }).toString()).then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.ok) { $i('c_err').textContent = (j && j.msg) || 'পাওয়া যায়নি'; return; }
+        $i('c_err').textContent = '';
+        $i('c_res').innerHTML = '<div style="margin-top:14px"><b style="font-size:18px">' + esc(j.name) + '</b><div class="ov" style="text-align:left">' +
+          esc(j.appNo) + ' • ' + esc(j.cls) + ' • জমার সময়: ' + esc(j.submitted) + '</div>' +
+          '<div style="margin-top:10px"><span class="badge ' + esc(j.status) + '">' + esc(j.statusLabel) + '</span></div>' +
+          (j.note ? '<div class="msgbox"><b>অফিসের বার্তা:</b><br>' + esc(j.note) + '</div>' : '') + '</div>';
+      }).catch(function () { $i('c_err').textContent = 'সংযোগ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।'; });
+    }
+
+    fetch(API_URL + '?action=appconfig').then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok) { CFG = j; }
+      buildForm();
+      $i('a_closed').style.display = CFG.open ? 'none' : 'block'; $i('a_form').style.display = CFG.open ? 'block' : 'none';
+    }).catch(function () { buildForm(); });
+    if (location.hash === '#apply') mode('apply'); else if (location.hash === '#check') mode('check');
   </script>
 </body>
 </html>
