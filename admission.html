@@ -218,12 +218,16 @@
               <button class="sec" id="exMerit">মেধাতালিকা প্রিন্ট</button>
               <button class="sec" id="exPub">ফল প্রকাশ</button>
             </div>
+            <div class="btns">
+              <button id="exAdmit">নির্বাচিতদের ভর্তি নিশ্চিত করুন</button>
+            </div>
             <div class="bar" style="margin-top:12px">
               <input type="text" id="eq" placeholder="নাম / রোল খুঁজুন">
               <select id="eCls"><option value="">সব শ্রেণি</option></select>
             </div>
             <div id="exMsg" class="note"></div>
           </div>
+          <div class="panel" id="admRes" style="display:none"></div>
           <div class="panel" id="exList"></div>
         </div>
       </div>
@@ -241,7 +245,7 @@
     const ADM = {
       nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
       logoText: 'ফ',
-      logoUrl: '',                                   // যেমন 'logo.png'
+      logoUrl: 'logo.png',
       address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
       phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
       signsTop: ['পিতা/মাতার স্বাক্ষর', 'অভিভাবকের স্বাক্ষর'],
@@ -446,7 +450,13 @@
           '<label class="l">অবস্থা</label><select id="mSt">' + stOpts + '</select>' +
           '<label class="l">বার্তা (আবেদনকারী অভিভাবক পোর্টালে দেখতে পাবেন)</label><input type="text" id="mNote" maxlength="300" value="' + esc(d.note) + '">' +
           '<div id="mMsg" class="note"></div>' +
-          '<div class="btns"><button id="mSave">সংরক্ষণ</button><button class="warn" id="mPrint">ফর্ম প্রিন্ট</button><button class="sec" id="mClose">বন্ধ</button></div>';
+          '<div class="btns"><button id="mSave">সংরক্ষণ</button><button class="warn" id="mPrint">ফর্ম প্রিন্ট</button><button class="sec" id="mClose">বন্ধ</button></div>' +
+          (d.status === 'Selected' ? '<div class="btns"><button id="mAdmit">ভর্তি নিশ্চিত করুন (Students-এ যোগ)</button></div>' : '');
+        if ($('mAdmit')) $('mAdmit').onclick = function () {
+          if (!confirm(d.name + ' কে Students শিটে ভর্তি করবেন?')) return;
+          $('mMsg').textContent = 'ভর্তি করা হচ্ছে...';
+          get('appadmit', { no: d.appNo }).then(function (r) { closeModal(); admitDone(r); view('E'); });
+        };
         $('mClose').onclick = closeModal;
         $('mPrint').onclick = function () { printForms([curApp], false); };
         $('mSave').onclick = function () {
@@ -621,6 +631,34 @@
           arr.map(function (a) { return '<tr><td class="c">' + bn(a.merit) + '</td><td class="c">' + bn(a.roll) + '</td><td>' + esc(a.name) + '</td><td>' + esc(a.father) + '</td><td class="c">' + bn(a.marks) + '</td><td class="c">' + (a.result === 'Pass' ? 'পাস' : 'ফেল') + '</td></tr>'; }));
       }).join(''));
     };
+
+
+    // ভর্তি নিশ্চিত → Students শিট
+    let LASTADM = [];
+    function admitDone(r) {
+      if (r && r.badAdmin) { badAdmin(); return; }
+      if (!r || !r.ok) { exSay((r && r.msg) || 'হয়নি'); return; }
+      LASTADM = r.students;
+      $('admRes').style.display = 'block';
+      $('admRes').innerHTML = '<h2>' + bn(r.count) + ' জন ভর্তি হয়েছে (Students শিটে যোগ হয়েছে)</h2>' +
+        '<div class="note">অভিভাবক পিন এখানেই একবার দেখানো হচ্ছে। স্লিপ প্রিন্ট করে অভিভাবককে দিন। পরে শিটের H কলামেও আছে।</div>' +
+        r.students.map(function (x) { return '<div class="it" style="cursor:default"><div class="m"><b>' + esc(x.name) + '</b><span>আইডি ' + esc(x.id) + ' • ' + esc(x.cls) + ' • রোল ' + bn(x.roll) + ' • পিন ' + esc(x.pin) + '</span></div></div>'; }).join('') +
+        '<div class="btns"><button class="warn" id="admPrint">ভর্তি স্লিপ প্রিন্ট</button></div>';
+      $('admPrint').onclick = printAdmitSlips;
+      exSay(''); loadApps(); loadExam();
+    }
+    $('exAdmit').onclick = function () {
+      if (!confirm('"নির্বাচিত" সবাইকে Students শিটে যোগ করা হবে এবং আইডি/রোল/পিন দেওয়া হবে। চালাবেন?')) return;
+      exSay('ভর্তি করা হচ্ছে...');
+      get('appadmit').then(admitDone).catch(function () { exSay('সংযোগ ত্রুটি, শিট দেখে নিন'); });
+    };
+    function printAdmitSlips() {
+      const school = CFG.school || ADM.nameFallback, order = CFG.classes || [];
+      const arr = LASTADM.slice().sort(function (a, b) { return order.indexOf(a.cls) - order.indexOf(b.cls) || a.roll - b.roll; });
+      printSheet(tablePage(school, 'ভর্তি সম্পন্ন শিক্ষার্থীর তালিকা — শিক্ষাবর্ষ ' + bn(CFG.year || ''),
+        ['আইডি', 'নাম', 'শ্রেণি', 'রোল', 'অভিভাবক মোবাইল', 'পোর্টাল পিন'],
+        arr.map(function (x) { return '<tr><td class="c">' + esc(x.id) + '</td><td>' + esc(x.name) + '</td><td>' + esc(x.cls) + '</td><td class="c">' + bn(x.roll) + '</td><td class="c">' + esc(bn(x.phone)) + '</td><td class="c">' + esc(x.pin) + '</td></tr>'; })));
+    }
 
     function closeModal() { $('modal').style.display = 'none'; }
     $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
