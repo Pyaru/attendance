@@ -4,12 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>হাজিরা স্ক্যানার</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Noto Sans Bengali", sans-serif; background: #f4f6f8; color: #1f2937; }
     header { background: #0b6b4f; color: #fff; padding: 14px 16px 0; }
     header h1 { margin: 0; font-size: 18px; }
     header small { opacity: .85; }
@@ -65,8 +62,8 @@
     <div class="tabs">
       <button id="tabS" onclick="setTab('S')">ছাত্র · QR কার্ড</button>
       <button id="tabT" onclick="setTab('T')">শিক্ষক · চেহারা</button>
+      <button id="tabI" onclick="location.href='idscan.html'">শিক্ষক · কার্ড</button>
       <button id="tabC" onclick="location.href='card.html'">আইডি কার্ড</button>
-      <button id="tabAd" onclick="location.href='admission.html'">ভর্তি আবেদন</button>
     </div>
   </header>
 
@@ -190,7 +187,8 @@
 
     // ================= ছাত্র: QR স্ক্যান =================
     let scanner = null, sBusy = false, lastCode = '', lastTime = 0;
-        // QR স্ক্যানের ক্যামেরা: 'environment' = পেছনের, 'user' = সামনের (পছন্দ ফোনে মনে থাকে)
+
+    // QR স্ক্যানের ক্যামেরা: 'environment' = পেছনের, 'user' = সামনের (পছন্দ ফোনে মনে থাকে)
     let qrFacing = 'environment';
     try { qrFacing = localStorage.getItem('att_cam') === 'user' ? 'user' : 'environment'; } catch (e) {}
     function camLabel() { $('camBtn').textContent = 'ক্যামেরা বদলান (এখন: ' + (qrFacing === 'user' ? 'সামনের' : 'পেছনের') + ')'; }
@@ -200,14 +198,14 @@
       camLabel();
       stopStudent().then(function () { if (tab === 'S') startStudent(); });
     }
-    
+
     function startStudent() {
       if (scanner) return;
       if (!PIN && !askPin()) { showS({ ok: false, type: 'error', msg: 'পিন ছাড়া চলবে না। পেজ রিফ্রেশ দিন।' }); return; }
       loadSummary();
       const s = new Html5Qrcode('reader');
       scanner = s;
-            // স্ক্যান-ঘর ক্যামেরা-পর্দার ৯০% জুড়ে থাকবে (আগে ছিল স্থির ২৪০ পিক্সেল)
+      // স্ক্যান-ঘর ক্যামেরা-পর্দার ৯০% জুড়ে থাকবে (আগে ছিল স্থির ২৪০ পিক্সেল)
       const box = function (w, h) { const m = Math.floor(Math.min(w, h) * 0.9); return { width: m, height: m }; };
       s.start({ facingMode: qrFacing }, { fps: 10, qrbox: box }, onScan, function () {})
         .then(function () {
