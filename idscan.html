@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>শিক্ষক · আইডি কার্ড হাজিরা</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Noto Sans Bengali", sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 14px 16px 0; }
+    header a { color: #fff; font-size: 13px; opacity: .9; text-decoration: none; }
+    header h1 { margin: 4px 0 0; font-size: 18px; }
+    header small { opacity: .85; }
+    .tabs { display: flex; gap: 6px; margin-top: 12px; }
+    .tabs button { flex: 1; padding: 11px 6px; font-size: 15px; border: 0; border-radius: 10px 10px 0 0; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; font-family: inherit; }
+    .tabs button.on { background: #f4f6f8; color: #0b6b4f; font-weight: 700; }
+    .wrap { padding: 12px; max-width: 540px; margin: 0 auto; }
+    .cam { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000; border-radius: 14px; overflow: hidden; }
+    .cam video { width: 100%; height: 100%; object-fit: cover; }
+    .cam .guide { position: absolute; left: 4%; right: 4%; top: 30%; bottom: 6%; border: 3px dashed rgba(255,255,255,.8); border-radius: 10px; pointer-events: none; }
+    .cam .tip { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px; color: #fff; text-align: center; background: linear-gradient(transparent, rgba(0,0,0,.75)); font-size: 15px; }
+    .result { margin: 12px 0; padding: 14px; border-radius: 12px; background: #fff; text-align: center; min-height: 70px; font-size: 16px; }
+    .result .big { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .present { background: #d1fae5 !important; color: #065f46; }
+    .late { background: #fef3c7 !important; color: #92400e; }
+    .out { background: #e0e7ff !important; color: #3730a3; }
+    .duplicate { background: #dbeafe !important; color: #1e40af; }
+    .error { background: #fee2e2 !important; color: #991b1b; }
+    button.b { padding: 12px 16px; font-size: 15px; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; font-family: inherit; }
+    button.sec { background: #374151; } button.red { background: #b91c1c; } button.light { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .5; }
+    .full { width: 100%; margin-bottom: 10px; }
+    select, input[type=text] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 10px; margin-bottom: 10px; background: #fff; font-family: inherit; }
+    .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .hint { font-size: 13px; color: #6b7280; margin: 6px 0 12px; line-height: 1.5; }
+    details summary { cursor: pointer; font-size: 14px; color: #374151; padding: 6px 0; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ স্ক্যানার মেনু</a>
+    <h1 id="school">শিক্ষক · আইডি কার্ড হাজিরা</h1>
+    <small id="today"></small>
+    <div class="tabs">
+      <button id="tabA" class="on" onclick="setTab('A')">হাজিরা</button>
+      <button id="tabE" onclick="setTab('E')">কার্ড নথিভুক্তি</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="cam"><video id="vid" autoplay playsinline muted></video><div class="guide"></div><div class="tip" id="tip">ক্যামেরা বন্ধ</div></div>
+    <button class="b full hidden" id="startBtn" onclick="startCam()" style="margin-top:10px">ক্যামেরা চালু করুন</button>
+
+    <div id="pA">
+      <div class="result" id="res">কার্ডের পেছনের দিক ক্যামেরার সামনে ধরুন — নিচের তিন লাইনের কোডসহ</div>
+    </div>
+
+    <div id="pE" class="hidden">
+      <div class="card" style="margin-top:12px">
+        <label class="hint">শিক্ষক বাছুন</label>
+        <select id="tsel"></select>
+        <div id="found" class="result" style="min-height:0">কার্ড স্ক্যানের অপেক্ষায়...</div>
+        <button class="b full" id="saveBtn" disabled onclick="saveCard()">এই শিক্ষকের নামে কার্ড সংরক্ষণ</button>
+        <button class="b red full" onclick="clearCard()">এই শিক্ষকের কার্ড মুছুন</button>
+        <div class="hint">কার্ডের নম্বর শিটে থাকে না — শুধু গোপন চাবিতে বানানো একমুখী কোড থাকে।</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <details>
+        <summary>স্ক্যান না হলে: ছবি থেকে বা হাতে লিখে দিন</summary>
+        <div style="margin-top:8px">
+          <input type="file" id="file" accept="image/*" capture="environment" class="hidden">
+          <button class="b light full" onclick="document.getElementById('file').click()">কার্ডের ছবি তুলুন / বাছুন</button>
+          <input type="text" id="mDoc" placeholder="কার্ড নম্বর (যেমন 91526697)" autocomplete="off">
+          <input type="text" id="mDob" placeholder="জন্ম তারিখ YYMMDD (যেমন 860922)" inputmode="numeric" maxlength="6" autocomplete="off">
+          <button class="b sec full" onclick="manualGo()">জমা দিন</button>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- MRZ পড়ার যুক্তি: ICAO 9303 চেক ডিজিট মিললে তবেই কার্ড গ্রহণ হয় -->
+  <script id="mrz">
+    var MRZ_W = [7, 3, 1];
+    function mrzVal(c) {
+      if (c === '<') return 0;
+      if (c >= '0' && c <= '9') return c.charCodeAt(0) - 48;
+      if (c >= 'A' && c <= 'Z') return c.charCodeAt(0) - 55;
+      return -1;
+    }
+    function mrzCheck(s) {
+      var t = 0;
+      for (var i = 0; i < s.length; i++) { var v = mrzVal(s.charAt(i)); if (v < 0) return -1; t += v * MRZ_W[i % 3]; }
+      return t % 10;
+    }
+    var MRZ_DIG = { O: '0', Q: '0', D: '0', I: '1', L: '1', Z: '2', S: '5', B: '8', G: '6', T: '7' };
+    var MRZ_AMB = { '0': 'O', 'O': '0', '1': 'I', 'I': '1', '8': 'B', 'B': '8', '5': 'S', 'S': '5', '2': 'Z', 'Z': '2' };
+    function mrzDigits(s) { return s.replace(/[A-Z]/g, function (c) { return MRZ_DIG[c] || c; }); }
+    // শুধু সংখ্যা-ঘর: অক্ষরে ভুল পড়লে সংখ্যায় ঠিক করে
+    function mrzNumField(val, chk) {
+      val = mrzDigits(val); chk = mrzDigits(chk);
+      if (!/^\d+$/.test(val) || !/^\d$/.test(chk)) return null;
+      return mrzCheck(val) === Number(chk) ? val : null;
+    }
+    // নম্বর-ঘর: O/0, I/1, B/8... গুলিয়ে গেলে সর্বোচ্চ ১টি বদলে চেক ডিজিট মেলায়
+    function mrzDocField(val, chk) {
+      chk = mrzDigits(chk);
+      if (!/^\d$/.test(chk)) return null;
+      var want = Number(chk);
+      if (mrzCheck(val) === want) return val;
+      for (var i = 0; i < val.length; i++) {
+        if (!MRZ_AMB[val.charAt(i)]) continue;
+        var v1 = val.substring(0, i) + MRZ_AMB[val.charAt(i)] + val.substring(i + 1);
+        if (mrzCheck(v1) === want) return v1;
+      }
+      return null;
+    }
+    function mrzDateOk(d) {
+      var m = Number(d.substring(2, 4)), day = Number(d.substring(4, 6));
+      return m >= 1 && m <= 12 && day >= 1 && day <= 31;
+    }
+    function mrzBuild(docRaw, docChk, dobRaw, dobChk, expRaw, expChk) {
+      var doc = mrzDocField(docRaw, docChk);
+      var dob = mrzNumField(dobRaw, dobChk);
+      var exp = mrzNumField(expRaw, expChk);
+      if (!doc || !dob || !exp || !mrzDateOk(dob) || !mrzDateOk(exp)) return null;
+      doc = doc.replace(/</g, '');
+      if (doc.length < 5) return null;
+      return { doc: doc, dob: dob, exp: exp };
+    }
+    // TD1 (৩×৩০, আইডি কার্ড)
+    function mrzTD1(l1, l2) {
+      // OCR প্রায়ই শেষের '<' চিহ্নগুলো ফেলে দেয়; দরকারি ঘরগুলো প্রথম ১৫ অক্ষরেই, তাই ১৫+ হলেই চলে
+      if (l1.length < 15 || l2.length < 15) return null;
+      if (l1.charAt(14) === '<') return null;
+      return mrzBuild(l1.substring(5, 14), l1.charAt(14), l2.substring(0, 6), l2.charAt(6), l2.substring(8, 14), l2.charAt(14));
+    }
+    // TD3 (২×৪৪, পাসপোর্ট)
+    function mrzTD3(l1, l2) {
+      if (l1.length !== 44 || l2.length !== 44) return null;
+      return mrzBuild(l2.substring(0, 9), l2.charAt(9), l2.substring(13, 19), l2.charAt(19), l2.substring(21, 27), l2.charAt(27));
+    }
+    // OCR-এর লেখা থেকে MRZ খোঁজা
+    function findMrz(text) {
+      var lines = String(text || '').toUpperCase().split(/\r?\n/).map(function (l) {
+        return l.replace(/\s+/g, '').replace(/[«‹]/g, '<').replace(/[^A-Z0-9<]/g, '<');
+      }).filter(function (l) { return l.length >= 15; });
+      for (var i = 0; i < lines.length; i++) {
+        for (var j = i + 1; j < Math.min(lines.length, i + 3); j++) {
+          var r = mrzTD1(lines[i], lines[j]) || mrzTD3(lines[i], lines[j]);
+          if (r) return r;
+        }
+      }
+      return null;
+    }
+  </script>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE';
+    const OCR_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+    const OCR_JS2 = 'https://unpkg.com/tesseract.js@5.1.1/dist/tesseract.min.js';
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+    let lastKey = '', seen = 0, PIN = '', ADMIN = '', tab = 'A', stream = null, worker = null, running = false, lastMrz = null, TEACHERS = [];
+    try { PIN = localStorage.getItem('att_pin') || ''; } catch (e) {}
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    $('today').textContent = new Date().toLocaleDateString('bn-BD', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    function askPin() {
+      const p = prompt('স্ক্যানার পিন দিন');
+      if (p && p.trim()) { PIN = p.trim(); try { localStorage.setItem('att_pin', PIN); } catch (e) {} }
+      return !!PIN;
+    }
+    function askAdmin() {
+      const p = prompt('অ্যাডমিন পিন দিন');
+      if (p && p.trim()) { ADMIN = p.trim(); try { sessionStorage.setItem('card_admin', ADMIN); } catch (e) {} }
+      return !!ADMIN;
+    }
+    function post(obj) {
+      return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(obj) }).then(function (r) { return r.json(); });
+    }
+    function beep(ok) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)(), o = ctx.createOscillator();
+        o.frequency.value = ok ? 880 : 220; o.connect(ctx.destination); o.start();
+        setTimeout(function () { o.stop(); ctx.close(); }, ok ? 120 : 350);
+      } catch (e) {}
+    }
+    function setTip(t) { $('tip').textContent = t; }
+
+    function setTab(t) {
+      tab = t;
+      $('pA').classList.toggle('hidden', t !== 'A'); $('pE').classList.toggle('hidden', t !== 'E');
+      $('tabA').className = t === 'A' ? 'on' : ''; $('tabE').className = t === 'E' ? 'on' : '';
+      if (t === 'E') loadTeachers();
+    }
+
+    // ---------- OCR ----------
+    function loadScript(src) {
+      return new Promise(function (res, rej) { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+    }
+    async function ensureOcr() {
+      if (worker) return worker;
+      setTip('লেখা পড়ার মডেল লোড হচ্ছে (প্রথমবার একটু সময় লাগে)...');
+      if (!window.Tesseract) { try { await loadScript(OCR_JS); } catch (e) { await loadScript(OCR_JS2); } }
+      worker = await Tesseract.createWorker('eng');
+      await worker.setParameters({ tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<', tessedit_pageseg_mode: '6' });
+      return worker;
+    }
+    function grabFrame() {
+      const v = $('vid'), vw = v.videoWidth, vh = v.videoHeight;
+      if (!vw) return null;
+      const sy = Math.floor(vh * 0.3), sh = vh - sy, scale = Math.min(1, 1500 / vw);
+      const c = document.createElement('canvas'); c.width = Math.round(vw * scale); c.height = Math.round(sh * scale);
+      const x = c.getContext('2d'); x.filter = 'grayscale(1) contrast(1.7)';
+      x.drawImage(v, 0, sy, vw, sh, 0, 0, c.width, c.height);
+      return c;
+    }
+    async function startCam() {
+      $('startBtn').classList.add('hidden');
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+        $('vid').srcObject = stream; await $('vid').play().catch(function () {});
+      } catch (e) { setTip('ক্যামেরা চালু হয়নি'); $('startBtn').classList.remove('hidden'); return; }
+      try { await ensureOcr(); } catch (e) { setTip('লেখা পড়ার মডেল লোড হয়নি — ইন্টারনেট দেখুন বা হাতে লিখুন'); return; }
+      running = true; loop();
+    }
+    async function loop() {
+      setTip('কার্ডের নিচের তিন লাইন ফ্রেমের ভেতরে রাখুন');
+      while (running) {
+        if (document.hidden) { await sleep(800); continue; }
+        const c = grabFrame();
+        if (c) {
+          let text = '';
+          try { text = (await worker.recognize(c)).data.text; } catch (e) {}
+          const r = findMrz(text);
+          // একই কোড পরপর কয়েকবার (হাজিরায় ২, নথিভুক্তিতে ৩) পড়া গেলে তবেই গ্রহণ — ভুল পড়া ঠেকাতে
+          const key = r ? r.doc + '|' + r.dob : '';
+          if (r && key === lastKey) seen++; else { seen = r ? 1 : 0; lastKey = key; }
+          if (r && seen >= (tab === 'E' ? 3 : 2)) { lastKey = ''; seen = 0; running = false; await onCard(r); if (stream) { running = true; setTip('পরের কার্ড দেখান'); } continue; }
+        }
+        await sleep(250);
+      }
+    }
+    // ছবি থেকে একবার পড়া
+    $('file').addEventListener('change', async function () {
+      const f = this.files[0]; this.value = ''; if (!f) return;
+      setTip('ছবি পড়া হচ্ছে...');
+      try {
+        await ensureOcr();
+        const bmp = await createImageBitmap(f), scale = Math.min(1, 2000 / bmp.width);
+        const c = document.createElement('canvas'); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+        const x = c.getContext('2d'); x.filter = 'grayscale(1) contrast(1.6)'; x.drawImage(bmp, 0, 0, c.width, c.height);
+        const r = findMrz((await worker.recognize(c)).data.text);
+        if (r) await onCard(r); else show({ type: 'error', msg: 'কোড পড়া যায়নি — আলো ঠিক রেখে কাছ থেকে আবার তুলুন, অথবা হাতে লিখুন' });
+      } catch (e) { show({ type: 'error', msg: 'ছবি পড়া যায়নি' }); }
+      setTip(stream ? 'কার্ডের নিচের তিন লাইন ফ্রেমের ভেতরে রাখুন' : 'ক্যামেরা বন্ধ');
+    });
+    function manualGo() {
+      const doc = $('mDoc').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''), dob = $('mDob').value.replace(/\D/g, '');
+      if (doc.length < 5 || dob.length !== 6) { show({ type: 'error', msg: 'নম্বর ও ৬ সংখ্যার জন্ম তারিখ দিন' }); return; }
+      onCard({ doc: doc, dob: dob });
+    }
+
+    // ---------- কার্ড পাওয়া গেলে ----------
+    function show(r) {
+      const box = tab === 'A' ? $('res') : $('found');
+      box.className = 'result ' + (r.type || '');
+      let h = '<div class="big">' + esc(r.msg || '') + '</div>';
+      if (r.name) h += '<div style="font-size:18px">' + esc(r.name) + (r.desig ? ' — ' + esc(r.desig) : '') + '</div>';
+      if (r.time) h += '<div style="font-size:13px;opacity:.8">' + esc(String(r.time).substring(0, 8)) + '</div>';
+      box.innerHTML = h;
+    }
+    async function onCard(r) {
+      if (tab === 'E') {
+        lastMrz = r; beep(true);
+        show({ type: 'present', msg: 'কার্ড পড়া গেছে ✓ — এবার "সংরক্ষণ" চাপুন' });
+        $('saveBtn').disabled = false;
+        await sleep(1200); return;
+      }
+      if (!PIN && !askPin()) { show({ type: 'error', msg: 'পিন দেওয়া হয়নি' }); return; }
+      show({ type: '', msg: 'মেলানো হচ্ছে...' });
+      try {
+        let j = await post({ action: 'tidcheck', pin: PIN, doc: r.doc, dob: r.dob });
+        if (j && j.badPin) { PIN = ''; try { localStorage.removeItem('att_pin'); } catch (e) {} if (askPin()) j = await post({ action: 'tidcheck', pin: PIN, doc: r.doc, dob: r.dob }); }
+        show(j || { type: 'error', msg: 'সার্ভারের সাড়া নেই' }); beep(!!(j && j.ok));
+      } catch (e) { show({ type: 'error', msg: 'সংযোগ ত্রুটি। ইন্টারনেট ও API_URL দেখুন।' }); beep(false); }
+      await sleep(3500);
+    }
+
+    // ---------- নথিভুক্তি (অ্যাডমিন) ----------
+    async function loadTeachers() {
+      if (!ADMIN && !askAdmin()) { setTab('A'); return; }
+      try {
+        const j = await fetch(API_URL + '?' + new URLSearchParams({ action: 'tlist', admin: ADMIN }).toString()).then(function (r) { return r.json(); });
+        if (!j.ok) { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} alert(j.msg || 'ভুল অ্যাডমিন পিন'); setTab('A'); return; }
+        TEACHERS = j.teachers; renderTeachers();
+      } catch (e) { alert('সংযোগ হয়নি'); setTab('A'); }
+    }
+    function renderTeachers() {
+      const keep = $('tsel').value;
+      $('tsel').innerHTML = TEACHERS.map(function (t) {
+        return '<option value="' + esc(t.id) + '">' + esc(t.name) + (t.desig ? ' — ' + esc(t.desig) : '') + (t.cardEnrolled ? '  ✓ কার্ড আছে' : '  (কার্ড নেই)') + '</option>';
+      }).join('');
+      if (keep) $('tsel').value = keep;
+    }
+    async function saveCard() {
+      if (!lastMrz) return;
+      const id = $('tsel').value; $('saveBtn').disabled = true;
+      try {
+        const j = await post({ action: 'tidenroll', admin: ADMIN, id: id, doc: lastMrz.doc, dob: lastMrz.dob });
+        if (j.ok) { show({ type: 'present', msg: 'কার্ড সংরক্ষিত — ' + (j.name || '') }); TEACHERS.forEach(function (t) { if (t.id === id) t.cardEnrolled = true; }); renderTeachers(); lastMrz = null; }
+        else { show({ type: 'error', msg: j.msg || 'সংরক্ষণ হয়নি' }); $('saveBtn').disabled = false; if (j.badAdmin) { ADMIN = ''; } }
+      } catch (e) { show({ type: 'error', msg: 'সংযোগ ত্রুটি' }); $('saveBtn').disabled = false; }
+    }
+    async function clearCard() {
+      const id = $('tsel').value; if (!id || !confirm('এই শিক্ষকের নথিভুক্ত কার্ড মুছবেন?')) return;
+      try {
+        const j = await post({ action: 'tidclear', admin: ADMIN, id: id });
+        if (j.ok) { TEACHERS.forEach(function (t) { if (t.id === id) t.cardEnrolled = false; }); renderTeachers(); show({ type: 'duplicate', msg: 'মুছে ফেলা হয়েছে' }); }
+        else show({ type: 'error', msg: j.msg || 'হয়নি' });
+      } catch (e) { show({ type: 'error', msg: 'সংযোগ ত্রুটি' }); }
+    }
+
+    $('startBtn').classList.remove('hidden');
+    $('school').textContent = 'শিক্ষক · আইডি কার্ড হাজিরা';
+  </script>
+</body>
+</html>
