@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ফি জমার রসিদ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 12px 16px; }
+    header a { color: #fff; font-size: 13px; opacity: .9; text-decoration: none; }
+    header h1 { margin: 2px 0 0; font-size: 18px; }
+    .tabs { display: flex; gap: 6px; max-width: 680px; margin: 10px auto 0; padding: 0 12px; }
+    .tabs button { flex: 1; background: #e5e7eb; color: #374151; font-weight: 600; padding: 10px 4px; }
+    .tabs button.on { background: #0b6b4f; color: #fff; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .panel h2 { margin: 0 0 10px; font-size: 16px; color: #0b6b4f; }
+    label.l { display: block; font-size: 13px; color: #6b7280; margin: 10px 0 4px; }
+    input[type=text], input[type=tel], input[type=password], input[type=date], input[type=month], select {
+      width: 100%; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    button { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #374151; } button.warn { background: #b45309; } button.red { background: #b91c1c; } button.light { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .5; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btns button { flex: 1; min-width: 110px; }
+    .note { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+    .msg.on { display: block; background: #fee2e2; color: #991b1b; } .msg.ok { background: #d1fae5; color: #065f46; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .it { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #f1f5f9; }
+    .it.click { cursor: pointer; }
+    .it .m { flex: 1; min-width: 0; } .it .m b { display: block; font-size: 15px; } .it .m span { font-size: 12px; color: #6b7280; }
+    .who { background: #f0fdf4; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .who b { font-size: 17px; } .who span { display: block; font-size: 13px; color: #374151; }
+    .months { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0 4px; }
+    .months label { display: block; text-align: center; padding: 9px 2px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 13px; background: #fff; cursor: pointer; line-height: 1.3; }
+    .months label.paid { background: #d1fae5; border-color: #10b981; color: #065f46; cursor: default; }
+    .months label.sel { background: #0b6b4f; border-color: #0b6b4f; color: #fff; }
+    .months label small { display: block; font-size: 10px; opacity: .85; }
+    .months input { display: none; }
+    .head { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+    .head .n { flex: 1; font-size: 15px; } .head input[type=checkbox] { width: 20px; height: 20px; }
+    .head input[type=tel] { width: 92px; padding: 8px; text-align: right; }
+    .head input.q { width: 52px; }
+    .tot { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 15px; margin-top: 10px; }
+    .tot b.big { font-size: 20px; color: #0b6b4f; }
+    .st { font-size: 12px; font-style: normal; padding: 3px 9px; border-radius: 999px; background: #d1fae5; color: #065f46; white-space: nowrap; }
+    .st.v { background: #fee2e2; color: #991b1b; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+    .cd { background: #f0fdf4; border-radius: 10px; padding: 8px 4px; text-align: center; }
+    .cd b { display: block; font-size: 17px; color: #065f46; } .cd span { font-size: 12px; color: #6b7280; }
+    .kv { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; border-bottom: 1px dashed #e5e7eb; }
+    #lock, #done { display: none; }
+
+    /* ---------- রসিদ (A4: দুই কপি) ---------- */
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .pg { width: 190mm; height: 277mm; display: flex; flex-direction: column; justify-content: space-between; background: #fff; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rc { height: 133mm; border: .5mm solid #0b6b4f; border-radius: 2mm; padding: 4mm 6mm; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .rc .h { display: flex; align-items: center; gap: 4mm; height: 20mm; }
+    .rc .lg { width: 17mm; height: 17mm; border-radius: 50%; border: .7mm solid #f59e0b; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 19pt; font-weight: 700; position: relative; overflow: hidden; flex: none; }
+    .rc .lg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .rc .sn { flex: 1; text-align: center; } .rc .sn b { display: block; font-size: 18pt; line-height: 1.5; color: #0b6b4f; white-space: nowrap; }
+    .rc .sn span { display: block; font-size: 9pt; color: #374151; line-height: 1.4; }
+    .rc .cp { border: .3mm solid #0b6b4f; color: #0b6b4f; border-radius: 1.5mm; padding: 0 2.5mm; font-size: 9pt; font-weight: 600; white-space: nowrap; line-height: 6mm; }
+    .rc .tt { display: flex; align-items: center; gap: 3mm; margin: 1mm 0 2.5mm; }
+    .rc .tt .t { flex: 1; text-align: center; background: linear-gradient(100deg, #064e3b, #0b6b4f); color: #fff; border: .5mm solid #f59e0b; border-radius: 1.5mm; font-size: 13pt; font-weight: 700; line-height: 1.7; }
+    .rc .tt .b { font-size: 9.6pt; font-weight: 600; white-space: nowrap; }
+    .rc .tt .b i { font-style: normal; border: .3mm solid #0b6b4f; border-radius: 1mm; padding: 0 2mm; margin-left: 1mm; font-weight: 700; }
+    .rc .r { display: flex; gap: 4mm; margin-bottom: 1.8mm; }
+    .rc .f { display: flex; align-items: flex-end; gap: 1.5mm; min-width: 0; }
+    .rc .k { font-size: 9.6pt; white-space: nowrap; } .rc .v { flex: 1; min-width: 0; border-bottom: .25mm solid #6b7280; font-weight: 700; font-size: 10pt; line-height: 5.8mm; min-height: 5.8mm; padding: 0 1mm; white-space: nowrap; overflow: hidden; }
+    .rc table { width: 100%; border-collapse: collapse; font-size: 9.6pt; margin-top: 1mm; }
+    .rc th { background: #0b6b4f; color: #fff; font-weight: 600; padding: .8mm 1.5mm; border: .25mm solid #0b6b4f; }
+    .rc td { padding: .9mm 1.5mm; border: .25mm solid #9ca3af; line-height: 1.35; }
+    .rc td.c { text-align: center; } .rc td.n { text-align: right; white-space: nowrap; }
+    .rc .bt { display: flex; gap: 5mm; margin-top: 2.5mm; flex: 1; min-height: 0; }
+    .rc .bt .l { flex: 1; font-size: 9.4pt; line-height: 1.5; } .rc .bt .l b { color: #0b6b4f; }
+    .rc .sm { width: 62mm; font-size: 10pt; } .rc .sm div { display: flex; justify-content: space-between; border-bottom: .25mm dashed #9ca3af; padding: .6mm 0; }
+    .rc .sm .p { font-weight: 700; font-size: 12pt; color: #0b6b4f; border-bottom: .4mm solid #0b6b4f; }
+    .rc .sg { display: flex; justify-content: space-between; gap: 14mm; margin-top: auto; padding-top: 6mm; }
+    .rc .sg div { flex: 1; text-align: center; font-size: 8.8pt; color: #b91c1c; border-top: .25mm solid #6b7280; padding-top: .6mm; font-weight: 600; }
+    .rc .void { position: absolute; left: 0; right: 0; top: 42%; text-align: center; font-size: 46pt; font-weight: 700; color: rgba(185,28,28,.28); transform: rotate(-12deg); pointer-events: none; }
+    .cut { text-align: center; font-size: 8pt; color: #9ca3af; border-top: .3mm dashed #9ca3af; line-height: 0; margin: 0; height: 0; }
+    .tp { width: 190mm; min-height: 277mm; background: #fff; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tp h2 { margin: 0; text-align: center; color: #0b6b4f; font-size: 17pt; line-height: 1.5; } .tp .s { text-align: center; font-size: 10.5pt; color: #374151; margin-bottom: 4mm; }
+    .tp table { width: 100%; border-collapse: collapse; font-size: 10.5pt; } .tp th { background: #0b6b4f; color: #fff; padding: 1.2mm 2mm; border: .25mm solid #0b6b4f; }
+    .tp td { padding: 1.3mm 2mm; border: .25mm solid #9ca3af; } .tp td.c { text-align: center; } .tp td.n { text-align: right; }
+    @media print {
+      html, body { background: #fff !important; }
+      header, .tabs, .wrap { display: none !important; }
+      #sheet { position: static; }
+      .pg { page-break-after: always; break-after: page; } .pg:last-child { page-break-after: auto; break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ স্ক্যানার মেনু</a>
+    <h1 id="schoolH">ফি জমার রসিদ</h1>
+  </header>
+  <div class="tabs">
+    <button id="tP" class="on">রসিদ কাটুন</button><button id="tR">রিপোর্ট</button><button id="tD">বকেয়া</button>
+  </div>
+
+  <div class="wrap">
+    <div class="panel" id="lock">
+      <h2>অ্যাডমিন পিন</h2>
+      <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
+      <div class="btns"><button id="pinBtn">ঢুকুন</button></div>
+      <div class="msg" id="lockMsg"></div>
+    </div>
+
+    <div id="main" style="display:none">
+      <!-- রসিদ কাটুন -->
+      <div id="vP">
+        <div class="panel" id="findBox">
+          <h2>ছাত্র খুঁজুন</h2>
+          <input type="text" id="q" placeholder="আইডি বা নাম" autocomplete="off">
+          <div class="btns"><button id="findBtn">খুঁজুন</button></div>
+          <div class="msg" id="findMsg"></div>
+          <div id="found"></div>
+        </div>
+
+        <div id="payBox" style="display:none">
+          <div class="panel">
+            <div class="who" id="who"></div>
+            <button class="light" id="changeBtn" style="width:100%">অন্য ছাত্র বাছুন</button>
+          </div>
+          <div class="panel">
+            <h2>মাসিক বেতন</h2>
+            <div class="two">
+              <div><label class="l" for="yr">বছর</label><select id="yr"></select></div>
+              <div><label class="l" for="mUnit">প্রতি মাসে (টাকা)</label><input type="tel" id="mUnit" inputmode="numeric"></div>
+            </div>
+            <div class="months" id="months"></div>
+            <div class="note">সবুজ ঘরের মাস আগেই জমা আছে। নতুন মাস ছুঁয়ে বাছুন।</div>
+          </div>
+          <div class="panel">
+            <h2>অন্যান্য ফি</h2>
+            <div id="heads"></div>
+          </div>
+          <div class="panel">
+            <div class="tot"><span>মোট</span><b id="tTotal">০</b></div>
+            <label class="l" for="disc">ছাড় (টাকা)</label>
+            <input type="tel" id="disc" inputmode="numeric" placeholder="০">
+            <div class="tot"><span>পরিশোধ</span><b class="big" id="tPaid">০</b></div>
+            <div class="two">
+              <div><label class="l" for="method">পদ্ধতি</label><select id="method"></select></div>
+              <div><label class="l" for="by">গ্রহণকারী</label><input type="text" id="by" maxlength="40" placeholder="আপনার নাম"></div>
+            </div>
+            <label class="l" for="note">নোট (ঐচ্ছিক)</label>
+            <input type="text" id="note" maxlength="200">
+            <div class="msg" id="payMsg"></div>
+            <div class="btns"><button id="payBtn">রসিদ কাটুন</button></div>
+          </div>
+          <div class="panel"><h2>আগের রসিদ</h2><div id="hist"></div></div>
+        </div>
+
+        <div class="panel" id="done">
+          <h2 id="doneT">রসিদ হয়েছে</h2>
+          <div class="note" id="doneN"></div>
+          <div class="btns"><button class="warn" id="doPrint">রসিদ প্রিন্ট (২ কপি)</button><button class="sec" id="newOne">নতুন রসিদ</button></div>
+        </div>
+      </div>
+
+      <!-- রিপোর্ট -->
+      <div id="vR" style="display:none">
+        <div class="panel">
+          <h2>আদায় রিপোর্ট</h2>
+          <div class="two"><div><label class="l" for="rf">থেকে</label><input type="date" id="rf"></div><div><label class="l" for="rt">পর্যন্ত</label><input type="date" id="rt"></div></div>
+          <div class="btns"><button id="rGo">দেখুন</button><button class="warn" id="rPrint">রিপোর্ট প্রিন্ট</button></div>
+          <div class="msg" id="rMsg"></div>
+          <div id="rBody"></div>
+        </div>
+      </div>
+
+      <!-- বকেয়া -->
+      <div id="vD" style="display:none">
+        <div class="panel">
+          <h2>মাসের বকেয়া তালিকা</h2>
+          <div class="two"><div><label class="l" for="dm">মাস</label><input type="month" id="dm"></div><div><label class="l" for="dc">শ্রেণি</label><select id="dc"><option value="">সব শ্রেণি</option></select></div></div>
+          <div class="btns"><button id="dGo">দেখুন</button><button class="warn" id="dPrint">তালিকা প্রিন্ট</button></div>
+          <div class="msg" id="dMsg"></div>
+          <div id="dBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sheet"></div>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+    // ↓↓↓ রসিদের মাথার তথ্য — নিজের মতো বদলান ↓↓↓
+    const ADM = {
+      
+      nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
+      logoText: 'ফ',
+      logoUrl: 'logo.png',
+      address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
+      phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
+    };
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function bn(s) { return String(s == null ? '' : s).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+    function en(s) { return String(s == null ? '' : s).replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }); }
+    function num(v) { const n = Number(en(v).replace(/[^0-9.]/g, '')); return isFinite(n) ? n : 0; }
+    function taka(n) { return bn(Math.round(n).toLocaleString('en-US')); }
+
+    // ---------- টাকা কথায় ----------
+    const W = ['শূন্য','এক','দুই','তিন','চার','পাঁচ','ছয়','সাত','আট','নয়','দশ','এগারো','বারো','তেরো','চৌদ্দ','পনেরো','ষোল','সতেরো','আঠারো','উনিশ','বিশ','একুশ','বাইশ','তেইশ','চব্বিশ','পঁচিশ','ছাব্বিশ','সাতাশ','আটাশ','ঊনত্রিশ','ত্রিশ','একত্রিশ','বত্রিশ','তেত্রিশ','চৌত্রিশ','পঁয়ত্রিশ','ছত্রিশ','সাঁইত্রিশ','আটত্রিশ','ঊনচল্লিশ','চল্লিশ','একচল্লিশ','বিয়াল্লিশ','তেতাল্লিশ','চুয়াল্লিশ','পঁয়তাল্লিশ','ছেচল্লিশ','সাতচল্লিশ','আটচল্লিশ','ঊনপঞ্চাশ','পঞ্চাশ','একান্ন','বায়ান্ন','তিপ্পান্ন','চুয়ান্ন','পঞ্চান্ন','ছাপ্পান্ন','সাতান্ন','আটান্ন','ঊনষাট','ষাট','একষট্টি','বাষট্টি','তেষট্টি','চৌষট্টি','পঁয়ষট্টি','ছেষট্টি','সাতষট্টি','আটষট্টি','ঊনসত্তর','সত্তর','একাত্তর','বাহাত্তর','তিয়াত্তর','চুয়াত্তর','পঁচাত্তর','ছিয়াত্তর','সাতাত্তর','আটাত্তর','ঊনআশি','আশি','একাশি','বিরাশি','তিরাশি','চুরাশি','পঁচাশি','ছিয়াশি','সাতাশি','অষ্টাশি','ঊননব্বই','নব্বই','একানব্বই','বিরানব্বই','তিরানব্বই','চুরানব্বই','পঁচানব্বই','ছিয়ানব্বই','সাতানব্বই','আটানব্বই','নিরানব্বই'];
+    function words(n) {
+      n = Math.floor(n); if (n <= 0) return 'শূন্য';
+      const out = [];
+      const cr = Math.floor(n / 10000000); n %= 10000000;
+      const lk = Math.floor(n / 100000); n %= 100000;
+      const th = Math.floor(n / 1000); n %= 1000;
+      const hu = Math.floor(n / 100); n %= 100;
+      if (cr) out.push((cr < 100 ? W[cr] : words(cr)) + ' কোটি');
+      if (lk) out.push(W[lk] + ' লাখ');
+      if (th) out.push(W[th] + ' হাজার');
+      if (hu) out.push(W[hu] + ' শত');
+      if (n) out.push(W[n]);
+      return out.join(' ');
+    }
+
+    // ---------- API ----------
+    let ADMIN = '';
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    function get(action, params) {
+      return fetch(API_URL + '?' + new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {})).toString()).then(function (r) { return r.json(); });
+    }
+    function post(body) {
+      return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ admin: ADMIN }, body)) }).then(function (r) { return r.json(); });
+    }
+    function say(id, t, ok) { const m = $(id); m.textContent = t || ''; m.className = 'msg' + (t ? ' on' : '') + (ok ? ' ok' : ''); }
+    function badAdmin() {
+      ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {}
+      $('lock').style.display = 'block'; $('main').style.display = 'none'; say('lockMsg', 'ভুল অ্যাডমিন পিন');
+    }
+
+    let CFG = { heads: [], methods: [], months: [], year: '', school: ADM.nameFallback, amounts: {} };
+    let INFO = null, LAST = null, PICK = {};
+
+    // ---------- শুরু ----------
+    function enter() {
+      if (!ADMIN) { $('lock').style.display = 'block'; $('main').style.display = 'none'; return; }
+      get('feeconfig').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('lockMsg', (j && j.msg) || 'আনা যায়নি'); $('lock').style.display = 'block'; return; }
+        CFG = j; $('lock').style.display = 'none'; $('main').style.display = 'block';
+        $('schoolH').textContent = 'ফি জমার রসিদ';
+        $('method').innerHTML = CFG.methods.map(function (m) { return '<option>' + esc(m) + '</option>'; }).join('');
+        try { $('by').value = localStorage.getItem('fee_by') || ''; } catch (e) {}
+        const y = Number(CFG.year) || new Date().getFullYear();
+        $('yr').innerHTML = [y - 1, y, y + 1].map(function (v) { return '<option' + (v === y ? ' selected' : '') + '>' + v + '</option>'; }).join('');
+        const t = new Date(), iso = t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
+        $('rf').value = iso; $('rt').value = iso; $('dm').value = iso.slice(0, 7);
+      }).catch(function () { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।'); $('lock').style.display = 'block'; });
+    }
+    $('pinBtn').onclick = login; $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+    function login() { const v = $('pinIn').value.trim(); if (!v) return; ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pinIn').value = ''; say('lockMsg', ''); enter(); }
+
+    function tab(v) {
+      ['P', 'R', 'D'].forEach(function (k) { $('v' + k).style.display = k === v ? 'block' : 'none'; $('t' + k).className = k === v ? 'on' : ''; });
+    }
+    $('tP').onclick = function () { tab('P'); }; $('tR').onclick = function () { tab('R'); }; $('tD').onclick = function () { tab('D'); };
+
+    // ---------- ছাত্র খোঁজা ----------
+    function find() {
+      const q = $('q').value.trim(); if (!q) return;
+      say('findMsg', 'খোঁজা হচ্ছে...', true);
+      get('feestudent', { q: q }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('findMsg', (j && j.msg) || 'পাওয়া যায়নি'); return; }
+        say('findMsg', j.list.length ? '' : 'কাউকে পাওয়া যায়নি');
+        $('found').innerHTML = j.list.map(function (s) {
+          return '<div class="it click" data-id="' + esc(s.id) + '"><div class="m"><b>' + esc(s.name) + '</b><span>' + esc(s.id) + ' • ' + esc(s.cls) + ' • রোল ' + esc(bn(s.roll)) + '</span></div></div>';
+        }).join('');
+      }).catch(function () { say('findMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('findBtn').onclick = find; $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') find(); });
+    $('found').addEventListener('click', function (e) { const it = e.target.closest('.it'); if (it) openStudent(it.getAttribute('data-id')); });
+
+    function openStudent(id) {
+      say('findMsg', 'আনা হচ্ছে...', true);
+      get('feeinfo', { id: id }).then(function (j) {
+        if (!j || !j.ok) { say('findMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('findMsg', ''); INFO = j; PICK = {};
+        $('findBox').style.display = 'none'; $('payBox').style.display = 'block'; $('done').style.display = 'none'; say('payMsg', '');
+        $('who').innerHTML = '<b>' + esc(j.student.name) + '</b><span>আইডি ' + esc(j.student.id) + ' • ' + esc(j.student.cls) + ' • রোল ' + esc(bn(j.student.roll)) + '</span>';
+        $('mUnit').value = j.defaults.monthly === '' ? '' : j.defaults.monthly;
+        $('disc').value = '';
+        $('heads').innerHTML = CFG.heads.filter(function (h) { return !h.monthly; }).map(function (h) {
+          const d = j.defaults[h.key];
+          return '<div class="head" data-k="' + h.key + '"><input type="checkbox" class="hc"><span class="n">' + esc(h.name) + '</span>' +
+            '<input type="tel" class="q" inputmode="numeric" value="১" title="পরিমাণ"><input type="tel" class="hu" inputmode="numeric" placeholder="টাকা" value="' + (d === '' ? '' : d) + '"></div>';
+        }).join('');
+        renderMonths(); renderHist(); recalc();
+      }).catch(function () { say('findMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('changeBtn').onclick = function () { $('payBox').style.display = 'none'; $('findBox').style.display = 'block'; INFO = null; };
+
+    function mk(y, i) { return y + '-' + ('0' + (i + 1)).slice(-2); }
+    function renderMonths() {
+      const y = $('yr').value;
+      $('months').innerHTML = CFG.months.map(function (m, i) {
+        const k = mk(y, i), paid = INFO.paidMonths[k], sel = PICK[k];
+        return '<label class="' + (paid ? 'paid' : sel ? 'sel' : '') + '" data-k="' + k + '">' + esc(m) + (paid ? '<small>জমা ✓</small>' : '') + '<input type="checkbox"></label>';
+      }).join('');
+    }
+    $('yr').onchange = renderMonths;
+    $('months').addEventListener('click', function (e) {
+      const l = e.target.closest('label'); if (!l) return; e.preventDefault();
+      const k = l.getAttribute('data-k'); if (INFO.paidMonths[k]) return;
+      if (PICK[k]) delete PICK[k]; else PICK[k] = 1;
+      renderMonths(); recalc();
+    });
+    $('heads').addEventListener('input', function (e) { const row = e.target.closest('.head'); if (row && e.target.type === 'tel' && num(e.target.value) > 0) row.querySelector('.hc').checked = true; recalc(); });
+    $('heads').addEventListener('change', recalc);
+    $('mUnit').addEventListener('input', recalc); $('disc').addEventListener('input', recalc);
+
+    function buildItems() {
+      const items = [];
+      const ms = Object.keys(PICK).sort();
+      if (ms.length) items.push({ head: 'monthly', unit: num($('mUnit').value), months: ms });
+      Array.prototype.forEach.call($('heads').querySelectorAll('.head'), function (r) {
+        if (r.querySelector('.hc').checked) items.push({ head: r.getAttribute('data-k'), unit: num(r.querySelector('.hu').value), qty: Math.max(1, Math.floor(num(r.querySelector('.q').value) || 1)) });
+      });
+      return items;
+    }
+    function recalc() {
+      let t = 0;
+      buildItems().forEach(function (it) { t += it.unit * (it.months ? it.months.length : it.qty); });
+      const d = Math.min(num($('disc').value), t);
+      $('tTotal').textContent = taka(t); $('tPaid').textContent = taka(t - d);
+    }
+
+    $('payBtn').onclick = function () {
+      const items = buildItems();
+      if (!items.length) { say('payMsg', 'মাস বা কোনো ফি বাছুন'); return; }
+      if (items.some(function (i) { return !(i.unit > 0); })) { say('payMsg', 'প্রতিটি খাতের টাকা লিখুন'); return; }
+      const by = $('by').value.trim(); if (by.length < 2) { say('payMsg', 'গ্রহণকারীর নাম লিখুন'); return; }
+      try { localStorage.setItem('fee_by', by); } catch (e) {}
+      const paid = $('tPaid').textContent;
+      if (!confirm('পরিশোধ ' + paid + ' টাকা — রসিদ কাটবেন?')) return;
+      $('payBtn').disabled = true; say('payMsg', 'রসিদ হচ্ছে...', true);
+      post({ action: 'feepay', sid: INFO.student.id, items: items, discount: num($('disc').value), method: $('method').value, by: by, note: $('note').value.trim() }).then(function (j) {
+        $('payBtn').disabled = false;
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('payMsg', (j && j.msg) || 'হয়নি, আবার চেষ্টা করুন'); return; }
+        LAST = j.receipt; say('payMsg', '');
+        $('payBox').style.display = 'none'; $('done').style.display = 'block';
+        $('doneT').textContent = 'রসিদ হয়েছে — ' + LAST.rcpt;
+        $('doneN').textContent = LAST.name + ' • পরিশোধ ' + taka(LAST.paid) + ' টাকা (' + LAST.method + ')';
+        $('note').value = '';
+        window.scrollTo(0, 0);
+      }).catch(function () { $('payBtn').disabled = false; say('payMsg', 'সংযোগ ত্রুটি — রসিদ কাটা হয়েছে কি না নিচে "আগের রসিদ" বা রিপোর্টে দেখে নিন'); });
+    };
+    $('doPrint').onclick = function () { printReceipts([LAST]); };
+    $('newOne').onclick = function () { $('done').style.display = 'none'; $('findBox').style.display = 'block'; $('q').value = ''; $('found').innerHTML = ''; };
+
+    function renderHist() {
+      $('hist').innerHTML = INFO.history.length ? INFO.history.map(function (r) {
+        return '<div class="it" data-r="' + esc(r.rcpt) + '"><div class="m"><b>' + esc(r.rcpt) + ' • ' + taka(r.paid) + ' টাকা</b><span>' + esc(bn(r.date)) + ' • ' + esc(r.items.map(function (i) { return i.name; }).join(', ')) + '</span></div>' +
+          '<em class="st' + (r.status === 'Void' ? ' v' : '') + '">' + (r.status === 'Void' ? 'বাতিল' : 'চালু') + '</em>' +
+          '<button class="light" data-act="print" style="padding:8px 10px">প্রিন্ট</button>' + (r.status === 'Void' ? '' : '<button class="red" data-act="void" style="padding:8px 10px">বাতিল</button>') + '</div>';
+      }).join('') : '<div class="note">আগের কোনো রসিদ নেই</div>';
+    }
+    function receiptAction(e, onChange) {
+      const b = e.target.closest('button[data-act]'); if (!b) return;
+      const rc = b.closest('[data-r]').getAttribute('data-r');
+      if (b.getAttribute('data-act') === 'print') {
+        get('feerecp', { rcpt: rc }).then(function (j) { if (j && j.ok) printReceipts([j.receipt]); else alert((j && j.msg) || 'পাওয়া যায়নি'); });
+      } else {
+        const why = prompt('রসিদ ' + rc + ' বাতিলের কারণ লিখুন:'); if (!why || why.trim().length < 3) return;
+        post({ action: 'feevoid', rcpt: rc, reason: why.trim() }).then(function (j) { if (j && j.ok) onChange(); else alert((j && j.msg) || 'হয়নি'); });
+      }
+    }
+    $('hist').addEventListener('click', function (e) { receiptAction(e, function () { openStudent(INFO.student.id); }); });
+
+    // ---------- প্রিন্ট ----------
+    function monthsLabel(keys) {
+      if (!keys || !keys.length) return '';
+      const by = {};
+      keys.slice().sort().forEach(function (k) { const p = k.split('-'); (by[p[0]] = by[p[0]] || []).push(Number(p[1]) - 1); });
+      return Object.keys(by).sort().map(function (y) {
+        const a = by[y], parts = []; let s = a[0], prev = a[0];
+        for (let i = 1; i <= a.length; i++) {
+          if (a[i] === prev + 1) { prev = a[i]; continue; }
+          parts.push(s === prev ? CFG.months[s] : CFG.months[s] + '–' + CFG.months[prev]);
+          s = a[i]; prev = a[i];
+        }
+        return parts.join(', ') + ' ' + bn(y);
+      }).join('; ');
+    }
+    function receiptHtml(r, label) {
+      const school = CFG.school || ADM.nameFallback;
+      const row = function (k, v, f) { return '<div class="f" style="flex:' + (f || 1) + '"><span class="k">' + k + '</span><span class="v" data-fit>' + esc(v || '') + '</span></div>'; };
+      const rows = r.items.map(function (it, i) {
+        const det = it.months && it.months.length ? monthsLabel(it.months) + ' (' + bn(it.months.length) + ' মাস × ' + taka(it.unit) + ')' : (it.qty > 1 ? bn(it.qty) + ' × ' + taka(it.unit) : '');
+        return '<tr><td class="c" style="width:9mm">' + bn(i + 1) + '</td><td style="width:38mm">' + esc(it.name) + '</td><td>' + esc(det) + '</td><td class="n" style="width:26mm">' + taka(it.amount) + '</td></tr>';
+      }).join('');
+      return '<div class="rc">' +
+        '<div class="h"><div class="lg">' + esc(ADM.logoText) + (ADM.logoUrl ? '<img alt="" src="' + esc(ADM.logoUrl) + '" onerror="this.remove()">' : '') + '</div>' +
+        '<div class="sn"><b data-fit>' + esc(school) + '</b><span>' + esc(ADM.address) + '</span><span>' + esc(ADM.phone) + '</span></div><div class="cp">' + esc(label) + '</div></div>' +
+        '<div class="tt"><span class="b">রসিদ নং <i>' + esc(r.rcpt) + '</i></span><div class="t">ফি জমার রসিদ</div><span class="b">তারিখ <i>' + esc(bn(r.date)) + '</i></span></div>' +
+        '<div class="r">' + row('নাম:', r.name, 3) + row('আইডি:', r.sid, 1.2) + '</div>' +
+        '<div class="r">' + row('শ্রেণি:', r.cls, 1.4) + row('রোল:', bn(r.roll), 1) + row('সময়:', bn(r.time), 1) + '</div>' +
+        '<table><tr><th>নং</th><th>খাত</th><th>বিবরণ</th><th>টাকা</th></tr>' + rows + '</table>' +
+        '<div class="bt"><div class="l"><b>কথায়:</b> ' + esc(words(r.paid)) + ' টাকা মাত্র<br><b>পদ্ধতি:</b> ' + esc(r.method) + (r.note ? '<br><b>নোট:</b> ' + esc(r.note) : '') + '</div>' +
+        '<div class="sm"><div><span>মোট</span><span>' + taka(r.total) + '</span></div>' + (r.discount ? '<div><span>ছাড়</span><span>− ' + taka(r.discount) + '</span></div>' : '') + '<div class="p"><span>পরিশোধিত</span><span>' + taka(r.paid) + ' টাকা</span></div></div></div>' +
+        '<div class="sg"><div>জমাদানকারীর স্বাক্ষর</div><div>গ্রহণকারী: ' + esc(r.by) + '</div></div>' +
+        (r.status === 'Void' ? '<div class="void">বাতিল</div>' : '') + '</div>';
+    }
+    function fitAll(root) {
+      root.querySelectorAll('[data-fit]').forEach(function (el) {
+        const big = el.tagName === 'B'; let s = big ? 18 : 10; el.style.fontSize = s + 'pt'; let g = 40;
+        while (g-- && s > 6 && el.scrollWidth > el.clientWidth + 1) { s -= 0.3; el.style.fontSize = s.toFixed(1) + 'pt'; }
+      });
+    }
+    function printHtml(html) {
+      $('sheet').innerHTML = html; fitAll($('sheet'));
+      const st = document.createElement('style'); st.id = 'pgcss'; st.textContent = '@page { size: A4; margin: 10mm; }'; document.head.appendChild(st);
+      const done = function () { const s = $('pgcss'); if (s) s.remove(); $('sheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img')).map(function (im) { return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; }); });
+      Promise.all(imgs).then(function () { setTimeout(function () { window.print(); }, 250); });
+    }
+    function printReceipts(list) {
+      printHtml(list.map(function (r) {
+        return '<div class="pg">' + receiptHtml(r, 'অফিস কপি') + '<div class="cut">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>' + receiptHtml(r, 'অভিভাবক কপি') + '</div>';
+      }).join(''));
+    }
+    function tablePage(title, sub, head, rows, right) {
+      return '<div class="tp"><h2>' + esc(title) + '</h2><div class="s">' + esc(sub) + '</div><table><tr>' + head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr>' + rows.join('') + '</table></div>';
+    }
+
+    // ---------- রিপোর্ট ----------
+    let REP = null;
+    function dmyIso(i) { const p = String(i).match(/^(\d{4})(\d{2})(\d{2})$/); return p ? p[3] + '/' + p[2] + '/' + p[1] : i; }
+    $('rGo').onclick = function () {
+      say('rMsg', 'আনা হচ্ছে...', true);
+      get('feereport', { from: $('rf').value, to: $('rt').value }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('rMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('rMsg', ''); REP = j;
+        const kv = function (o) { return Object.keys(o).map(function (k) { return '<div class="kv"><span>' + esc(k) + '</span><b>' + taka(o[k]) + '</b></div>'; }).join('') || '<div class="note">—</div>'; };
+        $('rBody').innerHTML = '<div class="cards"><div class="cd"><b>' + taka(j.paid) + '</b><span>আদায়</span></div><div class="cd"><b>' + bn(j.count) + '</b><span>রসিদ</span></div><div class="cd"><b>' + taka(j.discount) + '</b><span>ছাড়</span></div></div>' +
+          '<h2 style="margin-top:14px">খাত অনুযায়ী</h2>' + kv(j.byHead) + '<h2 style="margin-top:14px">পদ্ধতি অনুযায়ী</h2>' + kv(j.byMethod) +
+          '<h2 style="margin-top:14px">রসিদ তালিকা' + (j.voided ? ' (বাতিল ' + bn(j.voided) + ')' : '') + '</h2><div id="rList">' + j.list.slice().reverse().map(function (r) {
+            return '<div class="it" data-r="' + esc(r.rcpt) + '"><div class="m"><b>' + esc(r.name) + ' • ' + taka(r.paid) + '</b><span>' + esc(r.rcpt) + ' • ' + esc(r.cls) + ' • ' + esc(bn(r.date)) + ' ' + esc(bn(r.time)) + ' • ' + esc(r.method) + '</span></div>' +
+              '<em class="st' + (r.status === 'Void' ? ' v' : '') + '">' + (r.status === 'Void' ? 'বাতিল' : 'চালু') + '</em><button class="light" data-act="print" style="padding:8px 10px">প্রিন্ট</button>' + (r.status === 'Void' ? '' : '<button class="red" data-act="void" style="padding:8px 10px">বাতিল</button>') + '</div>';
+          }).join('') + '</div>';
+        $('rList').addEventListener('click', function (e) { receiptAction(e, function () { $('rGo').click(); }); });
+      }).catch(function () { say('rMsg', 'সংযোগ ত্রুটি'); });
+    };
+    $('rPrint').onclick = function () {
+      if (!REP) { say('rMsg', 'আগে "দেখুন" চাপুন'); return; }
+      const j = REP, school = CFG.school || ADM.nameFallback;
+      const period = dmyIso(j.from) + (j.to !== j.from ? ' থেকে ' + dmyIso(j.to) : '');
+      const head = Object.keys(j.byHead).map(function (k) { return '<tr><td>' + esc(k) + '</td><td class="n" colspan="3">' + taka(j.byHead[k]) + '</td></tr>'; });
+      const mth = Object.keys(j.byMethod).map(function (k) { return '<tr><td>' + esc(k) + '</td><td class="n" colspan="3">' + taka(j.byMethod[k]) + '</td></tr>'; });
+      const rows = j.list.filter(function (r) { return r.status !== 'Void'; }).map(function (r) { return '<tr><td>' + esc(r.rcpt) + '</td><td>' + esc(r.name) + ' (' + esc(r.cls) + ')</td><td>' + esc(r.method) + '</td><td class="n">' + taka(r.paid) + '</td></tr>'; });
+      printHtml('<div class="tp"><h2>' + esc(school) + '</h2><div class="s">ফি আদায় রিপোর্ট — ' + esc(bn(period)) + '</div>' +
+        '<table><tr><th colspan="4">খাত অনুযায়ী</th></tr>' + head.join('') + '<tr><th colspan="4">পদ্ধতি অনুযায়ী</th></tr>' + mth.join('') +
+        '<tr><td><b>মোট আদায় (' + bn(j.count) + ' রসিদ)</b></td><td class="n" colspan="3"><b>' + taka(j.paid) + ' টাকা</b></td></tr></table>' +
+        '<div style="height:6mm"></div><table><tr><th>রসিদ</th><th>নাম</th><th>পদ্ধতি</th><th>টাকা</th></tr>' + rows.join('') + '</table></div>');
+    };
+
+    // ---------- বকেয়া ----------
+    let DUE = null;
+    function loadDues() {
+      const m = $('dm').value; if (!m) return;
+      say('dMsg', 'আনা হচ্ছে...', true);
+      get('feedues', { month: m, cls: $('dc').value }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('dMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('dMsg', ''); DUE = j;
+        if (!$('dc').value) {
+          const cs = {}; j.list.forEach(function (s) { cs[s.cls] = 1; });
+          $('dc').innerHTML = '<option value="">সব শ্রেণি</option>' + Object.keys(cs).sort().map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
+        }
+        $('dBody').innerHTML = '<div class="note"><b>' + bn(j.count) + ' জনের</b> বেতন জমা নেই</div>' + j.list.map(function (s) {
+          return '<div class="it"><div class="m"><b>' + esc(s.name) + '</b><span>' + esc(s.id) + ' • ' + esc(s.cls) + ' • রোল ' + esc(bn(s.roll)) + (s.phone ? ' • ' + esc(bn(s.phone)) : '') + '</span></div></div>';
+        }).join('');
+      }).catch(function () { say('dMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('dGo').onclick = loadDues;
+    $('dPrint').onclick = function () {
+      if (!DUE) { say('dMsg', 'আগে "দেখুন" চাপুন'); return; }
+      const p = DUE.month.split('-');
+      printHtml(tablePage(CFG.school || ADM.nameFallback, CFG.months[Number(p[1]) - 1] + ' ' + bn(p[0]) + ' — মাসিক বেতন বকেয়া তালিকা (' + bn(DUE.count) + ' জন)',
+        ['ক্রম', 'আইডি', 'নাম', 'শ্রেণি', 'রোল', 'মোবাইল'],
+        DUE.list.map(function (s, i) { return '<tr><td class="c">' + bn(i + 1) + '</td><td class="c">' + esc(s.id) + '</td><td>' + esc(s.name) + '</td><td>' + esc(s.cls) + '</td><td class="c">' + esc(bn(s.roll)) + '</td><td>' + esc(bn(s.phone)) + '</td></tr>'; })));
+    };
+
+    enter();
+  </script>
+</body>
+</html>
