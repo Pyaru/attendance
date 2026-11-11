@@ -216,7 +216,7 @@
     function grabFrame() {
       const v = $('vid'), vw = v.videoWidth, vh = v.videoHeight;
       if (!vw) return null;
-      const sy = Math.floor(vh * 0.3), sh = vh - sy, scale = Math.min(1, 1500 / vw);
+      const sy = Math.floor(vh * 0.35), sh = vh - sy, scale = Math.min(1, 1100 / vw);   // নিচের অংশ + ছোট ছবি = দ্রুত পড়া
       const c = document.createElement('canvas'); c.width = Math.round(vw * scale); c.height = Math.round(sh * scale);
       const x = c.getContext('2d'); x.filter = 'grayscale(1) contrast(1.7)';
       x.drawImage(v, 0, sy, vw, sh, 0, 0, c.width, c.height);
@@ -240,14 +240,16 @@
           let text = '';
           try { text = (await worker.recognize(c)).data.text; } catch (e) {}
           const r = findMrz(text);
-          // একই কোড পরপর কয়েকবার (হাজিরায় ২, নথিভুক্তিতে ৩) পড়া গেলে তবেই গ্রহণ — ভুল পড়া ঠেকাতে
+          // কোডের তিনটি চেক-অঙ্ক মিললেই r আসে (ভুল পড়ার সুযোগ প্রায় শূন্য), তাই হাজিরায় ১ বার, নথিভুক্তিতে ২ বার মিললেই গ্রহণ
           const key = r ? r.doc + '|' + r.dob : '';
           if (r && key === lastKey) seen++; else { seen = r ? 1 : 0; lastKey = key; }
-          if (r && seen >= (tab === 'E' ? 3 : 2)) { lastKey = ''; seen = 0; running = false; await onCard(r); if (stream) { running = true; setTip('পরের কার্ড দেখান'); } continue; }
+          if (r && seen >= (tab === 'E' ? 2 : 1)) { lastKey = ''; seen = 0; running = false; await onCard(r); if (stream) { running = true; setTip('পরের কার্ড দেখান'); } continue; }
         }
-        await sleep(250);
+        await sleep(60);
       }
     }
+    // পেজ খোলার সাথেই OCR মডেল আগে থেকে লোড (ক্যামেরা চালুর সময় আর অপেক্ষা নেই)
+    setTimeout(function () { ensureOcr().then(function () { setTip('প্রস্তুত — ক্যামেরা চালু করুন'); }).catch(function () {}); }, 400);
     // ছবি থেকে একবার পড়া
     $('file').addEventListener('change', async function () {
       const f = this.files[0]; this.value = ''; if (!f) return;
