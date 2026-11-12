@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>স্টুডেন্ট প্রোফাইল</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 12px 16px; }
+    header a { color: #fff; font-size: 13px; opacity: .9; text-decoration: none; }
+    header h1 { margin: 2px 0 0; font-size: 18px; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .panel h2 { margin: 0 0 10px; font-size: 16px; color: #0b6b4f; }
+    label.l { display: block; font-size: 13px; color: #6b7280; margin: 10px 0 4px; }
+    input[type=text], input[type=search], input[type=password], select {
+      width: 100%; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    button { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #374151; } button.warn { background: #b45309; } button.light { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .5; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btns button { flex: 1; min-width: 110px; }
+    .note { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+    .msg.on { display: block; background: #fee2e2; color: #991b1b; } .msg.ok { background: #d1fae5; color: #065f46; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    #lock { display: none; }
+    .res { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #e5e7eb; cursor: pointer; }
+    .res:last-child { border-bottom: 0; } .res:active { background: #f0fdf4; }
+    .res .rn { width: 38px; height: 38px; border-radius: 50%; background: #d1fae5; color: #065f46; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
+    .res .d { flex: 1; min-width: 0; } .res .d b { display: block; } .res .d small { color: #6b7280; font-size: 12px; }
+    .top { display: flex; gap: 12px; align-items: center; }
+    .ph { width: 84px; height: 104px; border-radius: 10px; background: #e5e7eb center/cover no-repeat; flex: none; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 12px; }
+    .top h3 { margin: 0 0 2px; font-size: 19px; } .top .sub { color: #6b7280; font-size: 13px; line-height: 1.6; }
+    .chip { display: inline-block; background: #d1fae5; color: #065f46; border-radius: 99px; padding: 1px 10px; font-size: 12px; margin-right: 4px; font-weight: 600; }
+    .kv { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; font-size: 14px; border-bottom: 1px dashed #e5e7eb; }
+    .kv span { color: #6b7280; flex: none; } .kv b { font-weight: 500; text-align: right; word-break: break-word; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 4px 0 10px; }
+    .cd { background: #f0fdf4; border-radius: 10px; padding: 8px 2px; text-align: center; }
+    .cd.r { background: #fef2f2; } .cd.y { background: #fffbeb; } .cd.b { background: #eff6ff; }
+    .cd b { display: block; font-size: 17px; color: #065f46; } .cd.r b { color: #991b1b; } .cd.y b { color: #92400e; } .cd.b b { color: #1e40af; } .cd span { font-size: 11px; color: #6b7280; }
+    .mt { width: 100%; border-collapse: collapse; font-size: 13px; } .mt th, .mt td { padding: 6px 4px; border-bottom: 1px solid #e5e7eb; text-align: center; } .mt th:first-child, .mt td:first-child { text-align: left; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
+    .gm { border-radius: 8px; padding: 6px 2px; text-align: center; font-size: 12px; background: #f3f4f6; color: #9ca3af; }
+    .gm.paid { background: #d1fae5; color: #065f46; font-weight: 600; } .gm.unpaid { background: #fee2e2; color: #991b1b; font-weight: 600; }
+    .gm small { display: block; font-size: 10px; font-weight: 400; }
+    .ln { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
+    .ln .d { flex: 1; min-width: 0; } .ln .d small { display: block; color: #6b7280; font-size: 11px; } .ln .a { font-weight: 600; white-space: nowrap; }
+    .ln.vd { opacity: .5; text-decoration: line-through; }
+    .legend { font-size: 12px; color: #6b7280; display: flex; gap: 10px; flex-wrap: wrap; }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 3px; vertical-align: -1px; }
+
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .tp { width: 190mm; background: #fff; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tp h2 { margin: 0; text-align: center; color: #0b6b4f; font-size: 17pt; line-height: 1.5; } .tp .s { text-align: center; font-size: 10.5pt; color: #374151; margin-bottom: 3mm; }
+    .tp .hd { display: flex; gap: 5mm; margin-bottom: 3mm; align-items: flex-start; }
+    .tp .hd .p { width: 28mm; height: 35mm; border: .25mm solid #9ca3af; background: #f3f4f6 center/cover no-repeat; flex: none; }
+    .tp .hd table { flex: 1; }
+    .tp table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 3mm; }
+    .tp th { background: #0b6b4f; color: #fff; padding: 1mm 2mm; border: .25mm solid #0b6b4f; font-weight: 600; text-align: left; }
+    .tp td { padding: 1mm 2mm; border: .25mm solid #9ca3af; } .tp td.k { width: 30mm; background: #f0fdf4; font-weight: 600; } .tp td.c { text-align: center; } .tp td.n { text-align: right; white-space: nowrap; }
+    .tp td.pd { background: #d1fae5; text-align: center; } .tp td.up { background: #fee2e2; text-align: center; } .tp td.fu { color: #9ca3af; text-align: center; }
+    .tp tr.vd td { color: #9ca3af; text-decoration: line-through; }
+    .tp .sg { display: flex; justify-content: space-between; gap: 14mm; margin-top: 14mm; } .tp .sg div { flex: 1; text-align: center; font-size: 9pt; color: #b91c1c; border-top: .25mm solid #6b7280; padding-top: 1mm; font-weight: 600; }
+    @media print {
+      html, body { background: #fff !important; }
+      header, .wrap { display: none !important; }
+      #sheet { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ স্ক্যানার মেনু</a>
+    <h1>স্টুডেন্ট প্রোফাইল</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="panel" id="lock">
+      <h2>অ্যাডমিন পিন</h2>
+      <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
+      <div class="btns"><button id="pinBtn">ঢুকুন</button></div>
+      <div class="msg" id="lockMsg"></div>
+    </div>
+
+    <div id="main" style="display:none">
+      <!-- খোঁজা -->
+      <div id="vS">
+        <div class="panel">
+          <h2>ছাত্র খুঁজুন</h2>
+          <label class="l" for="q">নাম, আইডি বা ফোন নম্বর</label>
+          <input type="search" id="q" autocomplete="off" placeholder="যেমন: আব্দুল্লাহ বা S001">
+          <label class="l" for="cls">শ্রেণি (ঐচ্ছিক)</label>
+          <select id="cls"><option value="">সব শ্রেণি</option></select>
+          <div class="btns"><button id="go">খুঁজুন</button></div>
+          <div class="msg" id="sMsg"></div>
+        </div>
+        <div class="panel" id="resP" style="display:none"><h2 id="resH">ফলাফল</h2><div id="res"></div></div>
+      </div>
+
+      <!-- প্রোফাইল -->
+      <div id="vP" style="display:none">
+        <div class="btns" style="margin:0 0 10px"><button class="light" id="back">‹ তালিকায় ফিরুন</button><button class="warn" id="print">প্রিন্ট</button></div>
+        <div class="msg" id="pMsg"></div>
+        <div class="panel"><div class="top"><div class="ph" id="ph"></div><div><h3 id="pn"></h3><div class="sub" id="ps"></div></div></div></div>
+        <div class="panel"><h2>ছাত্রের তথ্য</h2><div id="info"></div>
+          <div class="btns"><button class="light" id="pinBtn2">অভিভাবক পোর্টালের পিন দেখান</button></div>
+        </div>
+        <div class="panel"><h2>অভিভাবক ও ঠিকানা</h2><div id="guard"></div></div>
+        <div class="panel"><h2>উপস্থিতি</h2><div id="att"></div></div>
+        <div class="panel"><h2>ফি</h2>
+          <div class="two"><div><label class="l" for="yy">বছর</label><select id="yy"></select></div><div></div></div>
+          <div id="fee"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sheet"></div>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+    const ADM = { nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল', sign: ['শ্রেণি শিক্ষক', 'প্রধান শিক্ষক'] };
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function bn(s) { return String(s == null ? '' : s).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+    function taka(n) { return bn(Math.round(n).toLocaleString('en-US')); }
+    function safeImg(u) { return /^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+\/=]+$/.test(u || '') ? u : ''; }
+
+    let ADMIN = '';
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    function get(action, params) { return fetch(API_URL + '?' + new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {})).toString()).then(function (r) { return r.json(); }); }
+    function say(id, t, ok) { const m = $(id); m.textContent = t || ''; m.className = 'msg' + (t ? ' on' : '') + (ok ? ' ok' : ''); }
+    function badAdmin() { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} $('lock').style.display = 'block'; $('main').style.display = 'none'; say('lockMsg', 'ভুল অ্যাডমিন পিন'); }
+
+    let CFG = { classes: [], months: [], school: ADM.nameFallback, year: '' }, P = null, SID = '';
+
+    function enter() {
+      if (!ADMIN) { $('lock').style.display = 'block'; $('main').style.display = 'none'; return; }
+      get('profconfig').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('lockMsg', (j && j.msg) || 'আনা যায়নি'); $('lock').style.display = 'block'; return; }
+        CFG = j; $('lock').style.display = 'none'; $('main').style.display = 'block';
+        $('cls').innerHTML = '<option value="">সব শ্রেণি</option>' + j.classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
+        const y = Number(j.year) || new Date().getFullYear();
+        $('yy').innerHTML = [y - 1, y, y + 1].map(function (v) { return '<option' + (v === y ? ' selected' : '') + '>' + v + '</option>'; }).join('');
+      }).catch(function () { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।'); $('lock').style.display = 'block'; });
+    }
+    $('pinBtn').onclick = login; $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+    function login() { const v = $('pinIn').value.trim(); if (!v) return; ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pinIn').value = ''; say('lockMsg', ''); enter(); }
+
+    // ---------- খোঁজা ----------
+    function search() {
+      const q = $('q').value.trim(), c = $('cls').value;
+      if (!q && !c) { say('sMsg', 'নাম, আইডি বা শ্রেণি দিন'); return; }
+      say('sMsg', 'খোঁজা হচ্ছে...', true);
+      get('profsearch', { q: q, cls: c }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('sMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('sMsg', '');
+        $('resP').style.display = 'block';
+        $('resH').textContent = j.count ? bn(j.count) + ' জন' + (j.count > j.list.length ? ' (প্রথম ' + bn(j.list.length) + ' জন)' : '') : 'ফলাফল';
+        $('res').innerHTML = j.list.length ? j.list.map(function (s) {
+          return '<div class="res" data-id="' + esc(s.id) + '"><div class="rn">' + esc(bn(s.roll || '–')) + '</div><div class="d"><b>' + esc(s.name) + '</b><small>' + esc(s.id) + ' • ' + esc(s.cls) + (s.phone ? ' • ' + esc(s.phone) : '') + '</small></div></div>';
+        }).join('') : '<div class="note">কাউকে পাওয়া যায়নি</div>';
+        if (j.list.length === 1 && q) openStudent(j.list[0].id);
+      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('go').onclick = search; $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') search(); });
+    $('res').addEventListener('click', function (e) { const r = e.target.closest('.res'); if (r) openStudent(r.getAttribute('data-id')); });
+    $('back').onclick = function () { $('vP').style.display = 'none'; $('vS').style.display = 'block'; window.scrollTo(0, 0); };
+
+    // ---------- প্রোফাইল ----------
+    function openStudent(id, year) {
+      SID = id; say('sMsg', 'প্রোফাইল আনা হচ্ছে...', true);
+      get('profget', { id: id, year: year || $('yy').value }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('sMsg', (j && j.msg) || 'আনা যায়নি'); return; }
+        say('sMsg', ''); say('pMsg', ''); P = j; render();
+        $('vS').style.display = 'none'; $('vP').style.display = 'block'; window.scrollTo(0, 0);
+      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('yy').onchange = function () { if (SID) get('profget', { id: SID, year: $('yy').value }).then(function (j) { if (j && j.ok) { P = j; render(); } }); };
+    function kv(k, v) { return v ? '<div class="kv"><span>' + esc(k) + '</span><b>' + esc(v) + '</b></div>' : ''; }
+    function monthName(k) { const p = k.split('-'); return (CFG.months[Number(p[1]) - 1] || p[1]) + ' ' + bn(p[0]); }
+
+    function render() {
+      const s = P.student, a = P.admission, at = P.attendance, f = P.fees;
+      const img = safeImg(s.photo);
+      $('ph').style.backgroundImage = img ? 'url(' + img + ')' : ''; $('ph').textContent = img ? '' : 'ছবি নেই';
+      $('pn').textContent = s.name;
+      $('ps').innerHTML = '<span class="chip">' + esc(s.cls) + '</span><span class="chip">রোল ' + esc(bn(s.roll)) + '</span><br>আইডি: ' + esc(s.id) + (s.phone ? '<br>ফোন: ' + esc(s.phone) : '');
+      $('info').innerHTML = kv('আইডি', s.id) + kv('শ্রেণি', s.cls) + kv('রোল', bn(s.roll)) + kv('জন্ম তারিখ', bn(s.dob)) + kv('অভিভাবকের ফোন', s.phone) +
+        (a ? kv('লিঙ্গ', a.gender) + kv('রক্তের গ্রুপ', a.blood) + kv('জন্মনিবন্ধন/NID', a.breg) + kv('আবেদন নম্বর', a.appNo) + kv('পূর্বের প্রতিষ্ঠান', a.prev) : '') +
+        kv('কার্ড ইস্যু', s.issue) + kv('কার্ড মেয়াদ', s.expire);
+      $('pinBtn2').textContent = 'অভিভাবক পোর্টালের পিন দেখান'; $('pinBtn2').style.display = s.pin ? '' : 'none';
+      $('guard').innerHTML = a ? (kv('পিতা', a.father) + kv('পিতার পেশা', a.focc) + kv('পিতার NID', a.fnid) + kv('পিতার মোবাইল', a.fmob) +
+        kv('মাতা', a.mother) + kv('মাতার পেশা', a.mocc) + kv('মাতার NID', a.mnid) + kv('মাতার মোবাইল', a.mmob) +
+        kv('অভিভাবক', a.guard) + kv('সম্পর্ক', a.rel) + kv('অভিভাবকের পেশা', a.gocc) + kv('অভিভাবকের মোবাইল', a.gmob) +
+        kv('স্থায়ী ঠিকানা', a.perm) + kv('বর্তমান ঠিকানা', a.temp)) :
+        '<div class="note">এই ছাত্রের ভর্তি আবেদনের তথ্য পাওয়া যায়নি (অনলাইন আবেদনের বাইরে ভর্তি হলে এমন হয়)।</div>';
+
+      const t = at.total;
+      $('att').innerHTML = t.days ? '<div class="cards"><div class="cd"><b>' + bn(t.present) + '</b><span>উপস্থিত</span></div><div class="cd y"><b>' + bn(t.late) + '</b><span>দেরি</span></div><div class="cd r"><b>' + bn(t.absent) + '</b><span>অনুপস্থিত</span></div><div class="cd b"><b>' + bn(t.pct) + '%</b><span>হাজিরা</span></div></div>' +
+        '<table class="mt"><tr><th>মাস</th><th>দিন</th><th>উপ.</th><th>দেরি</th><th>অনু.</th><th>%</th></tr>' + at.months.map(function (m) {
+          return '<tr><td>' + esc(monthName(m.month)) + '</td><td>' + bn(m.days) + '</td><td>' + bn(m.present) + '</td><td>' + bn(m.late) + '</td><td>' + bn(m.absent) + '</td><td>' + (m.pct == null ? '–' : bn(m.pct) + '%') + '</td></tr>';
+        }).join('') + '</table>' + (at.absentDays.length ? '<div class="note"><b>সাম্প্রতিক অনুপস্থিতির তারিখ:</b> ' + at.absentDays.map(function (d) { return esc(bn(d.slice(8) + '/' + d.slice(5, 7))); }).join(', ') + '</div>' : '') +
+        '<div class="note">স্কুল-দিন = যেদিন অন্তত একজনের স্ক্যান হয়েছে। আজকের না-আসা এখনো গোনা হয় না।</div>' : '<div class="note">এখনো উপস্থিতির তথ্য নেই</div>';
+
+      $('fee').innerHTML = '<div class="cards" style="grid-template-columns:repeat(3,1fr)"><div class="cd"><b>' + taka(f.totalPaid) + '</b><span>মোট জমা</span></div><div class="cd y"><b>' + taka(f.totalDiscount) + '</b><span>মোট ছাড়</span></div><div class="cd b"><b>' + bn(f.receipts) + '</b><span>রসিদ</span></div></div>' +
+        '<div class="grid">' + f.grid.map(function (g, i) {
+          return '<div class="gm ' + g.state + '">' + esc(CFG.months[i] || '') + '<small>' + (g.state === 'paid' ? 'জমা' : g.state === 'unpaid' ? 'জমা নেই' : '') + '</small></div>';
+        }).join('') + '</div>' +
+        '<div class="legend"><span><i style="background:#d1fae5"></i>জমা</span><span><i style="background:#fee2e2"></i>জমা নেই (চলতি মাস পর্যন্ত)</span><span><i style="background:#f3f4f6"></i>আসছে মাস</span></div>' +
+        '<div class="note">মাসিক বেতন ছাড়া অন্য খাত (ভর্তি, পরীক্ষা...) এই ছকে আসে না, নিচের রসিদে দেখুন। মাঝবছরে ভর্তি হলে আগের মাসগুলো "জমা নেই" দেখাতে পারে।</div>' +
+        '<h2 style="margin:12px 0 4px;font-size:14px">রসিদ</h2>' + (f.history.length ? f.history.map(function (r) {
+          return '<div class="ln' + (r.status === 'Void' ? ' vd' : '') + '"><div class="d">' + esc(r.rcpt) + ' • ' + esc(bn(r.date)) + '<small>' + esc(r.items.map(function (i) { return i.name; }).join(', ')) + (r.status === 'Void' ? ' • বাতিল: ' + esc(r.void) : '') + '</small></div><div class="a">' + taka(r.paid) + '</div></div>';
+        }).join('') : '<div class="note">কোনো রসিদ নেই</div>');
+    }
+    $('pinBtn2').onclick = function () {
+      const b = $('pinBtn2');
+      if (b.dataset.shown === '1') { b.dataset.shown = ''; b.textContent = 'অভিভাবক পোর্টালের পিন দেখান'; return; }
+      b.dataset.shown = '1'; b.textContent = 'পিন: ' + bn(P.student.pin) + ' (লুকাতে চাপুন)';
+    };
+
+    // ---------- প্রিন্ট ----------
+    function printHtml(html) {
+      $('sheet').innerHTML = html;
+      const st = document.createElement('style'); st.id = 'pgcss'; st.textContent = '@page { size: A4; margin: 10mm; }'; document.head.appendChild(st);
+      const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img'));
+      const done = function () { const s = $('pgcss'); if (s) s.remove(); $('sheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      setTimeout(function () { window.print(); }, 250);
+    }
+    function row2(k1, v1, k2, v2) { return '<tr><td class="k">' + esc(k1) + '</td><td>' + esc(v1 || '') + '</td><td class="k">' + esc(k2) + '</td><td>' + esc(v2 || '') + '</td></tr>'; }
+    $('print').onclick = function () {
+      if (!P) return;
+      const s = P.student, a = P.admission || {}, at = P.attendance, f = P.fees, t = at.total, img = safeImg(s.photo);
+      const hd = '<div class="hd"><div class="p"' + (img ? ' style="background-image:url(' + img + ')"' : '') + '></div><table>' +
+        row2('নাম', s.name, 'আইডি', s.id) + row2('শ্রেণি', s.cls, 'রোল', bn(s.roll)) + row2('জন্ম তারিখ', bn(s.dob), 'লিঙ্গ', a.gender) +
+        row2('রক্তের গ্রুপ', a.blood, 'অভিভাবকের ফোন', bn(s.phone)) + row2('পূর্বের প্রতিষ্ঠান', a.prev, 'আবেদন নম্বর', bn(a.appNo)) + '</table></div>';
+      const gd = P.admission ? '<table><tr><th colspan="4">অভিভাবক ও ঠিকানা</th></tr>' + row2('পিতা', a.father, 'মোবাইল', bn(a.fmob)) + row2('মাতা', a.mother, 'মোবাইল', bn(a.mmob)) +
+        row2('অভিভাবক', a.guard, 'সম্পর্ক', a.rel) + '<tr><td class="k">স্থায়ী ঠিকানা</td><td colspan="3">' + esc(a.perm || '') + '</td></tr><tr><td class="k">বর্তমান ঠিকানা</td><td colspan="3">' + esc(a.temp || '') + '</td></tr></table>' : '';
+      const att = '<table><tr><th colspan="6">উপস্থিতি' + (t.days ? ' — মোট ' + bn(t.days) + ' দিনে ' + bn(t.pct) + '%' : '') + '</th></tr><tr><td class="k c">মাস</td><td class="k c">দিন</td><td class="k c">উপস্থিত</td><td class="k c">দেরি</td><td class="k c">অনুপস্থিত</td><td class="k c">%</td></tr>' +
+        (at.months.length ? at.months.map(function (m) { return '<tr><td>' + esc(monthName(m.month)) + '</td><td class="c">' + bn(m.days) + '</td><td class="c">' + bn(m.present) + '</td><td class="c">' + bn(m.late) + '</td><td class="c">' + bn(m.absent) + '</td><td class="c">' + (m.pct == null ? '–' : bn(m.pct) + '%') + '</td></tr>'; }).join('') : '<tr><td colspan="6" class="c">তথ্য নেই</td></tr>') + '</table>';
+      const fee = '<table><tr><th colspan="12">মাসিক বেতন — ' + bn(f.year) + ' (মোট জমা ' + taka(f.totalPaid) + ' টাকা)</th></tr><tr>' + f.grid.map(function (g, i) { return '<td class="k c" style="font-size:8pt;padding:.6mm">' + esc((CFG.months[i] || '').slice(0, 4)) + '</td>'; }).join('') + '</tr><tr>' +
+        f.grid.map(function (g) { return '<td class="' + (g.state === 'paid' ? 'pd' : g.state === 'unpaid' ? 'up' : 'fu') + '" style="font-size:8pt;padding:.6mm">' + (g.state === 'paid' ? 'জমা' : g.state === 'unpaid' ? 'বাকি' : '–') + '</td>'; }).join('') + '</tr></table>';
+      const rc = f.history.filter(function (r) { return r.status !== 'Void'; }).slice(0, 8);
+      const rtab = '<table><tr><th>রসিদ</th><th>তারিখ</th><th>খাত</th><th style="text-align:right">টাকা</th></tr>' + (rc.length ? rc.map(function (r) {
+        return '<tr><td>' + esc(bn(r.rcpt)) + '</td><td class="c">' + esc(bn(r.date)) + '</td><td>' + esc(r.items.map(function (i) { return i.name; }).join(', ')) + '</td><td class="n">' + taka(r.paid) + '</td></tr>';
+      }).join('') : '<tr><td colspan="4" class="c">কোনো রসিদ নেই</td></tr>') + '</table>';
+      printHtml('<div class="tp"><h2>' + esc(CFG.school || ADM.nameFallback) + '</h2><div class="s"><b>ছাত্র প্রোফাইল</b></div>' + hd + gd + att + fee + rtab +
+        '<div class="sg">' + ADM.sign.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join('') + '</div></div>');
+    };
+
+    enter();
+  </script>
+</body>
+</html>
