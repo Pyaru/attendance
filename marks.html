@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>পরীক্ষার ফল ও মার্কশিট</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 12px 16px; }
+    header a { color: #fff; font-size: 13px; opacity: .9; text-decoration: none; }
+    header h1 { margin: 2px 0 0; font-size: 18px; }
+    .tabs { display: flex; gap: 6px; max-width: 680px; margin: 10px auto 0; padding: 0 12px; }
+    .tabs button { flex: 1; background: #e5e7eb; color: #374151; font-weight: 600; padding: 10px 4px; }
+    .tabs button.on { background: #0b6b4f; color: #fff; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .panel h2 { margin: 0 0 10px; font-size: 16px; color: #0b6b4f; }
+    label.l { display: block; font-size: 13px; color: #6b7280; margin: 10px 0 4px; }
+    input[type=text], input[type=password], select {
+      width: 100%; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    button { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #374151; } button.warn { background: #b45309; } button.light { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .5; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btns button { flex: 1; min-width: 110px; }
+    .note { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+    .msg.on { display: block; background: #fee2e2; color: #991b1b; } .msg.ok { background: #d1fae5; color: #065f46; }
+    .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    #lock { display: none; }
+
+    .stu { border-top: 2px solid #0b6b4f; padding: 10px 0 8px; margin-top: 10px; }
+    .stu:first-child { margin-top: 0; }
+    .stu .sh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .stu .sh b { font-size: 15px; } .stu .sh small { color: #6b7280; font-size: 12px; white-space: nowrap; }
+    .stu .tot { font-weight: 700; color: #065f46; font-size: 13px; white-space: nowrap; }
+    .sg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    .cell label { display: block; font-size: 11px; color: #6b7280; line-height: 1.2; margin-bottom: 2px; min-height: 26px; }
+    .cell .row { display: flex; gap: 3px; }
+    .cell input { width: 100%; min-width: 0; padding: 8px 6px; font-size: 16px; text-align: center; font-family: inherit; border: 1px solid #d1d5db; border-radius: 8px; }
+    .cell input.dirty { border-color: #0b6b4f; background: #f0fdf4; } .cell input.err { border-color: #b91c1c; background: #fef2f2; }
+    .cell input:disabled { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+    .cell button { padding: 0 8px; font-size: 12px; background: #e5e7eb; color: #374151; border-radius: 8px; flex: none; }
+    .cell button.on { background: #f59e0b; color: #fff; }
+    .savebar { position: sticky; bottom: 0; background: #fff; padding: 10px 12px; margin: 0 -12px -12px; border-top: 1px solid #e5e7eb; box-shadow: 0 -2px 6px rgba(0,0,0,.06); }
+    .savebar .btns { margin: 0; }
+
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 4px 0 10px; }
+    .cd { background: #f0fdf4; border-radius: 10px; padding: 8px 2px; text-align: center; }
+    .cd.r { background: #fef2f2; } .cd.y { background: #fffbeb; } .cd.b { background: #eff6ff; }
+    .cd b { display: block; font-size: 17px; color: #065f46; } .cd.r b { color: #991b1b; } .cd.y b { color: #92400e; } .cd.b b { color: #1e40af; } .cd span { font-size: 11px; color: #6b7280; }
+    .rl { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #e5e7eb; font-size: 14px; }
+    .rl .rk { width: 30px; height: 30px; border-radius: 50%; background: #d1fae5; color: #065f46; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; font-size: 13px; }
+    .rl .rk.f { background: #fee2e2; color: #991b1b; } .rl .rk.n { background: #f3f4f6; color: #9ca3af; }
+    .rl .d { flex: 1; min-width: 0; } .rl .d small { display: block; color: #6b7280; font-size: 11px; }
+    .rl .a { text-align: right; white-space: nowrap; font-weight: 600; font-size: 13px; } .rl .a small { display: block; font-weight: 400; color: #6b7280; font-size: 11px; }
+    .rl button { padding: 6px 9px; font-size: 12px; }
+    .tag { display: inline-block; border-radius: 99px; padding: 0 8px; font-size: 11px; font-weight: 600; }
+    .tag.p { background: #d1fae5; color: #065f46; } .tag.f { background: #fee2e2; color: #991b1b; } .tag.i { background: #fef3c7; color: #92400e; }
+
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .tp { width: 190mm; background: #fff; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; color: #111827; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tp .pg { page-break-after: always; border: .6mm double #0b6b4f; padding: 6mm 7mm; height: 275mm; position: relative; }
+    .tp .pg:last-child { page-break-after: auto; }
+    .tp h2 { margin: 0; text-align: center; color: #0b6b4f; font-size: 19pt; line-height: 1.5; }
+    .tp .s { text-align: center; font-size: 11pt; color: #374151; }
+    .tp .ttl { text-align: center; margin: 4mm auto 4mm; font-size: 14pt; font-weight: 700; color: #fff; background: #0b6b4f; width: 75mm; padding: 1mm 0; border-radius: 6mm; }
+    .tp table { width: 100%; border-collapse: collapse; font-size: 10.5pt; margin-bottom: 4mm; }
+    .tp th { background: #0b6b4f; color: #fff; padding: 1.5mm 2mm; border: .25mm solid #0b6b4f; font-weight: 600; }
+    .tp td { padding: 1.5mm 2mm; border: .25mm solid #9ca3af; } .tp td.k { width: 30mm; background: #f0fdf4; font-weight: 600; } .tp td.c { text-align: center; } .tp td.n { text-align: right; white-space: nowrap; }
+    .tp tr.tot td { font-weight: 700; background: #f0fdf4; } .tp td.fl { color: #b91c1c; font-weight: 700; }
+    .tp .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin-bottom: 4mm; }
+    .tp .sum div { border: .25mm solid #9ca3af; border-radius: 2mm; text-align: center; padding: 2mm 1mm; font-size: 9.5pt; color: #4b5563; }
+    .tp .sum b { display: block; font-size: 14pt; color: #0b6b4f; } .tp .sum b.bad { color: #b91c1c; }
+    .tp .gs { font-size: 8.5pt; color: #4b5563; }
+    .tp .sg { display: flex; justify-content: space-between; gap: 12mm; position: absolute; left: 7mm; right: 7mm; bottom: 8mm; } .tp .sg div { flex: 1; text-align: center; font-size: 9.5pt; color: #b91c1c; border-top: .25mm solid #6b7280; padding-top: 1mm; font-weight: 600; }
+    .tp.ml .sg { position: static; margin-top: 16mm; }
+    .tp.ml table { font-size: 8.5pt; } .tp.ml th, .tp.ml td { padding: 1mm 1mm; }
+    @media print {
+      html, body { background: #fff !important; }
+      header, .tabs, .wrap { display: none !important; }
+      #sheet { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ স্ক্যানার মেনু</a>
+    <h1>পরীক্ষার ফল ও মার্কশিট</h1>
+  </header>
+  <div class="tabs">
+    <button id="tE" class="on">নম্বর এন্ট্রি</button><button id="tR">ফল ও মার্কশিট</button>
+  </div>
+
+  <div class="wrap">
+    <div class="panel" id="lock">
+      <h2>অ্যাডমিন পিন</h2>
+      <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
+      <div class="btns"><button id="pinBtn">ঢুকুন</button></div>
+      <div class="msg" id="lockMsg"></div>
+    </div>
+
+    <div id="main" style="display:none">
+      <div class="panel">
+        <div class="three">
+          <div><label class="l" for="yy">বছর</label><select id="yy"></select></div>
+          <div><label class="l" for="ex">পরীক্ষা</label><select id="ex"></select></div>
+          <div><label class="l" for="cls">শ্রেণি</label><select id="cls"></select></div>
+        </div>
+        <div class="btns"><button id="go">দেখুন</button></div>
+        <div class="msg" id="gMsg"></div>
+      </div>
+
+      <!-- এন্ট্রি -->
+      <div id="vE" style="display:none">
+        <div class="panel" id="eP">
+          <h2 id="eH">নম্বর</h2>
+          <div class="note">নম্বর লিখুন। কেউ অনুপস্থিত থাকলে ঘরের পাশের <b>অনু.</b> বাটন চাপুন। ফাঁকা ঘর মানে "এখনো ওঠেনি"। শুধু বদলানো ঘরগুলো সবুজ হয়।</div>
+          <div id="eList"></div>
+          <div class="savebar">
+            <div class="two" style="display:grid;grid-template-columns:1fr 1.4fr;gap:8px"><input type="text" id="by" maxlength="40" placeholder="আপনার নাম"><button id="save">সংরক্ষণ</button></div>
+            <div class="msg" id="eMsg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ফল -->
+      <div id="vR" style="display:none">
+        <div class="panel" id="rP">
+          <h2 id="rH">ফল</h2>
+          <div id="rSum"></div>
+          <div class="btns"><button class="warn" id="pAll">সবার মার্কশিট প্রিন্ট</button><button class="sec" id="pMerit">মেধাতালিকা প্রিন্ট</button></div>
+          <div class="note" id="rNote"></div>
+          <div id="rList" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sheet"></div>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+    const ADM = { nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল', sign: ['শ্রেণি শিক্ষক', 'অভিভাবক', 'প্রধান শিক্ষক'], meritSign: ['শ্রেণি শিক্ষক', 'প্রধান শিক্ষক'] };
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function bn(s) { return String(s == null ? '' : s).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+    function en(s) { return String(s == null ? '' : s).replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }); }
+    function num(n) { return bn(String(Math.round(n * 100) / 100)); }
+
+    let ADMIN = '';
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    function get(action, params) { return fetch(API_URL + '?' + new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {})).toString()).then(function (r) { return r.json(); }); }
+    function post(body) { return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ admin: ADMIN }, body)) }).then(function (r) { return r.json(); }); }
+    function say(id, t, ok) { const m = $(id); m.textContent = t || ''; m.className = 'msg' + (t ? ' on' : '') + (ok ? ' ok' : ''); }
+    function badAdmin() { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} $('lock').style.display = 'block'; $('main').style.display = 'none'; say('lockMsg', 'ভুল অ্যাডমিন পিন'); }
+
+    let CFG = { exams: [], classes: [], school: ADM.nameFallback }, VIEW = 'E', ENT = null, RES = null, DIRTY = false;
+    const RESULT = { Pass: 'উত্তীর্ণ', Fail: 'অনুত্তীর্ণ', Incomplete: 'অসম্পূর্ণ', None: '—' };
+
+    function enter() {
+      if (!ADMIN) { $('lock').style.display = 'block'; $('main').style.display = 'none'; return; }
+      get('markconfig').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('lockMsg', (j && j.msg) || 'আনা যায়নি'); $('lock').style.display = 'block'; return; }
+        CFG = j; $('lock').style.display = 'none'; $('main').style.display = 'block';
+        const y = Number(j.year) || new Date().getFullYear();
+        $('yy').innerHTML = [y - 1, y, y + 1].map(function (v) { return '<option value="' + v + '"' + (v === y ? ' selected' : '') + '>' + bn(v) + '</option>'; }).join('');
+        $('ex').innerHTML = j.exams.map(function (x) { return '<option value="' + esc(x.key) + '">' + esc(x.name) + '</option>'; }).join('');
+        $('cls').innerHTML = '<option value="">বাছুন</option>' + j.classes.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
+        try { $('by').value = localStorage.getItem('fee_by') || ''; } catch (e) {}
+        tab('E');
+      }).catch(function () { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।'); $('lock').style.display = 'block'; });
+    }
+    $('pinBtn').onclick = login; $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+    function login() { const v = $('pinIn').value.trim(); if (!v) return; ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pinIn').value = ''; say('lockMsg', ''); enter(); }
+
+    function tab(v) {
+      if (v !== VIEW && DIRTY && !confirm('সংরক্ষণ না করা নম্বর আছে। তবুও যাবেন?')) return;
+      VIEW = v; if (v !== 'E') DIRTY = false;
+      $('vE').style.display = v === 'E' ? 'block' : 'none'; $('vR').style.display = v === 'R' ? 'block' : 'none';
+      $('tE').className = v === 'E' ? 'on' : ''; $('tR').className = v === 'R' ? 'on' : '';
+      if ($('cls').value) load();
+    }
+    $('tE').onclick = function () { tab('E'); }; $('tR').onclick = function () { tab('R'); };
+    window.addEventListener('beforeunload', function (e) { if (DIRTY) { e.preventDefault(); e.returnValue = ''; } });
+    $('go').onclick = function () { if (DIRTY && !confirm('সংরক্ষণ না করা নম্বর আছে। বাদ দিয়ে নতুন করে আনবেন?')) return; DIRTY = false; load(); };
+    function params() { return { year: $('yy').value, exam: $('ex').value, cls: $('cls').value }; }
+    function load() {
+      if (!$('cls').value) { say('gMsg', 'শ্রেণি বাছুন'); return; }
+      say('gMsg', 'আনা হচ্ছে...', true);
+      const done = function (j, fn) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('gMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('gMsg', ''); fn(j);
+      };
+      if (VIEW === 'E') get('marklist', params()).then(function (j) { done(j, function (x) { ENT = x; renderEntry(); }); }).catch(function () { say('gMsg', 'সংযোগ ত্রুটি'); });
+      else get('markclass', params()).then(function (j) { done(j, function (x) { RES = x; renderRes(); }); }).catch(function () { say('gMsg', 'সংযোগ ত্রুটি'); });
+    }
+
+    // ---------- এন্ট্রি ----------
+    function examName(k) { const x = CFG.exams.filter(function (e) { return e.key === k; })[0]; return x ? x.name : k; }
+    function renderEntry() {
+      const subs = ENT.subjects;
+      $('eH').textContent = examName(ENT.exam) + ' — ' + ENT.cls + ' (' + bn(ENT.students.length) + ' জন)';
+      $('eList').innerHTML = ENT.students.length ? ENT.students.map(function (s, si) {
+        return '<div class="stu" data-i="' + si + '"><div class="sh"><b>' + esc(bn(s.roll)) + '. ' + esc(s.name) + '</b><span class="tot"></span></div><div class="sg">' + subs.map(function (sub) {
+          const v = s.marks[sub.key];
+          const ab = v === 'A', val = ab ? '' : (v == null ? '' : bn(v));
+          return '<div class="cell"><label>' + esc(sub.name) + ' (' + bn(sub.full) + ')</label><div class="row"><input type="text" inputmode="decimal" autocomplete="off" data-k="' + esc(sub.key) + '" data-f="' + sub.full + '" value="' + esc(ab ? 'অনু.' : val) + '"' + (ab ? ' disabled' : '') + '>' +
+            '<button type="button" class="' + (ab ? 'on' : '') + '" data-abs="' + esc(sub.key) + '">অনু.</button></div></div>';
+        }).join('') + '</div></div>';
+      }).join('') : '<div class="note">এই শ্রেণিতে কোনো ছাত্র নেই</div>';
+      Array.prototype.forEach.call($('eList').querySelectorAll('.stu'), function (el) { recalc(el); });
+      say('eMsg', '');
+    }
+    function cellVal(inp) { return inp.disabled ? 'A' : en(inp.value).trim(); }
+    function recalc(stuEl) {
+      let t = 0, full = 0, any = false;
+      Array.prototype.forEach.call(stuEl.querySelectorAll('input'), function (inp) {
+        full += Number(inp.getAttribute('data-f'));
+        const v = cellVal(inp), n = Number(v);
+        inp.className = (inp.className.indexOf('dirty') >= 0 ? 'dirty' : '');
+        if (v !== '' && v !== 'A' && (isNaN(n) || n < 0 || n > Number(inp.getAttribute('data-f')))) inp.className += ' err';
+        if (v !== '' && v !== 'A' && !isNaN(n)) { t += n; any = true; }
+      });
+      stuEl.querySelector('.tot').textContent = any ? 'মোট ' + num(t) + '/' + bn(full) : '';
+    }
+    function markDirty(inp) {
+      inp.className = 'dirty'; inp.closest('.stu').setAttribute('data-dirty', '1'); DIRTY = true; recalc(inp.closest('.stu'));
+    }
+    $('eList').addEventListener('input', function (e) { if (e.target.tagName === 'INPUT') markDirty(e.target); });
+    $('eList').addEventListener('click', function (e) {
+      const b = e.target.closest('button[data-abs]'); if (!b) return;
+      const inp = b.parentNode.querySelector('input');
+      if (inp.disabled) { inp.disabled = false; inp.value = ''; b.className = ''; inp.focus(); }
+      else { inp.disabled = true; inp.value = 'অনু.'; b.className = 'on'; }
+      markDirty(inp);
+    });
+    $('save').onclick = function () {
+      const by = $('by').value.trim();
+      if (by.length < 2) { say('eMsg', 'আপনার নাম লিখুন'); return; }
+      const rows = [];
+      let bad = '';
+      Array.prototype.forEach.call($('eList').querySelectorAll('.stu[data-dirty="1"]'), function (el) {
+        const s = ENT.students[Number(el.getAttribute('data-i'))], marks = {};
+        Array.prototype.forEach.call(el.querySelectorAll('input'), function (inp) {
+          const v = cellVal(inp);
+          if (inp.className.indexOf('err') >= 0) bad = bad || (s.name + ' — লাল ঘরের নম্বর ঠিক করুন');
+          if (v !== '') marks[inp.getAttribute('data-k')] = v;
+        });
+        rows.push({ sid: s.sid, marks: marks });
+      });
+      if (bad) { say('eMsg', bad); return; }
+      if (!rows.length) { say('eMsg', 'কোনো নম্বর বদলানো হয়নি'); return; }
+      try { localStorage.setItem('fee_by', by); } catch (e) {}
+      $('save').disabled = true; say('eMsg', 'সংরক্ষণ হচ্ছে...', true);
+      post({ action: 'marksave', year: ENT.year, exam: ENT.exam, cls: ENT.cls, by: by, rows: rows }).then(function (j) {
+        $('save').disabled = false;
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('eMsg', (j && j.msg) || 'হয়নি, আবার চেষ্টা করুন'); return; }
+        DIRTY = false;
+        Array.prototype.forEach.call($('eList').querySelectorAll('.stu[data-dirty="1"]'), function (el) {
+          el.removeAttribute('data-dirty');
+          const s = ENT.students[Number(el.getAttribute('data-i'))];
+          Array.prototype.forEach.call(el.querySelectorAll('input'), function (inp) { const v = cellVal(inp); if (v === '') delete s.marks[inp.getAttribute('data-k')]; else s.marks[inp.getAttribute('data-k')] = v === 'A' ? 'A' : Number(v); inp.className = ''; });
+        });
+        say('eMsg', 'সংরক্ষিত — ' + bn(rows.length) + ' জনের নম্বর', true);
+      }).catch(function () { $('save').disabled = false; say('eMsg', 'সংযোগ ত্রুটি — "ফল" ট্যাবে দেখে নিন সংরক্ষণ হয়েছে কি না'); });
+    };
+
+    // ---------- ফল ----------
+    function tagOf(r) { return r === 'Pass' ? '<span class="tag p">উত্তীর্ণ</span>' : r === 'Fail' ? '<span class="tag f">অনুত্তীর্ণ</span>' : r === 'Incomplete' ? '<span class="tag i">অসম্পূর্ণ</span>' : ''; }
+    function renderRes() {
+      const j = RES;
+      $('rH').textContent = j.examName + ' — ' + j.cls;
+      const rate = j.completed ? Math.round(j.passed * 100 / j.completed) : 0;
+      $('rSum').innerHTML = '<div class="cards"><div class="cd b"><b>' + bn(j.count) + '</b><span>মোট ছাত্র</span></div><div class="cd"><b>' + bn(j.passed) + '</b><span>উত্তীর্ণ</span></div><div class="cd r"><b>' + bn(j.completed - j.passed) + '</b><span>অনুত্তীর্ণ</span></div><div class="cd y"><b>' + bn(rate) + '%</b><span>পাসের হার</span></div></div>';
+      const inc = j.count - j.completed;
+      $('rNote').textContent = inc ? bn(inc) + ' জনের নম্বর এখনো অসম্পূর্ণ বা ওঠেনি — তাদের মার্কশিট ও মেধাক্রম আসবে না।' : '';
+      const order = j.students.slice().sort(function (a, b) { return (a.rank == null) - (b.rank == null) || (a.rank || 0) - (b.rank || 0) || (Number(a.roll) || 0) - (Number(b.roll) || 0); });
+      $('rList').innerHTML = order.map(function (s) {
+        const r = s.res;
+        return '<div class="rl" data-sid="' + esc(s.sid) + '"><div class="rk ' + (s.rank == null ? 'n' : r.result === 'Fail' ? 'f' : '') + '">' + (s.rank == null ? '–' : bn(s.rank)) + '</div><div class="d"><b>' + esc(s.name) + '</b> ' + tagOf(r.result) + '<small>রোল ' + esc(bn(s.roll)) + ' • ' + esc(s.sid) + '</small></div>' +
+          '<div class="a">' + (r.entered ? num(r.total) + '/' + bn(r.fullTotal) + '<small>' + (r.complete ? 'GPA ' + num(r.gpa) + ' • ' + esc(r.grade) : bn(r.entered) + '/' + bn(j.subjects.length) + ' বিষয়') + '</small>' : '') + '</div>' +
+          (r.complete ? '<button class="sec" data-one="1">মার্কশিট</button>' : '') + '</div>';
+      }).join('') || '<div class="note">এই শ্রেণিতে কোনো ছাত্র নেই</div>';
+    }
+    $('rList').addEventListener('click', function (e) {
+      const b = e.target.closest('button[data-one]'); if (!b) return;
+      const sid = b.closest('.rl').getAttribute('data-sid');
+      printHtml(RES.students.filter(function (s) { return s.sid === sid; }).map(sheetOf).join(''), false);
+    });
+    $('pAll').onclick = function () {
+      if (!RES) { say('gMsg', 'আগে "দেখুন" চাপুন'); return; }
+      const list = RES.students.filter(function (s) { return s.res.complete; });
+      if (!list.length) { say('gMsg', 'প্রিন্ট করার মতো সম্পূর্ণ ফল নেই'); return; }
+      printHtml(list.map(sheetOf).join(''), false);
+    };
+
+    // ---------- প্রিন্ট ----------
+    function printHtml(html, merit) {
+      $('sheet').innerHTML = '<div class="tp' + (merit ? ' ml' : '') + '">' + html + '</div>';
+      const st = document.createElement('style'); st.id = 'pgcss'; st.textContent = '@page { size: A4; margin: 10mm; }'; document.head.appendChild(st);
+      const done = function () { const s = $('pgcss'); if (s) s.remove(); $('sheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      setTimeout(function () { window.print(); }, 250);
+    }
+    function sheetOf(s) {
+      const j = RES, r = s.res, pass = r.result === 'Pass';
+      const rows = r.lines.map(function (l, i) {
+        return '<tr><td class="c">' + bn(i + 1) + '</td><td>' + esc(l.name) + '</td><td class="c">' + bn(l.full) + '</td><td class="c' + (l.fail ? ' fl' : '') + '">' + (l.absent ? 'অনুপস্থিত' : num(l.mark)) + '</td><td class="c' + (l.fail ? ' fl' : '') + '">' + esc(l.grade) + '</td><td class="c">' + num(l.gp) + '</td></tr>';
+      }).join('');
+      const gs = (CFG.grades || []).map(function (g, i, a) { return esc(g[1]) + ' (' + bn(g[0]) + (i ? '–' + bn(Math.ceil(a[i - 1][0]) - 1) : '+') + '%) = ' + num(g[2]); }).join(' &nbsp;|&nbsp; ');
+      return '<div class="pg"><h2>' + esc(CFG.school || ADM.nameFallback) + '</h2><div class="s">শিক্ষাবর্ষ ' + bn(j.year) + '</div><div class="ttl">মার্কশিট</div>' +
+        '<div class="s" style="font-weight:600;margin-bottom:4mm">' + esc(j.examName) + ' — ' + bn(j.year) + '</div>' +
+        '<table><tr><td class="k">ছাত্রের নাম</td><td colspan="3">' + esc(s.name) + '</td></tr><tr><td class="k">শ্রেণি</td><td>' + esc(j.cls) + '</td><td class="k">রোল</td><td>' + esc(bn(s.roll)) + '</td></tr><tr><td class="k">আইডি</td><td>' + esc(s.sid) + '</td><td class="k">জন্ম তারিখ</td><td>' + esc(bn(s.dob)) + '</td></tr></table>' +
+        '<table><tr><th style="width:12mm">ক্রম</th><th>বিষয়</th><th style="width:24mm">পূর্ণমান</th><th style="width:28mm">প্রাপ্ত নম্বর</th><th style="width:20mm">গ্রেড</th><th style="width:22mm">পয়েন্ট</th></tr>' + rows +
+        '<tr class="tot"><td colspan="2">মোট</td><td class="c">' + bn(r.fullTotal) + '</td><td class="c">' + num(r.total) + '</td><td class="c' + (pass ? '' : ' fl') + '">' + esc(r.grade) + '</td><td class="c">' + num(r.gpa) + '</td></tr></table>' +
+        '<div class="sum"><div><b>' + bn(r.pct.toFixed(2).replace(/\.?0+$/, '')) + '%</b>শতকরা নম্বর</div><div><b>' + num(r.gpa) + '</b>জিপিএ</div><div><b>' + (s.rank ? bn(s.rank) + ' / ' + bn(j.completed) : '–') + '</b>শ্রেণিতে অবস্থান</div></div>' +
+        '<table><tr><td class="k">ফলাফল</td><td class="' + (pass ? '' : 'fl') + '" style="font-weight:700;font-size:12pt">' + (pass ? 'উত্তীর্ণ' : 'অনুত্তীর্ণ') + '</td></tr></table>' +
+        '<div class="gs"><b>গ্রেড তালিকা:</b> ' + gs + '<br>প্রতি বিষয়ে ন্যূনতম ' + bn(j.passPct) + '% নম্বর পেলে উত্তীর্ণ। কোনো বিষয়ে অনুত্তীর্ণ বা অনুপস্থিত হলে জিপিএ ০ ধরা হয়।</div>' +
+        '<div class="sg">' + ADM.sign.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join('') + '</div></div>';
+    }
+    $('pMerit').onclick = function () {
+      if (!RES) { say('gMsg', 'আগে "দেখুন" চাপুন'); return; }
+      const j = RES;
+      const order = j.students.slice().sort(function (a, b) { return (a.rank == null) - (b.rank == null) || (a.rank || 0) - (b.rank || 0) || (Number(a.roll) || 0) - (Number(b.roll) || 0); });
+      const rows = order.map(function (s) {
+        const r = s.res;
+        return '<tr><td class="c">' + (s.rank ? bn(s.rank) : '–') + '</td><td class="c">' + esc(bn(s.roll)) + '</td><td>' + esc(s.name) + '</td>' + r.lines.map(function (l) { return '<td class="c' + (l.fail ? ' fl' : '') + '">' + (l.absent ? 'অনু.' : l.mark == null ? '' : num(l.mark)) + '</td>'; }).join('') +
+          '<td class="c"><b>' + (r.entered ? num(r.total) : '') + '</b></td><td class="c">' + (r.complete ? num(r.gpa) : '') + '</td><td class="c' + (r.result === 'Fail' ? ' fl' : '') + '">' + (RESULT[r.result] || '') + '</td></tr>';
+      }).join('');
+      printHtml('<h2>' + esc(CFG.school || ADM.nameFallback) + '</h2><div class="s"><b>মেধাতালিকা</b> — ' + esc(j.examName) + ', ' + esc(j.cls) + ', ' + bn(j.year) + ' (উত্তীর্ণ ' + bn(j.passed) + ' / ' + bn(j.completed) + ')</div><br>' +
+        '<table><tr><th>ক্রম</th><th>রোল</th><th style="text-align:left">নাম</th>' + j.subjects.map(function (x) { return '<th>' + esc(x.name) + '<br><small>' + bn(x.full) + '</small></th>'; }).join('') + '<th>মোট</th><th>জিপিএ</th><th>ফল</th></tr>' + rows + '</table>' +
+        '<div class="sg">' + ADM.meritSign.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join('') + '</div>', true);
+    };
+
+    enter();
+  </script>
+</body>
+</html>
