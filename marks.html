@@ -35,6 +35,12 @@
 
     .stu { border-top: 2px solid #0b6b4f; padding: 10px 0 8px; margin-top: 10px; }
     .stu:first-child { margin-top: 0; }
+    .stu.hid { display: none; }
+    .fbar { margin-top: 10px; position: sticky; top: 0; background: #fff; padding: 6px 0 8px; z-index: 5; border-bottom: 1px solid #e5e7eb; }
+    .fbar .frow { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: 13px; color: #374151; }
+    .fbar .frow label { display: flex; align-items: center; gap: 6px; flex: 1; }
+    .fbar .frow input { width: auto; }
+    .fbar .cnt { color: #6b7280; white-space: nowrap; }
     .stu .sh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
     .stu .sh b { font-size: 15px; } .stu .sh small { color: #6b7280; font-size: 12px; white-space: nowrap; }
     .stu .tot { font-weight: 700; color: #065f46; font-size: 13px; white-space: nowrap; }
@@ -119,7 +125,11 @@
       <div id="vE" style="display:none">
         <div class="panel" id="eP">
           <h2 id="eH">নম্বর</h2>
-          <div class="note">নম্বর লিখুন। কেউ অনুপস্থিত থাকলে ঘরের পাশের <b>অনু.</b> বাটন চাপুন। ফাঁকা ঘর মানে "এখনো ওঠেনি"। শুধু বদলানো ঘরগুলো সবুজ হয়।</div>
+          <div class="note">নম্বর লিখুন। কেউ অনুপস্থিত থাকলে ঘরের পাশের <b>অনু.</b> বাটন চাপুন। ফাঁকা ঘর মানে "এখনো ওঠেনি"। শুধু বদলানো ঘরগুলো সবুজ হয়। বেশি ছাত্র থাকলে নিচের বক্স দিয়ে খুঁজে নিন।</div>
+          <div class="fbar">
+            <input type="search" id="fq" autocomplete="off" placeholder="ছাত্র খুঁজুন: নাম, রোল বা আইডি">
+            <div class="frow"><label><input type="checkbox" id="fOpen"> শুধু নম্বর বাকি আছে এমন</label><span class="cnt" id="fCnt"></span></div>
+          </div>
           <div id="eList"></div>
           <div class="savebar">
             <div class="two" style="display:grid;grid-template-columns:1fr 1.4fr;gap:8px"><input type="text" id="by" maxlength="40" placeholder="আপনার নাম"><button id="save">সংরক্ষণ</button></div>
@@ -218,7 +228,33 @@
       }).join('') : '<div class="note">এই শ্রেণিতে কোনো ছাত্র নেই</div>';
       Array.prototype.forEach.call($('eList').querySelectorAll('.stu'), function (el) { recalc(el); });
       say('eMsg', '');
+      $('fq').value = ''; $('fOpen').checked = false; applyFilter();
     }
+    // খোঁজা ও ফিল্টার: লুকানো ছাত্রের নম্বর ও "বদলানো" চিহ্ন থেকে যায়, সেভ করলে সবই যায়
+    function applyFilter() {
+      const q = en($('fq').value).trim().toLowerCase(), open = $('fOpen').checked;
+      let shown = 0, first = null;
+      Array.prototype.forEach.call($('eList').querySelectorAll('.stu'), function (el) {
+        const s = ENT.students[Number(el.getAttribute('data-i'))];
+        let ok = !q || String(s.name).toLowerCase().indexOf(q) >= 0 || String(s.roll) === q || String(s.sid).toLowerCase().indexOf(q) >= 0;
+        if (ok && open) {
+          ok = Array.prototype.some.call(el.querySelectorAll('input'), function (inp) { return !inp.disabled && inp.value.trim() === ''; });
+        }
+        el.classList.toggle('hid', !ok);
+        if (ok) { shown++; if (!first) first = el; }
+      });
+      const total = ENT ? ENT.students.length : 0;
+      $('fCnt').textContent = (q || open) ? bn(shown) + ' / ' + bn(total) + ' জন' : bn(total) + ' জন';
+      return first;
+    }
+    $('fq').addEventListener('input', applyFilter);
+    $('fOpen').addEventListener('change', applyFilter);
+    $('fq').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const f = applyFilter(), inp = f && f.querySelector('input:not([disabled])');
+      if (inp) { inp.focus(); inp.scrollIntoView({ block: 'center' }); }
+    });
     function cellVal(inp) { return inp.disabled ? 'A' : en(inp.value).trim(); }
     function recalc(stuEl) {
       let t = 0, full = 0, any = false;
