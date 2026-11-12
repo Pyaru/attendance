@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>প্রত্যয়নপত্র ও সনদ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 12px 16px; }
+    header a { color: #fff; font-size: 13px; opacity: .9; text-decoration: none; }
+    header h1 { margin: 2px 0 0; font-size: 18px; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+    .tabs button { flex: 1; background: #e5e7eb; color: #374151; } .tabs button.on { background: #0b6b4f; color: #fff; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .panel h2 { margin: 0 0 10px; font-size: 16px; color: #0b6b4f; }
+    label.l { display: block; font-size: 13px; color: #6b7280; margin: 10px 0 4px; }
+    input[type=text], input[type=search], input[type=password], input[type=date], select, textarea {
+      width: 100%; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; }
+    input.err, select.err { border-color: #dc2626; background: #fef2f2; }
+    button { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.sec { background: #374151; } button.warn { background: #b45309; } button.danger { background: #b91c1c; } button.light { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .5; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; } .btns button { flex: 1; min-width: 110px; }
+    .note { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+    .msg.on { display: block; background: #fee2e2; color: #991b1b; } .msg.ok { background: #d1fae5; color: #065f46; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    #lock { display: none; }
+    .res { display: flex; align-items: center; gap: 10px; padding: 10px 4px; border-bottom: 1px solid #e5e7eb; cursor: pointer; }
+    .res:last-child { border-bottom: 0; } .res:active { background: #f0fdf4; }
+    .res .rn { width: 38px; height: 38px; border-radius: 50%; background: #d1fae5; color: #065f46; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
+    .res .d { flex: 1; min-width: 0; } .res .d b { display: block; } .res .d small { color: #6b7280; font-size: 12px; }
+    .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .types button { background: #f3f4f6; color: #374151; padding: 10px 4px; font-size: 14px; border: 2px solid transparent; }
+    .types button.on { background: #d1fae5; color: #065f46; border-color: #0b6b4f; font-weight: 600; }
+    .who { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .who b { font-size: 17px; } .who small { color: #6b7280; display: block; font-size: 12px; }
+    .tag { display: inline-block; border-radius: 99px; padding: 1px 9px; font-size: 11px; font-weight: 600; background: #dbeafe; color: #1e40af; margin-right: 4px; }
+    .tag.v { background: #fee2e2; color: #991b1b; }
+    .ln { display: flex; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
+    .ln .d { flex: 1; min-width: 0; } .ln .d small { display: block; color: #6b7280; font-size: 11px; }
+    .ln.vd .d b { text-decoration: line-through; opacity: .6; }
+    .ln button { padding: 7px 10px; font-size: 12px; flex: none; }
+    .hide { display: none !important; }
+
+    #sheet { position: absolute; left: -10000px; top: 0; }
+    .cert { width: 190mm; height: 275mm; border: 1.2mm double #0b6b4f; padding: 8mm 12mm; position: relative; background: #fff; color: #111827; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .cert .h { display: flex; align-items: center; gap: 5mm; padding-bottom: 3mm; border-bottom: .5mm solid #0b6b4f; }
+    .cert .lg { width: 24mm; height: 24mm; border-radius: 50%; border: .8mm solid #f59e0b; color: #0b6b4f; display: flex; align-items: center; justify-content: center; font-size: 26pt; font-weight: 700; position: relative; overflow: hidden; flex: none; }
+    .cert .lg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .cert .sn { flex: 1; text-align: center; } .cert .sn b { display: block; font-size: 22pt; color: #0b6b4f; line-height: 1.5; } .cert .sn span { display: block; font-size: 10.5pt; color: #374151; }
+    .cert .ttl { text-align: center; margin: 9mm 0 5mm; } .cert .ttl span { display: inline-block; background: #0b6b4f; color: #fff; font-size: 17pt; font-weight: 700; padding: 1.5mm 12mm; border-radius: 99px; }
+    .cert .mt { display: flex; justify-content: space-between; font-size: 11.5pt; margin-bottom: 8mm; }
+    .cert .bd { font-size: 13.5pt; line-height: 2.15; text-align: justify; margin-bottom: 4mm; }
+    .cert .bd b { font-weight: 700; border-bottom: .2mm dotted #6b7280; }
+    .cert table { width: 100%; border-collapse: collapse; font-size: 12pt; margin: 2mm 0 6mm; } .cert td { border: .25mm solid #9ca3af; padding: 1.8mm 3mm; } .cert td.k { width: 42mm; background: #f0fdf4; font-weight: 600; }
+    .cert .sg { position: absolute; left: 12mm; right: 12mm; bottom: 14mm; display: flex; justify-content: space-between; gap: 20mm; }
+    .cert .sg div { flex: 1; text-align: center; border-top: .3mm solid #374151; padding-top: 1.5mm; font-size: 11pt; font-weight: 600; color: #b91c1c; }
+    .cert .ft { position: absolute; left: 12mm; right: 12mm; bottom: 5mm; text-align: center; font-size: 8.5pt; color: #6b7280; }
+    .cert .void { position: absolute; left: 0; right: 0; top: 105mm; text-align: center; font-size: 80pt; font-weight: 700; color: rgba(185,28,28,.22); transform: rotate(-22deg); pointer-events: none; }
+    @media print {
+      html, body { background: #fff !important; }
+      header, .wrap { display: none !important; }
+      #sheet { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ স্ক্যানার মেনু</a>
+    <h1>প্রত্যয়নপত্র ও সনদ</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="panel" id="lock">
+      <h2>অ্যাডমিন পিন</h2>
+      <input type="password" id="pinIn" autocomplete="off" placeholder="অ্যাডমিন পিন">
+      <div class="btns"><button id="pinBtn">ঢুকুন</button></div>
+      <div class="msg" id="lockMsg"></div>
+    </div>
+
+    <div id="main" style="display:none">
+      <div class="tabs"><button id="tI" class="on">সনদ দিন</button><button id="tR">খাতা</button></div>
+
+      <!-- সনদ দিন -->
+      <div id="vI">
+        <div id="step1">
+          <div class="panel">
+            <h2>ছাত্র খুঁজুন</h2>
+            <label class="l" for="q">নাম, আইডি বা ফোন নম্বর</label>
+            <input type="search" id="q" autocomplete="off" placeholder="যেমন: আব্দুল্লাহ বা S001">
+            <label class="l" for="cls">শ্রেণি (ঐচ্ছিক)</label>
+            <select id="cls"><option value="">সব শ্রেণি</option></select>
+            <div class="btns"><button id="go">খুঁজুন</button></div>
+            <div class="msg" id="sMsg"></div>
+          </div>
+          <div class="panel hide" id="resP"><h2 id="resH">ফলাফল</h2><div id="res"></div></div>
+        </div>
+
+        <div id="step2" class="hide">
+          <div class="panel">
+            <div class="who"><div><b id="wn"></b><small id="wi"></small></div><button class="light" id="chg">অন্য ছাত্র</button></div>
+            <div id="prior"></div>
+          </div>
+          <div class="panel">
+            <h2>সনদের ধরন</h2>
+            <div class="types" id="types"></div>
+            <label class="l" for="father">পিতার নাম *</label><input type="text" id="father" maxlength="80" autocomplete="off">
+            <label class="l" for="mother">মাতার নাম</label><input type="text" id="mother" maxlength="80" autocomplete="off">
+            <label class="l" for="purpose" id="pl">উদ্দেশ্য</label><input type="text" id="purpose" maxlength="120" autocomplete="off">
+            <div class="note" id="ph"></div>
+            <div id="trx" class="hide">
+              <label class="l" for="dues">ফি বকেয়া</label>
+              <select id="dues"><option value="clear">কোনো বকেয়া নেই</option><option value="due">বকেয়া আছে</option></select>
+            </div>
+            <div id="rmx" class="hide"><label class="l" for="remarks" id="rl">নোট</label><input type="text" id="remarks" maxlength="200" autocomplete="off"></div>
+            <div class="two">
+              <div><label class="l" for="date">সনদের তারিখ</label><input type="date" id="date"></div>
+              <div><label class="l" for="by">আপনার নাম *</label><input type="text" id="by" maxlength="40" autocomplete="off"></div>
+            </div>
+            <div class="btns"><button class="warn" id="issue">সনদ তৈরি করে প্রিন্ট</button></div>
+            <div class="msg" id="iMsg"></div>
+            <div class="note">তৈরি করলে ক্রমিক নম্বরসহ খাতায় উঠে যাবে। ভুল হলে খাতা থেকে বাতিল করে নতুন দিতে হবে, তাই তৈরির আগে নাম ও তারিখ ভালো করে দেখে নিন।</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- খাতা -->
+      <div id="vR" class="hide">
+        <div class="panel">
+          <h2>সনদের খাতা</h2>
+          <div class="two">
+            <div><label class="l" for="rq">নম্বর, নাম বা আইডি</label><input type="search" id="rq" autocomplete="off"></div>
+            <div><label class="l" for="rt">ধরন</label><select id="rt"><option value="">সব</option></select></div>
+          </div>
+          <div class="btns"><button id="rgo">দেখুন</button></div>
+          <div class="msg" id="rMsg"></div>
+        </div>
+        <div class="panel"><div id="rList"></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="sheet"></div>
+
+  <script>
+    // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+    const ADM = {
+      nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
+      logoText: 'ফ',
+      logoUrl: 'logo.png',
+      address: 'ঠিকানা: মোহাম্মদপুর, ইছাখালী, রাঙ্গুনিয়া, চট্টগ্রাম',
+      phone: 'মোবাইল: ০১৮৬৫৭৬০৫০৮',
+      signStudy: 'প্রধান শিক্ষক',                       // প্রত্যয়ন ও চারিত্রিক সনদের স্বাক্ষর
+      signTransfer: ['শ্রেণি শিক্ষক', 'প্রধান শিক্ষক']    // ছাড়পত্রের স্বাক্ষর
+    };
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function bn(s) { return String(s == null ? '' : s).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+    function unq(s) { return String(s == null ? '' : s).replace(/^'(?=[=+\-@])/, ''); }   // শিটে সুরক্ষার জন্য বসানো ' দেখানোর সময় বাদ
+
+    let ADMIN = '';
+    try { ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    function get(action, params) { return fetch(API_URL + '?' + new URLSearchParams(Object.assign({ action: action, admin: ADMIN }, params || {})).toString()).then(function (r) { return r.json(); }); }
+    function post(body) { return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ admin: ADMIN }, body)) }).then(function (r) { return r.json(); }); }
+    function say(id, t, ok) { const m = $(id); m.textContent = t || ''; m.className = 'msg' + (t ? ' on' : '') + (ok ? ' ok' : ''); }
+    function badAdmin() { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} $('lock').style.display = 'block'; $('main').style.display = 'none'; say('lockMsg', 'ভুল অ্যাডমিন পিন'); }
+    function today() { const d = new Date(), p = function (n) { return ('0' + n).slice(-2); }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+
+    let CFG = { types: [], school: ADM.nameFallback, year: '' }, STU = null, TYPE = 'study';
+    const HINT = {
+      study: { l: 'কী কাজে লাগবে (ঐচ্ছিক)', h: 'যেমন "পাসপোর্ট আবেদনের" লিখলে সনদে আসবে: "তার পাসপোর্ট আবেদনের প্রয়োজনে এই প্রত্যয়নপত্র প্রদান করা হলো।" ফাঁকা রাখলে "তার প্রয়োজনে..." আসবে।', req: false },
+      character: { l: 'কী কাজে লাগবে (ঐচ্ছিক)', h: 'যেমন "ভর্তির আবেদনের"। ফাঁকা রাখা যায়।', req: false },
+      transfer: { l: 'ছাড়পত্রের কারণ *', h: 'যেমন "অভিভাবকের বদলির কারণে অন্য এলাকায় চলে যাচ্ছে"।', req: true }
+    };
+
+    function enter() {
+      if (!ADMIN) { $('lock').style.display = 'block'; $('main').style.display = 'none'; return; }
+      get('certconfig').then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('lockMsg', (j && j.msg) || 'আনা যায়নি'); $('lock').style.display = 'block'; return; }
+        CFG = j; $('lock').style.display = 'none'; $('main').style.display = 'block';
+        $('types').innerHTML = j.types.map(function (t) { return '<button type="button" data-t="' + esc(t.key) + '">' + esc(t.name) + '</button>'; }).join('');
+        $('rt').innerHTML = '<option value="">সব</option>' + j.types.map(function (t) { return '<option value="' + esc(t.key) + '">' + esc(t.name) + '</option>'; }).join('');
+        try { $('by').value = localStorage.getItem('fee_by') || ''; } catch (e) {}
+        $('date').value = today(); $('date').max = today();
+        get('profconfig').then(function (c) { if (c && c.ok) $('cls').innerHTML = '<option value="">সব শ্রেণি</option>' + c.classes.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join(''); });
+        setType('study');
+      }).catch(function () { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।'); $('lock').style.display = 'block'; });
+    }
+    $('pinBtn').onclick = login; $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+    function login() { const v = $('pinIn').value.trim(); if (!v) return; ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pinIn').value = ''; say('lockMsg', ''); enter(); }
+
+    function tab(v) {
+      $('vI').classList.toggle('hide', v !== 'I'); $('vR').classList.toggle('hide', v !== 'R');
+      $('tI').className = v === 'I' ? 'on' : ''; $('tR').className = v === 'R' ? 'on' : '';
+      if (v === 'R') loadReg();
+    }
+    $('tI').onclick = function () { tab('I'); }; $('tR').onclick = function () { tab('R'); };
+
+    // ---------- ছাত্র খোঁজা ----------
+    function search() {
+      const q = $('q').value.trim(), c = $('cls').value;
+      if (!q && !c) { say('sMsg', 'নাম, আইডি বা শ্রেণি দিন'); return; }
+      say('sMsg', 'খোঁজা হচ্ছে...', true);
+      get('profsearch', { q: q, cls: c }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('sMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('sMsg', '');
+        $('resP').classList.remove('hide');
+        $('resH').textContent = j.count ? bn(j.count) + ' জন' + (j.count > j.list.length ? ' (প্রথম ' + bn(j.list.length) + ' জন)' : '') : 'ফলাফল';
+        $('res').innerHTML = j.list.length ? j.list.map(function (s) {
+          return '<div class="res" data-id="' + esc(s.id) + '"><div class="rn">' + esc(bn(s.roll || '–')) + '</div><div class="d"><b>' + esc(s.name) + '</b><small>' + esc(s.id) + ' • ' + esc(s.cls) + '</small></div></div>';
+        }).join('') : '<div class="note">কাউকে পাওয়া যায়নি</div>';
+        if (j.list.length === 1 && q) pick(j.list[0].id);
+      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+    }
+    $('go').onclick = search; $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') search(); });
+    $('res').addEventListener('click', function (e) { const r = e.target.closest('.res'); if (r) pick(r.getAttribute('data-id')); });
+    $('chg').onclick = function () { $('step2').classList.add('hide'); $('step1').classList.remove('hide'); window.scrollTo(0, 0); };
+
+    function pick(id) {
+      say('sMsg', 'আনা হচ্ছে...', true);
+      get('certstudent', { sid: id }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('sMsg', (j && j.msg) || 'আনা যায়নি'); return; }
+        say('sMsg', ''); STU = j.student; renderPrior(j.prior);
+        $('wn').textContent = STU.name; $('wi').textContent = STU.id + ' • ' + STU.cls + ' • রোল ' + bn(STU.roll);
+        $('father').value = STU.father; $('mother').value = STU.mother; $('purpose').value = ''; $('remarks').value = ''; $('dues').value = 'clear';
+        $('date').value = today(); say('iMsg', '');
+        Array.prototype.forEach.call(document.querySelectorAll('.err'), function (x) { x.classList.remove('err'); });
+        $('step1').classList.add('hide'); $('step2').classList.remove('hide'); setType(TYPE); window.scrollTo(0, 0);
+      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+    }
+    function renderPrior(list) {
+      $('prior').innerHTML = list.length ? '<div class="note" style="margin-top:10px"><b>এর আগে দেওয়া সনদ:</b></div>' + list.map(function (c) {
+        return '<div class="ln' + (c.status === 'Void' ? ' vd' : '') + '"><div class="d"><b>' + esc(c.no) + '</b> <span class="tag' + (c.status === 'Void' ? ' v' : '') + '">' + esc(c.status === 'Void' ? 'বাতিল' : c.typeName) + '</span><small>' + esc(bn(c.date)) + '</small></div></div>';
+      }).join('') : '';
+    }
+
+    // ---------- ইস্যু ----------
+    function setType(t) {
+      TYPE = t;
+      Array.prototype.forEach.call($('types').querySelectorAll('button'), function (b) { b.className = b.getAttribute('data-t') === t ? 'on' : ''; });
+      const h = HINT[t];
+      $('pl').textContent = h.l; $('ph').textContent = h.h;
+      $('trx').classList.toggle('hide', t !== 'transfer'); dueChg();
+    }
+    $('types').addEventListener('click', function (e) {
+      const b = e.target.closest('button[data-t]'); if (!b) return;
+      if (b.getAttribute('data-t') !== TYPE) { $('purpose').value = ''; $('remarks').value = ''; $('purpose').classList.remove('err'); say('iMsg', ''); }   // এক ধরনের উদ্দেশ্য যেন অন্য সনদে না যায়
+      setType(b.getAttribute('data-t'));
+    });
+    function dueChg() {
+      const tr = TYPE === 'transfer', due = tr && $('dues').value === 'due';
+      $('rmx').classList.toggle('hide', !due); $('rl').textContent = 'বকেয়ার বিবরণ *';
+    }
+    $('dues').onchange = dueChg;
+    ['father', 'by', 'purpose', 'remarks'].forEach(function (id) { $(id).addEventListener('input', function () { $(id).classList.remove('err'); }); });
+
+    $('issue').onclick = function () {
+      const f = $('father').value.trim(), by = $('by').value.trim(), pu = $('purpose').value.trim(), due = TYPE === 'transfer' && $('dues').value === 'due', rm = $('remarks').value.trim();
+      let bad = '';
+      if (f.length < 2) { $('father').classList.add('err'); bad = 'পিতার নাম লিখুন'; }
+      else if (HINT[TYPE].req && pu.length < 2) { $('purpose').classList.add('err'); bad = 'ছাড়পত্রের কারণ লিখুন'; }
+      else if (due && rm.length < 2) { $('remarks').classList.add('err'); bad = 'বকেয়ার বিবরণ লিখুন'; }
+      else if (by.length < 2) { $('by').classList.add('err'); bad = 'আপনার নাম লিখুন'; }
+      if (bad) { say('iMsg', bad); return; }
+      try { localStorage.setItem('fee_by', by); } catch (e) {}
+      $('issue').disabled = true; say('iMsg', 'তৈরি হচ্ছে...', true);
+      post({ action: 'certissue', sid: STU.id, type: TYPE, father: f, mother: $('mother').value.trim(), purpose: pu, remarks: rm, dues: $('dues').value, date: $('date').value, by: by }).then(function (j) {
+        $('issue').disabled = false;
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('iMsg', (j && j.msg) || 'হয়নি, আবার চেষ্টা করুন'); return; }
+        say('iMsg', 'তৈরি হয়েছে — সনদ নং ' + bn(j.cert.no), true);
+        get('certstudent', { sid: STU.id }).then(function (x) { if (x && x.ok) renderPrior(x.prior); });
+        printCert(j.cert);
+      }).catch(function () { $('issue').disabled = false; say('iMsg', 'সংযোগ ত্রুটি — "খাতা" ট্যাবে দেখে নিন সনদ তৈরি হয়েছে কি না, নইলে আবার তৈরি হয়ে যেতে পারে'); });
+    };
+
+    // ---------- খাতা ----------
+    function loadReg() {
+      say('rMsg', 'আনা হচ্ছে...', true);
+      get('certlist', { q: $('rq').value.trim(), type: $('rt').value }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('rMsg', (j && j.msg) || 'হয়নি'); return; }
+        say('rMsg', ''); REG = j.list;
+        $('rList').innerHTML = j.list.length ? j.list.map(function (c, i) {
+          const v = c.status === 'Void';
+          return '<div class="ln' + (v ? ' vd' : '') + '" data-i="' + i + '"><div class="d"><b>' + esc(c.no) + '</b> <span class="tag' + (v ? ' v' : '') + '">' + esc(v ? 'বাতিল' : c.typeName) + '</span><br>' + esc(c.name) + ' • ' + esc(c.cls) +
+            '<small>' + esc(bn(c.date)) + ' • ' + esc(c.sid) + (v ? ' • কারণ: ' + esc(unq(c.void)) : '') + '</small></div><button class="sec" data-p="1">প্রিন্ট</button>' + (v ? '' : '<button class="danger" data-v="1">বাতিল</button>') + '</div>';
+        }).join('') : '<div class="note">কিছু পাওয়া যায়নি</div>';
+      }).catch(function () { say('rMsg', 'সংযোগ ত্রুটি'); });
+    }
+    let REG = [];
+    $('rgo').onclick = loadReg; $('rq').addEventListener('keydown', function (e) { if (e.key === 'Enter') loadReg(); });
+    $('rList').addEventListener('click', function (e) {
+      const b = e.target.closest('button'); if (!b) return;
+      const c = REG[Number(b.closest('.ln').getAttribute('data-i'))];
+      if (b.getAttribute('data-p')) { printCert(c); return; }
+      const why = prompt(c.no + ' বাতিল করার কারণ লিখুন:');
+      if (why == null) return;
+      if (why.trim().length < 3) { say('rMsg', 'বাতিলের কারণ লিখুন'); return; }
+      post({ action: 'certvoid', no: c.no, reason: why.trim() }).then(function (j) {
+        if (j && j.badAdmin) { badAdmin(); return; }
+        if (!j || !j.ok) { say('rMsg', (j && j.msg) || 'হয়নি'); return; }
+        loadReg();
+      }).catch(function () { say('rMsg', 'সংযোগ ত্রুটি'); });
+    });
+
+    // ---------- প্রিন্ট ----------
+    function who(c) { return '<b>' + esc(c.name) + '</b>, পিতা: <b>' + esc(unq(c.father)) + '</b>' + (c.mother ? ', মাতা: <b>' + esc(unq(c.mother)) + '</b>' : '') + ', জন্ম তারিখ: <b>' + esc(bn(c.dob || '—')) + '</b>, আইডি নং <b>' + esc(c.sid) + '</b>'; }
+    function bodyOf(c) {
+      const yr = bn(CFG.year || c.date.slice(6)), pu = unq(c.purpose);
+      const enroll = who(c) + ', ' + yr + ' শিক্ষাবর্ষে অত্র প্রতিষ্ঠানের <b>' + esc(c.cls) + '</b> শ্রেণির রোল নং <b>' + esc(bn(c.roll)) + '</b> এর একজন নিয়মিত শিক্ষার্থী।';
+      const need = (pu ? 'তার ' + esc(pu) + ' প্রয়োজনে' : 'তার প্রয়োজনে');
+      if (c.type === 'study') return '<div class="bd">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, ' + enroll + '</div><div class="bd">' + need + ' এই প্রত্যয়নপত্র প্রদান করা হলো।</div><div class="bd">আমি তার উজ্জ্বল ভবিষ্যৎ ও সার্বিক মঙ্গল কামনা করি।</div>';
+      if (c.type === 'character') return '<div class="bd">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, ' + enroll + '</div><div class="bd">আমার জানামতে সে সচ্চরিত্রবান, ভদ্র ও নম্রস্বভাবের। তার আচরণ ও চরিত্রে অসংগতিপূর্ণ কিছু আমার নজরে আসেনি।</div><div class="bd">' + need + ' এই সনদপত্র প্রদান করা হলো। আমি তার উজ্জ্বল ভবিষ্যৎ ও সার্বিক মঙ্গল কামনা করি।</div>';
+      const row = function (k, v) { return '<tr><td class="k">' + k + '</td><td>' + esc(v) + '</td></tr>'; };
+      const due = c.dues === 'due' ? 'বকেয়া আছে: ' + unq(c.remarks) : 'কোনো বকেয়া নেই';
+      return '<div class="bd">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, নিম্নলিখিত শিক্ষার্থী ' + yr + ' শিক্ষাবর্ষে অত্র প্রতিষ্ঠানের শিক্ষার্থী ছিল। তার অভিভাবকের আবেদনের প্রেক্ষিতে তাকে অত্র প্রতিষ্ঠান থেকে ছাড়পত্র প্রদান করা হলো।</div>' +
+        '<table>' + row('শিক্ষার্থীর নাম', c.name) + row('পিতার নাম', unq(c.father)) + row('মাতার নাম', unq(c.mother)) + row('জন্ম তারিখ', bn(c.dob || '—')) + row('আইডি নং', c.sid) + row('শেষ শ্রেণি', c.cls + ' (রোল ' + bn(c.roll) + ')') + row('ছাড়ার কারণ', unq(c.purpose)) + row('ফি/পাওনা', due) +
+        (c.type === 'transfer' && c.dues !== 'due' && c.remarks ? row('মন্তব্য', unq(c.remarks)) : '') + '</table>' +
+        '<div class="bd">সে অন্য যেকোনো শিক্ষা প্রতিষ্ঠানে ভর্তি হওয়ার জন্য এখান থেকে অনাপত্তি পেল। আমি তার উজ্জ্বল ভবিষ্যৎ ও সার্বিক মঙ্গল কামনা করি।</div>';
+    }
+    function certHtml(c) {
+      const school = CFG.school || ADM.nameFallback;
+      const title = c.type === 'study' ? 'ছাত্র প্রত্যয়নপত্র' : c.type === 'character' ? 'চারিত্রিক সনদপত্র' : 'ছাড়পত্র';
+      const sign = c.type === 'transfer' ? ADM.signTransfer : [ADM.signStudy];
+      return '<div class="cert"><div class="h"><div class="lg">' + esc(ADM.logoText) + (ADM.logoUrl ? '<img alt="" src="' + esc(ADM.logoUrl) + '" onerror="this.remove()">' : '') + '</div>' +
+        '<div class="sn"><b>' + esc(school) + '</b><span>' + esc(ADM.address) + '</span><span>' + esc(ADM.phone) + '</span></div></div>' +
+        '<div class="ttl"><span>' + esc(title) + '</span></div>' +
+        '<div class="mt"><span>সনদ নং: <b>' + esc(bn(c.no)) + '</b></span><span>তারিখ: <b>' + esc(bn(c.date)) + '</b></span></div>' +
+        bodyOf(c) +
+        '<div class="sg">' + sign.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join('') + '</div>' +
+        '<div class="ft">সনদ নং ' + esc(bn(c.no)) + ' — এই সনদের তথ্য প্রতিষ্ঠানের নথিতে সংরক্ষিত আছে।</div>' +
+        (c.status === 'Void' ? '<div class="void">বাতিল</div>' : '') + '</div>';
+    }
+    function printCert(c) {
+      $('sheet').innerHTML = certHtml(c);
+      const st = document.createElement('style'); st.id = 'pgcss'; st.textContent = '@page { size: A4; margin: 10mm; }'; document.head.appendChild(st);
+      const imgs = Array.prototype.slice.call($('sheet').querySelectorAll('img'));
+      const go = function () { window.print(); };
+      const wait = imgs.map(function (im) { return im.complete ? Promise.resolve() : new Promise(function (r) { im.onload = im.onerror = r; }); });
+      const done = function () { const s = $('pgcss'); if (s) s.remove(); $('sheet').innerHTML = ''; window.removeEventListener('afterprint', done); };
+      window.addEventListener('afterprint', done);
+      Promise.all(wait).then(function () { setTimeout(go, 250); });
+    }
+
+    enter();
+  </script>
+</body>
+</html>
