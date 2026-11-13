@@ -151,6 +151,7 @@
     // ↓↓↓ Apps Script ডিপ্লয়ের /exec লিংক এখানে বসান ↓↓↓
     const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
     const ADM = {
+      
       nameFallback: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
       logoText: 'ফ',
       logoUrl: 'logo.png',
@@ -171,6 +172,7 @@
     function post(body) { return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ admin: ADMIN }, body)) }).then(function (r) { return r.json(); }); }
     function say(id, t, ok) { const m = $(id); m.textContent = t || ''; m.className = 'msg' + (t ? ' on' : '') + (ok ? ' ok' : ''); }
     function badAdmin() { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} $('lock').style.display = 'block'; $('main').style.display = 'none'; say('lockMsg', 'ভুল অ্যাডমিন পিন'); }
+    function why(err) { return ' [' + String(err && err.message ? err.message : err).slice(0, 90) + ']'; }   // ত্রুটির আসল কারণ দেখানোর জন্য
     function today() { const d = new Date(), p = function (n) { return ('0' + n).slice(-2); }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
 
     let CFG = { types: [], school: ADM.nameFallback, year: '' }, STU = null, TYPE = 'study';
@@ -192,7 +194,7 @@
         $('date').value = today(); $('date').max = today();
         get('profconfig').then(function (c) { if (c && c.ok) $('cls').innerHTML = '<option value="">সব শ্রেণি</option>' + c.classes.map(function (x) { return '<option>' + esc(x) + '</option>'; }).join(''); });
         setType('study');
-      }).catch(function () { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।'); $('lock').style.display = 'block'; });
+      }).catch(function (err) { say('lockMsg', 'সংযোগ হয়নি। API_URL ও ইন্টারনেট দেখুন।' + why(err)); $('lock').style.display = 'block'; });
     }
     $('pinBtn').onclick = login; $('pinIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
     function login() { const v = $('pinIn').value.trim(); if (!v) return; ADMIN = v; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pinIn').value = ''; say('lockMsg', ''); enter(); }
@@ -219,7 +221,7 @@
           return '<div class="res" data-id="' + esc(s.id) + '"><div class="rn">' + esc(bn(s.roll || '–')) + '</div><div class="d"><b>' + esc(s.name) + '</b><small>' + esc(s.id) + ' • ' + esc(s.cls) + '</small></div></div>';
         }).join('') : '<div class="note">কাউকে পাওয়া যায়নি</div>';
         if (j.list.length === 1 && q) pick(j.list[0].id);
-      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+      }).catch(function (err) { say('sMsg', 'সংযোগ ত্রুটি' + why(err)); });
     }
     $('go').onclick = search; $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') search(); });
     $('res').addEventListener('click', function (e) { const r = e.target.closest('.res'); if (r) pick(r.getAttribute('data-id')); });
@@ -236,7 +238,7 @@
         $('date').value = today(); say('iMsg', '');
         Array.prototype.forEach.call(document.querySelectorAll('.err'), function (x) { x.classList.remove('err'); });
         $('step1').classList.add('hide'); $('step2').classList.remove('hide'); setType(TYPE); window.scrollTo(0, 0);
-      }).catch(function () { say('sMsg', 'সংযোগ ত্রুটি'); });
+      }).catch(function (err) { say('sMsg', 'সংযোগ ত্রুটি' + why(err)); });
     }
     function renderPrior(list) {
       $('prior').innerHTML = list.length ? '<div class="note" style="margin-top:10px"><b>এর আগে দেওয়া সনদ:</b></div>' + list.map(function (c) {
@@ -281,7 +283,7 @@
         say('iMsg', 'তৈরি হয়েছে — সনদ নং ' + bn(j.cert.no), true);
         get('certstudent', { sid: STU.id }).then(function (x) { if (x && x.ok) renderPrior(x.prior); });
         printCert(j.cert);
-      }).catch(function () { $('issue').disabled = false; say('iMsg', 'সংযোগ ত্রুটি — "খাতা" ট্যাবে দেখে নিন সনদ তৈরি হয়েছে কি না, নইলে আবার তৈরি হয়ে যেতে পারে'); });
+      }).catch(function (err) { $('issue').disabled = false; say('iMsg', 'সংযোগ ত্রুটি' + why(err) + ' — "খাতা" ট্যাবে দেখে নিন সনদ তৈরি হয়েছে কি না, নইলে আবার তৈরি হয়ে যেতে পারে'); });
     };
 
     // ---------- খাতা ----------
@@ -296,7 +298,7 @@
           return '<div class="ln' + (v ? ' vd' : '') + '" data-i="' + i + '"><div class="d"><b>' + esc(c.no) + '</b> <span class="tag' + (v ? ' v' : '') + '">' + esc(v ? 'বাতিল' : c.typeName) + '</span><br>' + esc(c.name) + ' • ' + esc(c.cls) +
             '<small>' + esc(bn(c.date)) + ' • ' + esc(c.sid) + (v ? ' • কারণ: ' + esc(unq(c.void)) : '') + '</small></div><button class="sec" data-p="1">প্রিন্ট</button>' + (v ? '' : '<button class="danger" data-v="1">বাতিল</button>') + '</div>';
         }).join('') : '<div class="note">কিছু পাওয়া যায়নি</div>';
-      }).catch(function () { say('rMsg', 'সংযোগ ত্রুটি'); });
+      }).catch(function (err) { say('rMsg', 'সংযোগ ত্রুটি' + why(err)); });
     }
     let REG = [];
     $('rgo').onclick = loadReg; $('rq').addEventListener('keydown', function (e) { if (e.key === 'Enter') loadReg(); });
@@ -311,7 +313,7 @@
         if (j && j.badAdmin) { badAdmin(); return; }
         if (!j || !j.ok) { say('rMsg', (j && j.msg) || 'হয়নি'); return; }
         loadReg();
-      }).catch(function () { say('rMsg', 'সংযোগ ত্রুটি'); });
+      }).catch(function (err) { say('rMsg', 'সংযোগ ত্রুটি' + why(err)); });
     });
 
     // ---------- প্রিন্ট ----------
