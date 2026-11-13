@@ -40,18 +40,20 @@
   <header>
     <h1 id="school">ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল</h1>
     <small>অফিস মেনু</small>
+    <a href="index.html" style="color:#fff;font-size:12px;opacity:.85;text-decoration:none">← স্কুলের মূল সাইট</a>
   </header>
 
   <div class="wrap">
     <div class="panel">
       <div class="pin">
         <input type="password" id="pin" placeholder="অ্যাডমিন পিন" autocomplete="off">
-        <button id="pinSave">রাখুন</button>
+        <button id="pinSave">প্রবেশ</button>
         <button class="light" id="pinOut" style="display:none">বের হন</button>
       </div>
       <div class="st" id="pinSt"></div>
     </div>
 
+    <div id="app" style="display:none">
     <div id="tiles"></div>
 
     <div class="panel" style="margin-top:14px">
@@ -61,12 +63,15 @@
       <div class="st" id="shMsg"></div>
     </div>
 
-    <div class="foot">ফোনের হোম স্ক্রিনে রাখতে: ব্রাউজারের মেনু (⋮) → "Add to Home screen"</div>
+    </div>
+    <div class="foot" id="foot">ফোনের হোম স্ক্রিনে রাখতে: ব্রাউজারের মেনু (⋮) → "Add to Home screen"</div>
   </div>
 
   <script>
     // স্কুলের নাম বদলাতে চাইলে এখানে লিখুন
     const SCHOOL = 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল';
+    // ↓↓↓ আগের পেজগুলোর সেই একই /exec লিংক ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
     // [পেজ, আইকন, নাম, ছোট বিবরণ, অ্যাডমিন পিন লাগে কি না]
     const GROUPS = [
       ['হাজিরা', [
@@ -93,22 +98,39 @@
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     $('school').textContent = SCHOOL; document.title = SCHOOL + ' — অফিস মেনু';
 
-    function hasPin() { try { return !!sessionStorage.getItem('card_admin'); } catch (e) { return false; } }
+    function getPin() { try { return sessionStorage.getItem('card_admin') || ''; } catch (e) { return ''; } }
     function render() {
-      const pinned = hasPin();
-      $('tiles').innerHTML = GROUPS.map(function (g) {
+      const pinned = !!getPin();
+      $('app').style.display = pinned ? '' : 'none';
+      $('tiles').innerHTML = pinned ? GROUPS.map(function (g) {
         return '<h2>' + esc(g[0]) + '</h2><div class="grid">' + g[1].map(function (t) {
-          return '<a class="tile" href="' + esc(t[0]) + '"><span class="ic">' + t[1] + '</span><b>' + esc(t[2]) + '</b><span class="d">' + esc(t[3]) + '</span>' + (t[4] && !pinned ? '<span class="lk" title="অ্যাডমিন পিন লাগবে">🔒</span>' : '') + '</a>';
+          return '<a class="tile" href="' + esc(t[0]) + '"><span class="ic">' + t[1] + '</span><b>' + esc(t[2]) + '</b><span class="d">' + esc(t[3]) + '</span></a>';
         }).join('') + '</div>';
-      }).join('');
+      }).join('') : '';
       $('pinOut').style.display = pinned ? '' : 'none';
       $('pin').style.display = pinned ? 'none' : ''; $('pinSave').style.display = pinned ? 'none' : '';
+      $('foot').style.display = pinned ? '' : 'none';
       $('pinSt').className = 'st' + (pinned ? ' ok' : '');
-      $('pinSt').textContent = pinned ? '✓ অ্যাডমিন পিন রাখা আছে — ফি, প্রোফাইল, মার্কশিট ইত্যাদি পেজ আর পিন চাইবে না। (ট্যাব বন্ধ করলে মুছে যায়)' : 'একবার পিন দিলে 🔒 চিহ্নিত পেজগুলো আর আলাদা করে পিন চাইবে না। না দিলেও চলে, তখন প্রতিটি পেজ নিজে চাইবে।';
+      if (pinned) $('pinSt').textContent = '✓ অ্যাডমিন হিসেবে ঢুকেছেন (ট্যাব বন্ধ করলে বা "বের হন" চাপলে আবার পিন লাগবে)';
+      else if (!$('pinSt').dataset.err) $('pinSt').textContent = 'অফিস মেনু দেখতে অ্যাডমিন পিন দিন।';
+    }
+    function check(v) {
+      return fetch(API_URL + '?' + new URLSearchParams({ action: 'tlist', admin: v }).toString())
+        .then(function (r) { return r.json(); });
+    }
+    function save() {
+      const v = $('pin').value.trim(); if (!v) return;
+      $('pinSave').disabled = true; $('pinSt').dataset.err = '1'; $('pinSt').className = 'st'; $('pinSt').textContent = 'যাচাই হচ্ছে...';
+      check(v).then(function (j) {
+        $('pinSave').disabled = false;
+        if (j && j.ok) { try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pin').value = ''; delete $('pinSt').dataset.err; render(); }
+        else { $('pinSt').textContent = (j && j.badAdmin) ? 'ভুল পিন' : 'যাচাই করা যায়নি, আবার চেষ্টা করুন'; $('pin').select(); }
+      }).catch(function () { $('pinSave').disabled = false; $('pinSt').textContent = 'সংযোগ ত্রুটি — ইন্টারনেট দেখুন'; });
     }
     $('pinSave').onclick = save; $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') save(); });
-    function save() { const v = $('pin').value.trim(); if (!v) return; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pin').value = ''; render(); }
-    $('pinOut').onclick = function () { try { sessionStorage.removeItem('card_admin'); } catch (e) {} render(); };
+    $('pinOut').onclick = function () { try { sessionStorage.removeItem('card_admin'); } catch (e) {} delete $('pinSt').dataset.err; render(); };
+    // আগে ঢোকা থাকলেও চুপচাপ আবার যাচাই — পিন বদলে গেলে লক হয়ে যাবে
+    if (getPin()) check(getPin()).then(function (j) { if (j && j.badAdmin) { try { sessionStorage.removeItem('card_admin'); } catch (e) {} render(); } }).catch(function () {});
 
     // অভিভাবক পোর্টালের লিংক (এই পেজের পাশেই parent.html আছে ধরে)
     const PARENT = new URL('parent.html', location.href).href;
