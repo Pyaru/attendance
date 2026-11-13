@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b6b4f">
+  <title>অফিস মেনু</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 18px 16px 16px; text-align: center; }
+    header h1 { margin: 0; font-size: 20px; line-height: 1.4; }
+    header small { display: block; margin-top: 2px; opacity: .85; font-size: 13px; }
+    .wrap { padding: 12px; max-width: 680px; margin: 0 auto; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; }
+    .pin { display: flex; gap: 8px; align-items: center; }
+    .pin input { flex: 1; min-width: 0; padding: 11px 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; }
+    button { padding: 11px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    button.light { background: #e5e7eb; color: #111827; }
+    .st { font-size: 13px; margin-top: 8px; color: #6b7280; line-height: 1.5; }
+    .st.ok { color: #065f46; font-weight: 600; }
+    h2 { margin: 18px 4px 8px; font-size: 14px; color: #0b6b4f; letter-spacing: .2px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 560px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    a.tile { position: relative; display: block; background: #fff; border-radius: 14px; padding: 14px 12px 12px; text-decoration: none; color: inherit; box-shadow: 0 1px 2px rgba(0,0,0,.08); border: 2px solid transparent; }
+    a.tile:active { border-color: #0b6b4f; background: #f0fdf4; }
+    a.tile .ic { font-size: 28px; line-height: 1; display: block; margin-bottom: 6px; }
+    a.tile b { display: block; font-size: 15px; }
+    a.tile span.d { display: block; font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
+    a.tile .lk { position: absolute; top: 8px; right: 10px; font-size: 12px; opacity: .55; }
+    .share { display: flex; gap: 8px; margin-top: 10px; }
+    .share button { flex: 1; }
+    .foot { text-align: center; font-size: 12px; color: #9ca3af; margin: 18px 0 8px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="school">ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল</h1>
+    <small>অফিস মেনু</small>
+  </header>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="pin">
+        <input type="password" id="pin" placeholder="অ্যাডমিন পিন" autocomplete="off">
+        <button id="pinSave">রাখুন</button>
+        <button class="light" id="pinOut" style="display:none">বের হন</button>
+      </div>
+      <div class="st" id="pinSt"></div>
+    </div>
+
+    <div id="tiles"></div>
+
+    <div class="panel" style="margin-top:14px">
+      <b style="font-size:15px">অভিভাবকদের লিংক</b>
+      <div class="st" id="plink" style="word-break:break-all"></div>
+      <div class="share"><button id="copy">লিংক কপি</button><button class="light" id="share">শেয়ার</button></div>
+      <div class="st" id="shMsg"></div>
+    </div>
+
+    <div class="foot">ফোনের হোম স্ক্রিনে রাখতে: ব্রাউজারের মেনু (⋮) → "Add to Home screen"</div>
+  </div>
+
+  <script>
+    // স্কুলের নাম বদলাতে চাইলে এখানে লিখুন
+    const SCHOOL = 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল';
+    // [পেজ, আইকন, নাম, ছোট বিবরণ, অ্যাডমিন পিন লাগে কি না]
+    const GROUPS = [
+      ['হাজিরা', [
+        ['scan.html', '📷', 'ছাত্র স্ক্যান', 'QR কার্ড স্ক্যান করে উপস্থিতি', false],
+        ['face.html', '🙂', 'শিক্ষক · চেহারা', 'ফেস স্ক্যানে আসা-যাওয়া', false],
+        ['idscan.html', '🪪', 'শিক্ষক · কার্ড', 'আইডি কার্ড দিয়ে হাজিরা', true]
+      ]],
+      ['ভর্তি', [
+        ['admission.html', '📝', 'ভর্তি আবেদন ও পরীক্ষা', 'আবেদন, রোল-সিট, ফল, ভর্তি', true]
+      ]],
+      ['ছাত্র ও সনদ', [
+        ['profile.html', '👤', 'স্টুডেন্ট প্রোফাইল', 'তথ্য, হাজিরা ও ফি এক পাতায়', true],
+        ['card.html', '🎫', 'আইডি কার্ড', 'তৈরি ও প্রিন্ট', true],
+        ['marks.html', '📊', 'মার্কশিট', 'নম্বর এন্ট্রি, ফল, মেধাতালিকা', true],
+        ['certs.html', '📜', 'প্রত্যয়নপত্র', 'প্রত্যয়ন, চারিত্রিক সনদ, ছাড়পত্র', true]
+      ]],
+      ['হিসাব', [
+        ['fees.html', '🧾', 'ফি রসিদ', 'ফি নেওয়া, রিপোর্ট, বকেয়া', true],
+        ['accounts.html', '💰', 'আয়-ব্যয়', 'ক্যাশবুক ও মাসিক সারাংশ', true]
+      ]]
+    ];
+
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    $('school').textContent = SCHOOL; document.title = SCHOOL + ' — অফিস মেনু';
+
+    function hasPin() { try { return !!sessionStorage.getItem('card_admin'); } catch (e) { return false; } }
+    function render() {
+      const pinned = hasPin();
+      $('tiles').innerHTML = GROUPS.map(function (g) {
+        return '<h2>' + esc(g[0]) + '</h2><div class="grid">' + g[1].map(function (t) {
+          return '<a class="tile" href="' + esc(t[0]) + '"><span class="ic">' + t[1] + '</span><b>' + esc(t[2]) + '</b><span class="d">' + esc(t[3]) + '</span>' + (t[4] && !pinned ? '<span class="lk" title="অ্যাডমিন পিন লাগবে">🔒</span>' : '') + '</a>';
+        }).join('') + '</div>';
+      }).join('');
+      $('pinOut').style.display = pinned ? '' : 'none';
+      $('pin').style.display = pinned ? 'none' : ''; $('pinSave').style.display = pinned ? 'none' : '';
+      $('pinSt').className = 'st' + (pinned ? ' ok' : '');
+      $('pinSt').textContent = pinned ? '✓ অ্যাডমিন পিন রাখা আছে — ফি, প্রোফাইল, মার্কশিট ইত্যাদি পেজ আর পিন চাইবে না। (ট্যাব বন্ধ করলে মুছে যায়)' : 'একবার পিন দিলে 🔒 চিহ্নিত পেজগুলো আর আলাদা করে পিন চাইবে না। না দিলেও চলে, তখন প্রতিটি পেজ নিজে চাইবে।';
+    }
+    $('pinSave').onclick = save; $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') save(); });
+    function save() { const v = $('pin').value.trim(); if (!v) return; try { sessionStorage.setItem('card_admin', v); } catch (e) {} $('pin').value = ''; render(); }
+    $('pinOut').onclick = function () { try { sessionStorage.removeItem('card_admin'); } catch (e) {} render(); };
+
+    // অভিভাবক পোর্টালের লিংক (এই পেজের পাশেই parent.html আছে ধরে)
+    const PARENT = new URL('parent.html', location.href).href;
+    $('plink').textContent = PARENT;
+    function msg(t) { $('shMsg').textContent = t; setTimeout(function () { $('shMsg').textContent = ''; }, 3000); }
+    $('copy').onclick = function () {
+      const done = function () { msg('লিংক কপি হয়েছে'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(PARENT).then(done, function () { msg('কপি হয়নি — লিংকটা চেপে ধরে কপি করুন'); });
+      else msg('কপি হয়নি — লিংকটা চেপে ধরে কপি করুন');
+    };
+    $('share').onclick = function () {
+      if (navigator.share) navigator.share({ title: SCHOOL + ' — অভিভাবক পোর্টাল', text: 'উপস্থিতি, ফি ও আবেদনের অবস্থা দেখতে:', url: PARENT }).catch(function () {});
+      else msg('এই ব্রাউজারে শেয়ার নেই — "লিংক কপি" চাপুন');
+    };
+    render();
+  </script>
+</body>
+</html>
