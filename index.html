@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f58a07">
+<title>ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--o:#f58a07;--od:#c96a00;--cream:#fffaf3;--peach:#fff0dc;--mint:#e6f4ee;--teal:#1f9d8a;--ink:#2b2118;--mut:#6f6254;--navy:#1d2530}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Hind Siliguri",system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.65}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+section{padding:56px 0}
+h2{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:0 0 8px;font-weight:700}
+.lead{color:var(--mut);margin:0 0 26px}
+.tag{display:inline-block;font-size:12px;font-weight:600;background:var(--mint);color:#146b5d;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+/* nav */
+nav{position:sticky;top:0;z-index:10;background:rgba(255,250,243,.94);backdrop-filter:blur(8px);border-bottom:1px solid #f1e3cf}
+nav .wrap{display:flex;align-items:center;gap:14px;height:58px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.logo i{width:30px;height:30px;border-radius:50%;background:var(--o);display:grid;place-items:center;font-style:normal;color:#fff;font-size:16px}
+.links{display:flex;gap:16px;margin-left:auto;font-size:14px;font-weight:500}
+.links a:hover{color:var(--od)}
+.btn{display:inline-block;padding:10px 20px;border-radius:99px;font-weight:600;font-size:14px;border:0;cursor:pointer;font-family:inherit}
+.btn.o{background:var(--o);color:#fff}.btn.t{background:var(--teal);color:#fff}.btn.w{background:#fff;color:var(--ink)}
+nav .btn{padding:8px 16px}
+@media(max-width:700px){.links{display:none}nav .btn{margin-left:auto}}
+/* hero */
+.hero{padding:34px 0 56px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:34px;align-items:center}
+.hcard{background:var(--o);color:#fff;border-radius:22px;padding:34px 30px;box-shadow:0 14px 30px rgba(245,138,7,.28)}
+.hcard .tag{background:rgba(255,255,255,.22);color:#fff}
+.hcard h1{font-size:clamp(32px,7vw,52px);line-height:1.15;margin:6px 0 14px}
+.hcard p{margin:0 0 20px;opacity:.95}
+.hcard .btn.w{color:var(--od)}
+.hph{aspect-ratio:4/3;border-radius:22px;background:linear-gradient(135deg,#ffd9a0,#ffb347 55%,#1f9d8a);display:grid;place-items:center;font-size:84px;overflow:hidden;position:relative}
+.hph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(max-width:800px){.hero .wrap{grid-template-columns:1fr}}
+/* about */
+.about{background:var(--mint)}
+.about .wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.about .hph{background:linear-gradient(135deg,#bfe6d9,#7cc9b5)}
+@media(max-width:800px){.about .wrap{grid-template-columns:1fr}}
+/* grids */
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.c{border-radius:16px;padding:20px}
+.c .ic{font-size:26px}
+.c h3{margin:6px 0 4px;font-size:18px}.c p{margin:0;font-size:14px;color:var(--mut)}
+.c.p{background:var(--peach)}.c.m{background:var(--mint)}
+.teachers{background:var(--peach)}
+.t{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.av{width:46px;height:46px;border-radius:50%;background:var(--o);color:#fff;display:grid;place-items:center;font-weight:700;font-size:20px;margin-bottom:8px}
+.t b{display:block}.t span{font-size:13px;color:var(--mut)}
+/* table */
+.tw{background:#fff;border-radius:16px;overflow:auto;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+th{background:var(--peach);text-align:left;padding:12px 16px}td{padding:12px 16px;border-top:1px solid #f4eadb}
+.note{font-size:12px;color:var(--mut);margin-top:10px}
+/* committee */
+.comm .c{background:var(--mint)}
+/* notices */
+.n{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.n .d{display:inline-block;font-size:12px;font-weight:600;background:var(--teal);color:#fff;padding:2px 10px;border-radius:99px}
+.n h3{margin:6px 0 2px;font-size:17px}.n p{margin:0;font-size:14px;color:var(--mut)}
+/* admission */
+.adm{background:var(--peach)}
+.adm .wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.ci{display:flex;gap:12px;margin:14px 0}.ci i{font-style:normal;color:var(--o);font-size:20px}
+.ci b{display:block}.ci span{font-size:14px;color:var(--mut)}
+.acard{background:var(--mint);border-radius:22px;padding:20px}
+.acard .hph{margin-bottom:14px;font-size:64px;background:linear-gradient(135deg,#ffe0b0,#ffc069)}
+@media(max-width:800px){.adm .wrap{grid-template-columns:1fr}}
+footer{background:var(--navy);color:#cfd6df;padding:40px 0 22px;font-size:14px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:26px}
+footer h4{color:#fff;margin:0 0 10px}footer a{display:block;padding:3px 0}footer a:hover{color:#fff}
+.copy{border-top:1px solid #334055;margin-top:24px;padding-top:14px;font-size:12px;text-align:center;color:#8f9bad}
+@media(max-width:700px){footer .wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#top"><i>☪</i><span id="nm0"></span></a>
+  <div class="links"><a href="#about">পরিচিতি</a><a href="#classes">শ্রেণি</a><a href="#teachers">শিক্ষক</a><a href="#notice">নোটিশ</a><a href="#contact">যোগাযোগ</a></div>
+  <a class="btn o" href="#contact">যোগাযোগ করুন</a>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div class="hcard">
+    <span class="tag" id="sub"></span>
+    <h1 id="hl"></h1>
+    <p id="hp"></p>
+    <a class="btn w" href="#contact">যোগাযোগ করুন</a>
+    <a class="btn t" href="parent.html" style="margin-left:6px">অভিভাবক পোর্টাল</a>
+  </div>
+  <div class="hph" id="heroPh">🏫</div>
+</div></header>
+
+<section class="about" id="about"><div class="wrap">
+  <div>
+    <span class="tag">প্রতিষ্ঠান পরিচিতি</span>
+    <h2 id="abT"></h2>
+    <p id="abP1"></p><p id="abP2"></p>
+  </div>
+  <div class="hph" id="aboutPh">📚</div>
+</div></section>
+
+<section id="classes"><div class="wrap">
+  <h2>প্লে থেকে পঞ্চম শ্রেণি পর্যন্ত</h2>
+  <p class="lead">প্রতিটি শ্রেণির জন্য আলাদা পাঠ্যসূচি, যত্ন ও শিক্ষক।</p>
+  <div class="grid g4" id="clsGrid"></div>
+</div></section>
+
+<section class="teachers" id="teachers"><div class="wrap">
+  <h2>যাঁরা প্রতিদিন হাসিমুখে ক্লাস নেন</h2>
+  <p class="lead">অভিজ্ঞ ও স্নেহশীল শিক্ষক-শিক্ষিকাগণ।</p>
+  <div class="grid g4" id="tGrid"></div>
+</div></section>
+
+<section id="routine"><div class="wrap">
+  <h2 id="rT"></h2>
+  <p class="lead">প্রতিটি শ্রেণির জন্য আলাদা ক্লাসের সময় ও পড়া।</p>
+  <div class="tw"><table><thead><tr><th>শ্রেণি</th><th>সময়</th><th>প্রধান বিষয়</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="note">বিস্তারিত রুটিন অফিস থেকে জেনে নিতে পারেন।</div>
+</div></section>
+
+<section class="comm" id="comm" style="background:var(--cream);padding-top:0"><div class="wrap">
+  <h2>যাঁদের তত্ত্বাবধানে চলে এই প্রতিষ্ঠান</h2>
+  <p class="lead">স্কুল পরিচালনা কমিটির সদস্যবৃন্দ।</p>
+  <div class="grid g4" id="cGrid"></div>
+</div></section>
+
+<section id="notice" style="background:var(--mint)"><div class="wrap">
+  <h2>নোটিশ বোর্ডের সর্বশেষ খবর</h2>
+  <p class="lead">নতুন নোটিশ সবার আগে এখানে।</p>
+  <div id="nList"></div>
+</div></section>
+
+<section class="adm" id="contact"><div class="wrap">
+  <div>
+    <span class="tag">যোগাযোগ</span>
+    <h2>ভর্তি ও যেকোনো প্রশ্নে অফিসে আসুন</h2>
+    <p class="lead" id="cLead"></p>
+    <div class="ci"><i>📍</i><div><b>ঠিকানা</b><span id="addr"></span></div></div>
+    <div class="ci"><i>📞</i><div><b>ফোন / হোয়াটসঅ্যাপ</b><span id="ph"></span></div></div>
+    <div class="ci"><i>🕖</i><div><b>অফিস সময়</b><span id="hrs"></span></div></div>
+  </div>
+  <div class="acard">
+    <div class="hph" id="admPh">👨‍👩‍👧</div>
+    <p style="margin:0 0 12px;font-size:14px;color:var(--mut)">সন্তানকে ভর্তি করাতে চান? আগে আবেদন করুন, বাকি তথ্য অফিস থেকে জানানো হবে।</p>
+    <a class="btn o" id="waBtn" href="parent.html">ভর্তির আবেদন করুন</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div><b style="color:#fff;font-size:16px" id="nm1"></b><p id="fAbout" style="margin:8px 0 0"></p></div>
+  <div><h4>দ্রুত লিংক</h4><a href="#about">পরিচিতি</a><a href="#classes">শ্রেণি</a><a href="#teachers">শিক্ষক</a><a href="#notice">নোটিশ</a><a href="parent.html">অভিভাবক পোর্টাল</a></div>
+  <div><h4>যোগাযোগ</h4><span id="fAddr"></span><br><span id="fPh"></span></div>
+</div>
+<div class="wrap copy"><span id="cp"></span> · <a href="office.html" style="display:inline;opacity:.6">অফিস লগইন</a></div></footer>
+
+<script>
+/* ============ শুধু এই অংশটুকু বদলালেই পুরো সাইট বদলে যাবে ============ */
+const SITE = {
+  name: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল',
+  place: 'মোহাম্মদপুর',
+  headline: 'স্নেহ, শৃঙ্খলা আর হাসিমুখে হোক প্রতিটি সকাল',
+  headP: 'দ্বীনি পরিবেশে আধুনিক শিক্ষা। প্রতিটি শিশুর যত্ন, নৈতিকতা ও পড়াশোনার মজবুত ভিত্তি আমাদের অঙ্গীকার।',
+  aboutT: 'মোহাম্মদপুরের এই স্কুল ছোটদের শেখে আনন্দে',
+  about1: 'ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল ছোট শিশুদের জন্য নিরাপদ, শান্ত ও আদর্শ শিক্ষার পরিবেশ গড়ে তুলতে প্রতিশ্রুতিবদ্ধ।',
+  about2: 'বাংলা, ইংরেজি, গণিত, সাধারণ জ্ঞান ও ইসলাম শিক্ষার পাশাপাশি ড্রয়িং ও আদব-কায়দা শেখানো হয়।',
+  address: 'মোহাম্মদপুর, (আপনার পূর্ণ ঠিকানা লিখুন)',
+  phone: '০১XXXXXXXXX',
+  whatsapp: '',              // যেমন 968XXXXXXXX (দেশের কোডসহ, + ছাড়া) — দিলে বাটন হোয়াটসঅ্যাপ খুলবে
+  hours: 'শনি–বৃহস্পতি, সকাল ৭:০০ – দুপুর ১:০০',
+  routineTitle: 'সকাল ৭টা থেকে দুপুর ১টা পর্যন্ত ক্লাস',
+  est: '২০২৭',
+  // ছবি দিতে চাইলে ফাইলের নাম লিখুন (GitHub-এ একই ফোল্ডারে রাখুন), নইলে ফাঁকা রাখুন
+  photos: { hero: '', about: '', admission: '' },
+  classes: [
+    ['🧸','প্লে','খেলার ছলে অক্ষর, রং ও ছড়ার সঙ্গে পরিচয়।','p'],
+    ['🌱','নার্সারি','বর্ণমালা, সংখ্যা ও ছোট ছোট বাক্য শেখা।','m'],
+    ['📘','কেজি','পড়া-লেখার ভিত্তি, ইংরেজি ও গণিতের প্রাথমিক ধারণা।','p'],
+    ['✏️','প্রথম শ্রেণি','বাংলা, ইংরেজি, গণিত ও ইসলাম শিক্ষা।','m'],
+    ['📗','দ্বিতীয় শ্রেণি','পাঠ্যবিষয়ে দক্ষতা ও হাতের লেখার অনুশীলন।','p'],
+    ['📙','তৃতীয় শ্রেণি','সাধারণ জ্ঞান ও চিন্তাশক্তির বিকাশ।','m'],
+    ['📕','চতুর্থ শ্রেণি','বিষয়ভিত্তিক গভীর পাঠ ও নিয়মিত মূল্যায়ন।','p'],
+    ['🎓','পঞ্চম শ্রেণি','পরবর্তী ধাপের জন্য পূর্ণ প্রস্তুতি।','m']
+  ],
+  // নাম ও পদবি ঠিকমতো বসান (এখন উদাহরণ)
+  teachers: [
+    ['শিক্ষকের নাম ১','প্রধান শিক্ষক'],
+    ['শিক্ষকের নাম ২','সহকারী শিক্ষক'],
+    ['শিক্ষিকার নাম ৩','সহকারী শিক্ষিকা'],
+    ['শিক্ষিকার নাম ৪','সহকারী শিক্ষিকা']
+  ],
+  routine: [
+    ['প্লে','সকাল ৭:০০ – ৯:৩০','ছড়া, রং, অক্ষর'],
+    ['নার্সারি','সকাল ৭:০০ – ১০:০০','বাংলা, ইংরেজি, সংখ্যা'],
+    ['কেজি','সকাল ৭:০০ – ১১:০০','বাংলা, ইংরেজি, গণিত'],
+    ['প্রথম – পঞ্চম','সকাল ৭:০০ – দুপুর ১:০০','সব বিষয় ও ইসলাম শিক্ষা']
+  ],
+  committee: [
+    ['সভাপতির নাম','সভাপতি'],
+    ['সদস্যের নাম','সদস্য'],
+    ['সদস্যের নাম','সদস্য']
+  ],
+  notices: [
+    ['১৩ নভেম্বর ২০২৬','নতুন শিক্ষাবর্ষে ভর্তি চলছে','২০২৭ সালের জন্য ভর্তির আবেদন অফিসে ও অনলাইনে নেওয়া হচ্ছে।'],
+    ['(তারিখ)','পরীক্ষার সময়সূচি','অর্ধবার্ষিক পরীক্ষার রুটিন অফিসে ও অভিভাবক পোর্টালে পাওয়া যাবে।']
+  ]
+};
+/* ====================================================================== */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
+document.title=SITE.name;
+$('nm0').textContent=SITE.name;$('nm1').textContent=SITE.name;
+$('sub').textContent='শিশুদের জন্য নিরাপদ বিদ্যালয়';
+$('hl').textContent=SITE.headline;$('hp').textContent=SITE.headP;
+$('abT').textContent=SITE.aboutT;$('abP1').textContent=SITE.about1;$('abP2').textContent=SITE.about2;
+$('rT').textContent=SITE.routineTitle;
+$('addr').textContent=SITE.address;$('ph').textContent=SITE.phone;$('hrs').textContent=SITE.hours;
+$('cLead').textContent=SITE.place+'র শিশুদের জন্য আমাদের দরজা খোলা। সরাসরি এসে কথা বলুন।';
+$('fAbout').textContent=SITE.about1;$('fAddr').textContent=SITE.address;$('fPh').textContent=SITE.phone;
+$('cp').textContent='© '+SITE.est+' '+SITE.name;
+if(SITE.whatsapp){$('waBtn').href='https://wa.me/'+SITE.whatsapp;$('waBtn').textContent='হোয়াটসঅ্যাপে লিখুন';}
+[['hero','heroPh'],['about','aboutPh'],['admission','admPh']].forEach(([k,id])=>{
+  const f=SITE.photos[k]; if(f){const i=document.createElement('img');i.src=f;i.alt='';i.loading='lazy';$(id).appendChild(i);}
+});
+$('clsGrid').innerHTML=SITE.classes.map(c=>`<div class="c ${c[3]}"><div class="ic">${c[0]}</div><h3>${esc(c[1])}</h3><p>${esc(c[2])}</p></div>`).join('');
+$('tGrid').innerHTML=SITE.teachers.map(t=>`<div class="t"><div class="av">${esc(t[0].charAt(0))}</div><b>${esc(t[0])}</b><span>${esc(t[1])}</span></div>`).join('');
+$('rows').innerHTML=SITE.routine.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+$('cGrid').innerHTML=SITE.committee.map(t=>`<div class="c"><h3 style="font-size:16px">${esc(t[0])}</h3><p>${esc(t[1])}</p></div>`).join('');
+$('nList').innerHTML=SITE.notices.map(n=>`<div class="n"><span class="d">${esc(n[0])}</span><h3>${esc(n[1])}</h3><p>${esc(n[2])}</p></div>`).join('');
+</script>
+</body>
+</html>
