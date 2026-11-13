@@ -21,7 +21,9 @@ h2{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:0 0 8px;font-weight:70
 nav{position:sticky;top:0;z-index:10;background:rgba(255,250,243,.94);backdrop-filter:blur(8px);border-bottom:1px solid #f1e3cf}
 nav .wrap{display:flex;align-items:center;gap:14px;height:58px}
 .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
-.logo i{width:30px;height:30px;border-radius:50%;background:var(--o);display:grid;place-items:center;font-style:normal;color:#fff;font-size:16px}
+.logo i{width:34px;height:34px;border-radius:50%;background:var(--o);display:grid;place-items:center;font-style:normal;color:#fff;font-size:16px;overflow:hidden;flex:none}
+.logo i img,.av img,.flogo img{width:100%;height:100%;object-fit:cover;display:block}
+.flogo{display:inline-block;width:40px;height:40px;border-radius:50%;overflow:hidden;vertical-align:middle;margin-right:8px;background:#fff}
 .links{display:flex;gap:16px;margin-left:auto;font-size:14px;font-weight:500}
 .links a:hover{color:var(--od)}
 .btn{display:inline-block;padding:10px 20px;border-radius:99px;font-weight:600;font-size:14px;border:0;cursor:pointer;font-family:inherit}
@@ -53,7 +55,7 @@ nav .btn{padding:8px 16px}
 .c.p{background:var(--peach)}.c.m{background:var(--mint)}
 .teachers{background:var(--peach)}
 .t{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.av{width:46px;height:46px;border-radius:50%;background:var(--o);color:#fff;display:grid;place-items:center;font-weight:700;font-size:20px;margin-bottom:8px}
+.av{width:72px;height:72px;border-radius:50%;background:var(--o);color:#fff;display:grid;place-items:center;font-weight:700;font-size:26px;margin-bottom:10px;overflow:hidden}
 .t b{display:block}.t span{font-size:13px;color:var(--mut)}
 /* table */
 .tw{background:#fff;border-radius:16px;overflow:auto;box-shadow:0 2px 8px rgba(0,0,0,.05)}
@@ -83,7 +85,7 @@ footer h4{color:#fff;margin:0 0 10px}footer a{display:block;padding:3px 0}footer
 </head>
 <body>
 <nav><div class="wrap">
-  <a class="logo" href="#top"><i>☪</i><span id="nm0"></span></a>
+  <a class="logo" href="#top"><i id="logoBox">☪</i><span id="nm0"></span></a>
   <div class="links"><a href="#about">পরিচিতি</a><a href="#classes">শ্রেণি</a><a href="#teachers">শিক্ষক</a><a href="#notice">নোটিশ</a><a href="#contact">যোগাযোগ</a></div>
   <a class="btn o" href="#contact">যোগাযোগ করুন</a>
 </div></nav>
@@ -156,7 +158,7 @@ footer h4{color:#fff;margin:0 0 10px}footer a{display:block;padding:3px 0}footer
 </div></section>
 
 <footer><div class="wrap">
-  <div><b style="color:#fff;font-size:16px" id="nm1"></b><p id="fAbout" style="margin:8px 0 0"></p></div>
+  <div><b style="color:#fff;font-size:16px"><span id="flogoBox"></span><span id="nm1"></span></b><p id="fAbout" style="margin:8px 0 0"></p></div>
   <div><h4>দ্রুত লিংক</h4><a href="#about">পরিচিতি</a><a href="#classes">শ্রেণি</a><a href="#teachers">শিক্ষক</a><a href="#notice">নোটিশ</a><a href="parent.html">অভিভাবক পোর্টাল</a></div>
   <div><h4>যোগাযোগ</h4><span id="fAddr"></span><br><span id="fPh"></span></div>
 </div>
@@ -179,6 +181,7 @@ const SITE = {
   routineTitle: 'সকাল ৭টা থেকে দুপুর ১টা পর্যন্ত ক্লাস',
   est: '২০২৭',
   // ছবি দিতে চাইলে ফাইলের নাম লিখুন (GitHub-এ একই ফোল্ডারে রাখুন), নইলে ফাঁকা রাখুন
+  logo: 'logo.png',                  // স্কুলের লোগোর ফাইলের নাম, যেমন 'logo.png' (ফাঁকা থাকলে ডিফল্ট আইকন)
   photos: { hero: 'hero.png', about: 'about.png', admission: 'admission.png' },
   classes: [
     ['🧸','প্লে','খেলার ছলে অক্ষর, রং ও ছড়ার সঙ্গে পরিচয়।','p'],
@@ -192,10 +195,11 @@ const SITE = {
   ],
   // নাম ও পদবি ঠিকমতো বসান (এখন উদাহরণ)
   teachers: [
-    ['শিক্ষকের নাম ১','প্রধান শিক্ষক'],
-    ['শিক্ষকের নাম ২','সহকারী শিক্ষক'],
-    ['শিক্ষিকার নাম ৩','সহকারী শিক্ষিকা'],
-    ['শিক্ষিকার নাম ৪','সহকারী শিক্ষিকা']
+    // ['নাম', 'পদবি', 'ছবির ফাইল (না থাকলে ফাঁকা '' রাখুন)']
+    ['মোহাম্মদ পেয়ারু','প্রধান শিক্ষক','pyaru.png'],
+    ['মোহাম্মদ সোহেল','সহকারী শিক্ষক',''],
+    ['শিক্ষিকার নাম ৩','সহকারী শিক্ষিকা',''],
+    ['শিক্ষিকার নাম ৪','সহকারী শিক্ষিকা','']
   ],
   routine: [
     ['প্লে','সকাল ৭:০০ – ৯:৩০','ছড়া, রং, অক্ষর'],
@@ -204,7 +208,7 @@ const SITE = {
     ['প্রথম – পঞ্চম','সকাল ৭:০০ – দুপুর ১:০০','সব বিষয় ও ইসলাম শিক্ষা']
   ],
   committee: [
-    ['সভাপতির নাম','সভাপতি'],
+    ['মোহাম্মদ পেয়ারু আত্তারী','সভাপতি'],
     ['সদস্যের নাম','সদস্য'],
     ['সদস্যের নাম','সদস্য']
   ],
@@ -218,7 +222,14 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
 document.title=SITE.name;
-$('nm0').textContent=SITE.name;$('nm1').textContent=SITE.name;
+$('nm0').textContent=SITE.name;
+if(SITE.logo){
+  const mk=()=>{const i=document.createElement('img');i.src=SITE.logo;i.alt='';i.onerror=function(){this.remove()};return i};
+  $('logoBox').textContent='';$('logoBox').style.background='#fff';$('logoBox').appendChild(mk());
+  const f=document.createElement('span');f.className='flogo';f.appendChild(mk());$('flogoBox').appendChild(f);
+  const ic=document.createElement('link');ic.rel='icon';ic.href=SITE.logo;document.head.appendChild(ic);
+}
+$('nm1').textContent=SITE.name;
 $('sub').textContent='শিশুদের জন্য নিরাপদ বিদ্যালয়';
 $('hl').textContent=SITE.headline;$('hp').textContent=SITE.headP;
 $('abT').textContent=SITE.aboutT;$('abP1').textContent=SITE.about1;$('abP2').textContent=SITE.about2;
@@ -232,7 +243,7 @@ if(SITE.whatsapp){$('waBtn').href='https://wa.me/'+SITE.whatsapp;$('waBtn').text
   const f=SITE.photos[k]; if(f){const i=document.createElement('img');i.src=f;i.alt='';i.loading='lazy';$(id).appendChild(i);}
 });
 $('clsGrid').innerHTML=SITE.classes.map(c=>`<div class="c ${c[3]}"><div class="ic">${c[0]}</div><h3>${esc(c[1])}</h3><p>${esc(c[2])}</p></div>`).join('');
-$('tGrid').innerHTML=SITE.teachers.map(t=>`<div class="t"><div class="av">${esc(t[0].charAt(0))}</div><b>${esc(t[0])}</b><span>${esc(t[1])}</span></div>`).join('');
+$('tGrid').innerHTML=SITE.teachers.map(t=>`<div class="t"><div class="av">${t[2]?`<img src="${esc(t[2])}" alt="" loading="lazy" onerror="this.remove()">`:''}${esc(t[0].charAt(0))}</div><b>${esc(t[0])}</b><span>${esc(t[1])}</span></div>`).join('');
 $('rows').innerHTML=SITE.routine.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
 $('cGrid').innerHTML=SITE.committee.map(t=>`<div class="c"><h3 style="font-size:16px">${esc(t[0])}</h3><p>${esc(t[1])}</p></div>`).join('');
 $('nList').innerHTML=SITE.notices.map(n=>`<div class="n"><span class="d">${esc(n[0])}</span><h3>${esc(n[1])}</h3><p>${esc(n[2])}</p></div>`).join('');
