@@ -229,7 +229,7 @@
 
     function pick(id) {
       say('sMsg', 'আনা হচ্ছে...', true);
-      get('certstudent', { sid: id }).then(function (j) {
+      get('certstudent', { id: id }).then(function (j) {
         if (j && j.badAdmin) { badAdmin(); return; }
         if (!j || !j.ok) { say('sMsg', (j && j.msg) || 'আনা যায়নি'); return; }
         say('sMsg', ''); STU = j.student; renderPrior(j.prior);
@@ -281,7 +281,7 @@
         if (j && j.badAdmin) { badAdmin(); return; }
         if (!j || !j.ok) { say('iMsg', (j && j.msg) || 'হয়নি, আবার চেষ্টা করুন'); return; }
         say('iMsg', 'তৈরি হয়েছে — সনদ নং ' + bn(j.cert.no), true);
-        get('certstudent', { sid: STU.id }).then(function (x) { if (x && x.ok) renderPrior(x.prior); });
+        get('certstudent', { id: STU.id }).then(function (x) { if (x && x.ok) renderPrior(x.prior); });
         printCert(j.cert);
       }).catch(function (err) { $('issue').disabled = false; say('iMsg', 'সংযোগ ত্রুটি' + why(err) + ' — "খাতা" ট্যাবে দেখে নিন সনদ তৈরি হয়েছে কি না, নইলে আবার তৈরি হয়ে যেতে পারে'); });
     };
