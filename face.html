@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b6b4f">
+  <title>শিক্ষক · চেহারা হাজিরা</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Noto Sans Bengali", sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: #0b6b4f; color: #fff; padding: 10px 16px 0; }
+    header a { color: #fff; font-size: 12px; text-decoration: none; opacity: .9; }
+    header h1 { margin: 2px 0 0; font-size: 18px; }
+    header small { opacity: .85; font-size: 12px; }
+    .tabs { display: flex; gap: 6px; margin-top: 10px; }
+    .tabs button { flex: 1; padding: 11px 6px; font-size: 15px; border: 0; border-radius: 10px 10px 0 0; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; font-family: inherit; }
+    .tabs button.on { background: #f4f6f8; color: #0b6b4f; font-weight: 700; }
+    .wrap { padding: 12px; max-width: 540px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 12px; font-size: 14px; }
+    .cam { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+    .cam video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .cam .ring { position: absolute; left: 50%; top: 46%; height: 78%; aspect-ratio: 3 / 4; transform: translate(-50%, -50%); border: 3px dashed rgba(255,255,255,.7); border-radius: 50%; pointer-events: none; }
+    .cam .tip { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px; color: #fff; text-align: center; background: linear-gradient(transparent, rgba(0,0,0,.7)); font-size: 14px; }
+    .result { margin: 0 0 12px; padding: 14px; border-radius: 12px; background: #fff; text-align: center; min-height: 70px; font-size: 16px; }
+    .result .big { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .present { background: #d1fae5 !important; color: #065f46; }
+    .late { background: #fef3c7 !important; color: #92400e; }
+    .out { background: #e0e7ff !important; color: #3730a3; }
+    .duplicate { background: #dbeafe !important; color: #1e40af; }
+    .error { background: #fee2e2 !important; color: #991b1b; }
+    .b { padding: 12px 16px; font-size: 15px; font-family: inherit; border: 0; border-radius: 10px; background: #0b6b4f; color: #fff; cursor: pointer; }
+    .b.light { background: #e5e7eb; color: #111827; } .b.sec { background: #374151; } .b.red { background: #b91c1c; }
+    .b:disabled { opacity: .5; }
+    .full { width: 100%; margin-bottom: 10px; }
+    select { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 1px solid #d1d5db; border-radius: 10px; margin-bottom: 10px; background: #fff; }
+    .hint { font-size: 13px; color: #6b7280; margin: 6px 0 10px; }
+    .sum { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+    .sum div { background: #f3f4f6; border-radius: 10px; padding: 8px 2px; text-align: center; font-size: 11px; }
+    .sum b { display: block; font-size: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 7px 4px; border-bottom: 1px solid #f1f5f9; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+    .d-present { background: #10b981; } .d-late { background: #f59e0b; } .d-absent { background: #ef4444; }
+    #prog { height: 10px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin: 8px 0; }
+    #prog i { display: block; height: 100%; width: 0; background: #0b6b4f; transition: width .3s; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">‹ অফিস মেনু</a>
+    <h1>শিক্ষক · চেহারা হাজিরা</h1>
+    <small id="today"></small>
+    <div class="tabs">
+      <button id="tabA" class="on" onclick="setTab('A')">হাজিরা</button>
+      <button id="tabE" onclick="goEnroll()">চেহারা নথিভুক্তি</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div id="pA">
+      <div class="cam"><video id="vid" autoplay playsinline muted></video><div class="ring"></div><div class="tip" id="tip">প্রস্তুত — ক্যামেরা চালু করুন</div></div>
+      <button id="startBtn" class="b full" onclick="toggleKiosk()">ক্যামেরা চালু করুন</button>
+      <div id="resultT" class="result">ক্যামেরার সামনে এসে সোজা তাকান</div>
+      <button class="b sec full" onclick="toggleList()">আজকের শিক্ষক তালিকা</button>
+      <div id="listBox" class="card hidden"></div>
+    </div>
+
+    <div id="pE" class="hidden">
+      <div class="card">
+        <b>চেহারা নথিভুক্তি (অ্যাডমিন)</b>
+        <div class="hint">শিক্ষক বেছে ক্যামেরার সামনে বসুন। ৫টা ছবি স্বয়ংক্রিয়ভাবে নেওয়া হবে (সোজা, ডানে, বামে)। শুধু ১২৮টি সংখ্যার ছাপ জমা হয়, ছবি জমা হয় না।</div>
+        <select id="tsel"></select>
+        <div class="cam"><video id="vid2" autoplay playsinline muted></video><div class="ring"></div><div class="tip" id="etip">শিক্ষক বেছে "শুরু করুন" চাপুন</div></div>
+        <div id="prog"><i></i></div>
+        <button class="b full" id="startEnrollBtn" onclick="startEnroll()">শুরু করুন</button>
+        <button class="b red full" onclick="clearFace()">এই শিক্ষকের ফেস ডেটা মুছুন</button>
+        <div id="emsg" class="hint"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ↓↓↓ আগের পেজগুলোর সেই একই /exec লিংক ↓↓↓
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyL7jo2DJdwI__PmCTIaCgeXYzVMOzb_w3D62EdQ0ezckxIphi4WQq2aOK0SgueF-b1Sg/exec';
+    const FACE_JS = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js';
+    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/';
+    // চেহারা মেলানোর সীমা (কম = কড়া)
+    const MATCH_MAX = 0.50, MARGIN_MIN = 0.06, NEED_FRAMES = 3;
+
+    let PIN = '', ADMIN = '';
+    try { PIN = localStorage.getItem('att_pin') || ''; ADMIN = sessionStorage.getItem('card_admin') || ''; } catch (e) {}
+    const $ = function (id) { return document.getElementById(id); };
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+    function askPin() {
+      const p = prompt('স্ক্যানার পিন দিন');
+      if (p && p.trim()) { PIN = p.trim(); try { localStorage.setItem('att_pin', PIN); } catch (e) {} }
+      return !!PIN;
+    }
+    function askAdmin() {
+      const p = prompt('অ্যাডমিন পিন দিন');
+      if (p && p.trim()) ADMIN = p.trim();
+      return !!ADMIN;
+    }
+    function api(action, params, retried) {
+      const q = new URLSearchParams(Object.assign({ action: action, pin: PIN }, params || {}));
+      return fetch(API_URL + '?' + q.toString()).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.badPin) {
+          PIN = ''; try { localStorage.removeItem('att_pin'); } catch (e) {}
+          if (!retried && askPin()) return api(action, params, true);
+        }
+        return j;
+      });
+    }
+    function adminGet(action) {
+      return fetch(API_URL + '?' + new URLSearchParams({ action: action, admin: ADMIN }).toString()).then(function (r) { return r.json(); });
+    }
+    function adminPost(obj) {
+      obj.admin = ADMIN;
+      return fetch(API_URL, { method: 'POST', body: JSON.stringify(obj) }).then(function (r) { return r.json(); });
+    }
+    function beep(ok) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator(); o.frequency.value = ok ? 880 : 300; o.connect(ctx.destination); o.start();
+        setTimeout(function () { o.stop(); ctx.close(); }, ok ? 120 : 350);
+      } catch (e) {}
+      if (navigator.vibrate) navigator.vibrate(ok ? 80 : [120, 60, 120]);
+    }
+
+    let FACES = [], TEACHERS = [], stream = null, loopTimer = null, tBusy = false, streak = { id: null, n: 0 };
+    const lastDone = {};
+    let modelsReady = false, mode = 'off';
+
+    function ensureFaceApi() {
+      if (window.faceapi) return Promise.resolve();
+      return new Promise(function (res, rej) {
+        const s = document.createElement('script');
+        s.src = FACE_JS; s.onload = res; s.onerror = function () { rej(new Error('face-api লোড হয়নি')); };
+        document.head.appendChild(s);
+      });
+    }
+    async function loadModels() {
+      if (modelsReady) return;
+      await ensureFaceApi();
+      await faceapi.tf.ready();
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+      modelsReady = true;
+    }
+    async function startCam(videoEl) {
+      stopCam();
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+      videoEl.srcObject = stream;
+      await videoEl.play().catch(function () {});
+    }
+    function stopCam() {
+      if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+      clearTimeout(loopTimer);
+    }
+    function detect(videoEl) {
+      return faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+    }
+    function dist(a, b) { let s = 0; for (let i = 0; i < 128; i++) { const d = a[i] - b[i]; s += d * d; } return Math.sqrt(s); }
+    function bestMatch(desc) {
+      const per = FACES.map(function (t) {
+        let m = 9; t.faces.forEach(function (f) { const d = dist(desc, f); if (d < m) m = d; });
+        return { t: t, d: m };
+      }).sort(function (a, b) { return a.d - b.d; });
+      return { best: per[0] || null, second: per[1] || null };
+    }
+
+    function setTab(t) {
+      $('tabA').classList.toggle('on', t === 'A'); $('tabE').classList.toggle('on', t === 'E');
+      $('pA').classList.toggle('hidden', t !== 'A'); $('pE').classList.toggle('hidden', t !== 'E');
+    }
+    function stopAll() { mode = 'off'; stopCam(); $('startBtn').textContent = 'ক্যামেরা চালু করুন'; }
+    function toggleKiosk() { if (mode === 'kiosk') { stopAll(); $('tip').textContent = 'প্রস্তুত — ক্যামেরা চালু করুন'; } else initKiosk(); }
+
+    async function initKiosk() {
+      stopAll(); setTab('A'); mode = 'kiosk';
+      $('startBtn').textContent = 'ক্যামেরা বন্ধ করুন';
+      $('tip').textContent = 'মডেল লোড হচ্ছে (প্রথমবার কিছুক্ষণ লাগতে পারে)...';
+      try { await loadModels(); } catch (e) { $('tip').textContent = 'মডেল লোড হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।'; stopAll(); return; }
+      if (mode !== 'kiosk') return;
+      if (!PIN && !askPin()) { $('tip').textContent = 'পিন ছাড়া চলবে না।'; stopAll(); return; }
+      $('tip').textContent = 'শিক্ষকদের তথ্য আনা হচ্ছে...';
+      try {
+        const f = await api('tfaces');
+        if (!f || !f.ok) { $('tip').textContent = (f && f.msg) || 'তথ্য আনা যায়নি'; stopAll(); return; }
+        FACES = f.teachers;
+      } catch (e) { $('tip').textContent = 'সংযোগ হয়নি। ইন্টারনেট ও API_URL দেখুন।'; stopAll(); return; }
+      if (mode !== 'kiosk') return;
+      if (!FACES.length) $('tip').textContent = 'এখনো কারও চেহারা নথিভুক্ত নেই। "চেহারা নথিভুক্তি" ট্যাবে যান।';
+      try { await startCam($('vid')); } catch (e) { $('tip').textContent = 'ক্যামেরার অনুমতি পাওয়া যায়নি। ব্রাউজারে Allow করুন।'; stopAll(); return; }
+      if (mode !== 'kiosk') { stopCam(); return; }
+      if (FACES.length) $('tip').textContent = 'ক্যামেরার সামনে সোজা তাকান';
+      loadList(); loop();
+    }
+
+    async function loop() {
+      if (mode !== 'kiosk' || !stream) return;
+      try {
+        if (!tBusy && FACES.length) {
+          const r = await detect($('vid'));
+          if (!r) { streak = { id: null, n: 0 }; $('tip').textContent = 'ক্যামেরার সামনে সোজা তাকান'; }
+          else {
+            const m = bestMatch(r.descriptor);
+            const ok = m.best && m.best.d <= MATCH_MAX && (!m.second || (m.second.d - m.best.d) >= MARGIN_MIN);
+            if (!ok) {
+              streak = { id: null, n: 0 };
+              $('tip').textContent = (m.best && m.best.d <= MATCH_MAX + 0.08) ? 'নিশ্চিত হতে পারছি না, একটু কাছে এসে সোজা তাকান' : 'চেহারা চেনা যাচ্ছে না';
+            } else {
+              const id = m.best.t.id;
+              streak = streak.id === id ? { id: id, n: streak.n + 1 } : { id: id, n: 1 };
+              $('tip').textContent = 'চেনা হচ্ছে... ' + m.best.t.name;
+              if (streak.n >= NEED_FRAMES) { streak = { id: null, n: 0 }; await confirmCheck(m.best.t); }
+            }
+          }
+        }
+      } catch (e) {}
+      if (mode === 'kiosk') loopTimer = setTimeout(loop, 450);
+    }
+    async function confirmCheck(t) {
+      if (lastDone[t.id] && Date.now() - lastDone[t.id] < 30000) { $('tip').textContent = t.name + ': হাজিরা একটু আগেই নেওয়া হয়েছে'; return; }
+      tBusy = true;
+      $('resultT').className = 'result'; $('resultT').textContent = 'হাজিরা নেওয়া হচ্ছে...';
+      try {
+        const res = await api('tcheck', { id: t.id });
+        lastDone[t.id] = Date.now();
+        showT(res); loadList();
+      } catch (e) { showT({ ok: false, type: 'error', msg: 'সংযোগ ত্রুটি। ইন্টারনেট দেখুন।' }); }
+      await sleep(3500);
+      tBusy = false;
+    }
+    function showT(r) {
+      const box = $('resultT');
+      box.className = 'result ' + (r.type || '');
+      let h = '<div class="big">' + esc(r.msg || '') + '</div>';
+      if (r.name) h += '<div style="font-size:18px">' + esc(r.name) + (r.desig ? ' — ' + esc(r.desig) : '') + '</div>';
+      if (r.time) h += '<div style="font-size:13px;opacity:.8">' + esc(String(r.time).substring(0, 8)) + '</div>';
+      box.innerHTML = h;
+      beep(!!r.ok);
+    }
+    const SLAB = { present: 'উপস্থিত', late: 'দেরি', absent: 'অনুপস্থিত' };
+    function loadList() {
+      return api('tsummary').then(function (s) {
+        if (!s || !s.ok) return;
+        $('today').textContent = s.date;
+        $('listBox').innerHTML =
+          '<div class="sum"><div><b>' + s.total + '</b>মোট</div><div><b>' + s.present + '</b>উপস্থিত</div><div><b>' + s.late + '</b>দেরি</div><div><b>' + s.absent + '</b>অনুপস্থিত</div></div>' +
+          '<table>' + s.list.map(function (x) {
+            return '<tr><td><i class="dot d-' + x.status + '"></i>' + esc(x.name) + '</td><td>' +
+              (x.inn ? 'আসা ' + esc(x.inn.substring(0, 5)) : SLAB[x.status]) + (x.out ? '<br>যাওয়া ' + esc(x.out.substring(0, 5)) : '') + '</td></tr>';
+          }).join('') + '</table>';
+      }).catch(function () {});
+    }
+    function toggleList() { $('listBox').classList.toggle('hidden'); loadList(); }
+
+    // ================= নথিভুক্তি (অ্যাডমিন) =================
+    function teacherOptions() {
+      return TEACHERS.map(function (t) {
+        return '<option value="' + esc(t.id) + '">' + esc(t.name) + (t.desig ? ' — ' + esc(t.desig) : '') + (t.enrolled ? '  ✓' : '  (নথিভুক্ত নয়)') + '</option>';
+      }).join('');
+    }
+    async function goEnroll() {
+      if (!ADMIN && !askAdmin()) return;
+      $('emsg').textContent = '';
+      let j;
+      try { j = await adminGet('tlist'); } catch (e) { alert('সংযোগ হয়নি'); return; }
+      if (!j.ok) { ADMIN = ''; try { sessionStorage.removeItem('card_admin'); } catch (e) {} alert(j.msg || 'ভুল অ্যাডমিন পিন'); return; }
+      try { sessionStorage.setItem('card_admin', ADMIN); } catch (e) {}
+      TEACHERS = j.teachers;
+      $('tsel').innerHTML = teacherOptions();
+      stopAll(); mode = 'enroll'; setTab('E');
+      $('etip').textContent = 'মডেল লোড হচ্ছে...';
+      try { await loadModels(); await startCam($('vid2')); $('etip').textContent = 'শিক্ষক বেছে "শুরু করুন" চাপুন'; }
+      catch (e) { $('etip').textContent = 'ক্যামেরা বা মডেল চালু হয়নি'; }
+    }
+    async function startEnroll() {
+      const id = $('tsel').value;
+      if (!id || !stream) return;
+      const steps = ['সোজা তাকান', 'একটু ডানে ঘুরুন', 'একটু বামে ঘুরুন', 'সোজা তাকিয়ে একটু হাসুন', 'আবার সোজা তাকান'];
+      const samples = [];
+      $('startEnrollBtn').disabled = true; $('emsg').textContent = '';
+      for (let i = 0; i < steps.length; i++) {
+        $('etip').textContent = (i + 1) + '/' + steps.length + ' — ' + steps[i];
+        await sleep(1800);
+        let r = null;
+        for (let k = 0; k < 8 && !r; k++) {
+          const x = await detect($('vid2'));
+          if (x && x.detection.score > 0.6) r = x; else await sleep(400);
+        }
+        if (!r) { $('etip').textContent = 'চেহারা পাওয়া যায়নি, আবার চেষ্টা করুন'; $('startEnrollBtn').disabled = false; $('prog').firstChild.style.width = '0'; return; }
+        samples.push(Array.from(r.descriptor).map(function (v) { return Math.round(v * 10000) / 10000; }));
+        $('prog').firstChild.style.width = ((i + 1) * 100 / steps.length) + '%';
+      }
+      let maxD = 0;
+      for (let i = 0; i < samples.length; i++) for (let j = i + 1; j < samples.length; j++) maxD = Math.max(maxD, dist(samples[i], samples[j]));
+      if (maxD > 0.65) {
+        $('etip').textContent = 'ছবিগুলো মিলছে না, আবার চেষ্টা করুন'; $('emsg').textContent = 'একজনই সামনে থাকুন, আলো ভালো রাখুন।';
+        $('startEnrollBtn').disabled = false; return;
+      }
+      $('etip').textContent = 'সংরক্ষণ হচ্ছে...';
+      try {
+        const res = await adminPost({ action: 'tenroll', id: id, faces: samples });
+        if (res.ok) { $('etip').textContent = 'নথিভুক্ত হয়েছে ✓'; $('emsg').textContent = 'এবার "হাজিরা" ট্যাবে গিয়ে পরীক্ষা করুন।'; markEnrolled(id, true); }
+        else { $('etip').textContent = res.msg || 'সংরক্ষণ হয়নি'; }
+      } catch (e) { $('etip').textContent = 'সংযোগ ত্রুটি, আবার চেষ্টা করুন'; }
+      $('startEnrollBtn').disabled = false;
+    }
+    function markEnrolled(id, v) {
+      TEACHERS.forEach(function (t) { if (t.id === id) t.enrolled = v; });
+      const keep = $('tsel').value;
+      $('tsel').innerHTML = teacherOptions(); $('tsel').value = keep;
+    }
+    async function clearFace() {
+      const id = $('tsel').value;
+      if (!id || !confirm('এই শিক্ষকের ফেস ডেটা মুছে ফেলবেন?')) return;
+      try {
+        const res = await adminPost({ action: 'tclear', id: id });
+        $('emsg').textContent = res.ok ? 'মুছে ফেলা হয়েছে' : (res.msg || 'মোছা যায়নি');
+        if (res.ok) markEnrolled(id, false);
+      } catch (e) { $('emsg').textContent = 'সংযোগ ত্রুটি'; }
+    }
+    // "হাজিরা" ট্যাবে ফেরা: নথিভুক্তির ক্যামেরা বন্ধ করে
+    $('tabA').onclick = function () { stopAll(); setTab('A'); $('tip').textContent = 'প্রস্তুত — ক্যামেরা চালু করুন'; };
+    if (!PIN) askPin();
+    api('tsummary').then(function (s) { if (s && s.ok) $('today').textContent = s.date; }).catch(function () {});
+  </script>
+</body>
+</html>
