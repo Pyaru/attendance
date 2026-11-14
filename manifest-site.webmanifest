@@ -1,0 +1,18 @@
+{
+  "id": "/attendance/site",
+  "name": "ফয়যানে মদীনা কিন্ডারগার্টেন স্কুল",
+  "short_name": "ফয়যানে মদীনা",
+  "description": "স্কুলের তথ্য, নোটিশ ও অভিভাবক পোর্টাল",
+  "lang": "bn",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffaf3",
+  "theme_color": "#f58a07",
+  "icons": [
+    { "src": "icon-site-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-site-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-site-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
