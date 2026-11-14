@@ -1,0 +1,19 @@
+{
+  "id": "/attendance/office",
+  "name": "ফয়যানে মদীনা — অফিস",
+  "short_name": "স্কুল অফিস",
+  "description": "ফয়যানে মদীনা কিন্ডারগার্টেন স্কুলের অফিস মেনু",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "./office.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6f8",
+  "theme_color": "#0b6b4f",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
